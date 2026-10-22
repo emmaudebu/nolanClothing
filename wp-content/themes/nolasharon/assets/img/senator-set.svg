@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="800" height="1000">
+<defs><pattern id="p" width="10" height="10" patternUnits="userSpaceOnUse"><rect width="10" height="10" fill="#1F2A44"/></pattern></defs>
+<rect width="400" height="500" fill="#E9ECF2"/>
+<ellipse cx="200" cy="478" rx="130" ry="10" fill="#000000" fill-opacity="0.08"/>
+<path d="M200 28c0-10 14-10 14 0c0 8-14 10-14 22" fill="none" stroke="#8A8178" stroke-width="4" stroke-linecap="round"/><path d="M200 50L130 82M200 50L270 82" stroke="#8A8178" stroke-width="5" stroke-linecap="round"/>
+<path d="M122 325L198 325L192 470L140 470Z" fill="#2A3656" stroke="#00000033" stroke-width="2" stroke-linejoin="round"/><path d="M202 325L278 325L260 470L208 470Z" fill="#2A3656" stroke="#00000033" stroke-width="2" stroke-linejoin="round"/><path d="M160 80Q200 98 240 80L290 100L315 250L292 256L278 160L280 332L120 332L122 160L108 256L85 250L110 100Z" fill="url(#p)" stroke="#00000033" stroke-width="2" stroke-linejoin="round"/>
+<path d="M175 84L200 120L225 84" fill="none" stroke="#C9A24A" stroke-width="3"/><path d="M200 120V250" stroke="#C9A24A" stroke-width="2.5"/><path d="M232 150h26" stroke="#C9A24A" stroke-width="2"/>
+</svg>

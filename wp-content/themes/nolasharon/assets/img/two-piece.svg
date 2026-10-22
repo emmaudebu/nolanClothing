@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="800" height="1000">
+<defs><pattern id="p" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="36" height="36" fill="#D9692A"/><path d="M18 2L34 18L18 34L2 18Z" fill="#0F6E6C"/><path d="M18 10L26 18L18 26L10 18Z" fill="#F2C14E"/><circle cx="18" cy="18" r="2.5" fill="#D9692A"/><circle cx="0" cy="0" r="3" fill="#F2C14E"/><circle cx="36" cy="36" r="3" fill="#F2C14E"/></pattern></defs>
+<rect width="400" height="500" fill="#F6EDE5"/>
+<ellipse cx="200" cy="478" rx="130" ry="10" fill="#000000" fill-opacity="0.08"/>
+<path d="M200 28c0-10 14-10 14 0c0 8-14 10-14 22" fill="none" stroke="#8A8178" stroke-width="4" stroke-linecap="round"/><path d="M200 50L130 82M200 50L270 82" stroke="#8A8178" stroke-width="5" stroke-linecap="round"/>
+<path d="M155 85Q200 105 245 85L275 120L260 135L248 120L250 185L150 185L152 120L140 135L125 120Z" fill="url(#p)" stroke="#00000033" stroke-width="2" stroke-linejoin="round"/><path d="M152 200L248 200L272 455L128 455Z" fill="url(#p)" stroke="#00000033" stroke-width="2" stroke-linejoin="round"/>
+<rect x="152" y="200" width="96" height="12" fill="#0F6E6C"/>
+</svg>
