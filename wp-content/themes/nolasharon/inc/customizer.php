@@ -80,6 +80,7 @@ function nolasharon_settings_schema() {
 				'nolasharon_delivery_info'  => array( __( 'Delivery information snippet', 'nolasharon' ), 'textarea', $textarea, '', __( 'Shown on product pages and in the bag. Confirmed details only. Empty hides it.', 'nolasharon' ) ),
 				'nolasharon_returns_info'   => array( __( 'Returns & exchanges snippet', 'nolasharon' ), 'textarea', $textarea, '', __( 'Shown on product pages with a link to the policy. Empty hides it.', 'nolasharon' ) ),
 				'nolasharon_pickup_enabled' => array( __( 'Enable store pickup at checkout', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', false, __( 'Only switch on once the client confirms which branches offer pickup. Branches also need "Pickup available" ticked.', 'nolasharon' ) ),
+				'nolasharon_fulfilment_statuses' => array( __( 'Use "Dispatched" and "Ready for pickup" order statuses', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', false, __( 'Adds two order statuses staff can set, and a matching step on the customer\'s order tracker. Only switch on once the client confirms the fulfilment process.', 'nolasharon' ) ),
 				'nolasharon_new_days'       => array( __( '"New" badge: product age in days', 'nolasharon' ), 'number', 'absint', 30, '' ),
 				'nolasharon_video'          => array( __( 'Homepage video (YouTube URL, optional)', 'nolasharon' ), 'url', $url, '', __( 'Empty hides the video section.', 'nolasharon' ) ),
 				'nolasharon_video_title'    => array( __( 'Video section heading', 'nolasharon' ), 'text', $text, '', '' ),

@@ -306,4 +306,109 @@
 		first.addEventListener( 'input', update );
 		second.addEventListener( 'input', update );
 	} );
+	/* Order tracker: the line fills the first time it comes into view -------- */
+
+	var trackers = document.querySelectorAll( '[data-tracker]' );
+	if ( trackers.length ) {
+		if ( 'IntersectionObserver' in window && ! ui.reduced ) {
+			var seen = new IntersectionObserver( function ( entries ) {
+				entries.forEach( function ( entry ) {
+					if ( entry.isIntersecting ) {
+						entry.target.classList.add( 'is-shown' );
+						seen.unobserve( entry.target );
+					}
+				} );
+			}, { threshold: 0.4 } );
+			trackers.forEach( function ( el ) {
+				seen.observe( el );
+			} );
+		} else {
+			trackers.forEach( function ( el ) {
+				el.classList.add( 'is-shown' );
+			} );
+		}
+	}
+
+	/* Log out: confirm in a dialog; without JavaScript the link just works ---- */
+
+	var logoutDialog = document.getElementById( 'ns-logout' );
+	if ( logoutDialog ) {
+		document.addEventListener( 'click', function ( e ) {
+			var link = e.target.closest( '[data-logout]' );
+			if ( link && ui.modal( logoutDialog, link ) ) {
+				e.preventDefault();
+			}
+		} );
+	}
+
+	/* Orders: switch the status filter without a reload ----------------------- */
+
+	var filters = document.querySelector( '[data-order-filters]' );
+	var list = document.querySelector( '[data-orders-list]' );
+	if ( filters && list && window.fetch && window.DOMParser ) {
+		var swapping = false;
+
+		var rows = function ( scope ) {
+			return Array.prototype.slice.call( scope.querySelectorAll( '.ns-orow-wrap' ) );
+		};
+
+		var press = function ( value ) {
+			filters.querySelectorAll( '.ns-chip' ).forEach( function ( chip ) {
+				chip.setAttribute( 'aria-pressed', chip.value === value ? 'true' : 'false' );
+			} );
+		};
+
+		filters.addEventListener( 'submit', function ( e ) {
+			var chip = e.submitter;
+			if ( ! chip || swapping ) {
+				return;
+			}
+			e.preventDefault();
+			var value = chip.value;
+			var url = new URL( filters.action, window.location.href );
+			if ( value ) {
+				url.searchParams.set( 'status', value );
+			}
+			swapping = true;
+			press( value );
+			list.classList.add( 'is-busy' );
+
+			fetch( url.toString(), { credentials: 'same-origin' } )
+				.then( function ( response ) {
+					if ( ! response.ok ) {
+						throw new Error( response.status );
+					}
+					return response.text();
+				} )
+				.then( function ( html ) {
+					var next = new DOMParser().parseFromString( html, 'text/html' ).querySelector( '[data-orders-list]' );
+					if ( ! next ) {
+						throw new Error( 'list' );
+					}
+					// Fold the old rows away, then fold the new ones in.
+					rows( list ).forEach( function ( row ) {
+						ui.collapse( row, false );
+					} );
+					setTimeout( function () {
+						rows( next ).forEach( function ( row ) {
+							ui.collapse( row, false );
+						} );
+						list.innerHTML = next.innerHTML;
+						list.classList.remove( 'is-busy' );
+						requestAnimationFrame( function () {
+							requestAnimationFrame( function () {
+								rows( list ).forEach( function ( row ) {
+									ui.collapse( row, true );
+								} );
+							} );
+						} );
+						history.replaceState( null, '', url.toString() );
+						swapping = false;
+					}, ui.reduced ? 0 : 320 );
+				} )
+				.catch( function () {
+					window.location.href = url.toString();
+				} );
+		} );
+	}
 }() );

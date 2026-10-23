@@ -396,3 +396,378 @@ function nolasharon_lost_password_unknown( $errors, $user_data ) {
 	exit;
 }
 add_action( 'lostpassword_post', 'nolasharon_lost_password_unknown', 10, 2 );
+
+/* My Account: menu ------------------------------------------------------------ */
+
+/**
+ * Menu (STORE-PAGES.md §3): Dashboard · Orders · Addresses · Account details · Log out.
+ * Downloads and Payment methods are not used.
+ *
+ * @param array $items endpoint => label.
+ * @return array
+ */
+function nolasharon_account_menu_items( $items ) {
+	unset( $items['downloads'], $items['payment-methods'] );
+	if ( isset( $items['edit-address'] ) ) {
+		$items['edit-address'] = __( 'Addresses', 'nolasharon' );
+	}
+	return $items;
+}
+add_filter( 'woocommerce_account_menu_items', 'nolasharon_account_menu_items', 20 );
+
+/**
+ * Order statuses that still need the customer to pay.
+ *
+ * @return string[] Without the wc- prefix.
+ */
+function nolasharon_unpaid_statuses() {
+	return apply_filters( 'woocommerce_valid_order_statuses_for_payment', array( 'pending', 'failed' ), null );
+}
+
+/**
+ * How many of the customer's orders are waiting for payment (the Orders badge).
+ *
+ * @return int
+ */
+function nolasharon_unpaid_order_count() {
+	static $count = null;
+	if ( null === $count ) {
+		$count = is_user_logged_in() ? count(
+			wc_get_orders(
+				array(
+					'customer_id' => get_current_user_id(),
+					'status'      => nolasharon_unpaid_statuses(),
+					'limit'       => -1,
+					'return'      => 'ids',
+				)
+			)
+		) : 0;
+	}
+	return $count;
+}
+
+/**
+ * Icon for an account menu item or dashboard tile.
+ *
+ * @param string $endpoint Endpoint key.
+ * @param int    $size     Size in px.
+ * @return string SVG markup.
+ */
+function nolasharon_account_icon( $endpoint, $size = 19 ) {
+	$paths = array(
+		'dashboard'       => '<path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"/>',
+		'orders'          => '<path d="M6 7h12l-1 13H7L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/>',
+		'edit-address'    => '<path d="M12 21s-7-6.1-7-11.5a7 7 0 0 1 14 0C19 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+		'edit-account'    => '<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+		'customer-logout' => '<path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5 5-5M5 12h11"/>',
+		'store'           => '<path d="M4 10l1.5-5h13L20 10M4 10v10h16V10M4 10h16M9 20v-5h6v5"/>',
+		'home'            => '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+	);
+	$path = isset( $paths[ $endpoint ] ) ? $paths[ $endpoint ] : '<circle cx="12" cy="12" r="8"/>';
+	return sprintf( '<svg width="%1$d" height="%1$d" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">%2$s</svg>', absint( $size ), $path );
+}
+
+/* Order statuses (STORE-PAGES.md §3.4) ---------------------------------------- */
+
+/**
+ * Whether the "Dispatched" and "Ready for pickup" statuses are switched on. They stay off
+ * until the client confirms the fulfilment process ([[CONFIRM: fulfilment process]]).
+ *
+ * @return bool
+ */
+function nolasharon_fulfilment_statuses_on() {
+	return (bool) nolasharon_setting( 'nolasharon_fulfilment_statuses' );
+}
+
+/**
+ * Register wc-dispatched and wc-ready-pickup.
+ */
+function nolasharon_register_order_statuses() {
+	if ( ! nolasharon_fulfilment_statuses_on() ) {
+		return;
+	}
+	register_post_status(
+		'wc-dispatched',
+		array(
+			'label'                     => _x( 'Dispatched', 'Order status', 'nolasharon' ),
+			'public'                    => false,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			/* translators: %s: number of orders. */
+			'label_count'               => _n_noop( 'Dispatched <span class="count">(%s)</span>', 'Dispatched <span class="count">(%s)</span>', 'nolasharon' ),
+		)
+	);
+	register_post_status(
+		'wc-ready-pickup',
+		array(
+			'label'                     => _x( 'Ready for pickup', 'Order status', 'nolasharon' ),
+			'public'                    => false,
+			'exclude_from_search'       => false,
+			'show_in_admin_all_list'    => true,
+			'show_in_admin_status_list' => true,
+			/* translators: %s: number of orders. */
+			'label_count'               => _n_noop( 'Ready for pickup <span class="count">(%s)</span>', 'Ready for pickup <span class="count">(%s)</span>', 'nolasharon' ),
+		)
+	);
+}
+add_action( 'init', 'nolasharon_register_order_statuses' );
+
+/**
+ * Add the two statuses after "Processing" in WooCommerce's list.
+ *
+ * @param array $statuses wc-status => label.
+ * @return array
+ */
+function nolasharon_order_statuses( $statuses ) {
+	if ( ! nolasharon_fulfilment_statuses_on() ) {
+		return $statuses;
+	}
+	$out = array();
+	foreach ( $statuses as $key => $label ) {
+		$out[ $key ] = $label;
+		if ( 'wc-processing' === $key ) {
+			$out['wc-dispatched']   = _x( 'Dispatched', 'Order status', 'nolasharon' );
+			$out['wc-ready-pickup'] = _x( 'Ready for pickup', 'Order status', 'nolasharon' );
+		}
+	}
+	return $out;
+}
+add_filter( 'wc_order_statuses', 'nolasharon_order_statuses' );
+
+/**
+ * Dispatched and ready-for-pickup orders have been paid.
+ *
+ * @param string[] $statuses Paid statuses.
+ * @return string[]
+ */
+function nolasharon_paid_statuses( $statuses ) {
+	return nolasharon_fulfilment_statuses_on() ? array_merge( $statuses, array( 'dispatched', 'ready-pickup' ) ) : $statuses;
+}
+add_filter( 'woocommerce_order_is_paid_statuses', 'nolasharon_paid_statuses' );
+
+/**
+ * Remember when an order reached each fulfilment step, for the tracker's dates.
+ *
+ * @param int      $order_id Order ID.
+ * @param string   $from     Old status.
+ * @param string   $to       New status.
+ * @param WC_Order $order    Order.
+ */
+function nolasharon_record_status_date( $order_id, $from, $to, $order ) {
+	if ( in_array( $to, array( 'dispatched', 'ready-pickup' ), true ) ) {
+		$order->update_meta_data( '_ns_status_date_' . $to, time() );
+		$order->save_meta_data();
+	}
+}
+add_action( 'woocommerce_order_status_changed', 'nolasharon_record_status_date', 10, 4 );
+
+/* Orders: helpers ------------------------------------------------------------- */
+
+/**
+ * Whether an order is collected from a branch rather than delivered.
+ *
+ * @param WC_Order $order Order.
+ * @return bool
+ */
+function nolasharon_order_is_pickup( $order ) {
+	if ( $order->get_meta( '_ns_pickup_branch' ) ) {
+		return true;
+	}
+	foreach ( $order->get_shipping_methods() as $method ) {
+		if ( nolasharon_is_pickup_method( $method->get_method_id() ) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/**
+ * Status pill.
+ *
+ * @param WC_Order $order Order.
+ */
+function nolasharon_order_pill( $order ) {
+	printf( '<span class="ns-pill ns-pill--%1$s">%2$s</span>', esc_attr( $order->get_status() ), esc_html( wc_get_order_status_name( $order->get_status() ) ) );
+}
+
+/**
+ * Number of items in an order, less refunds.
+ *
+ * @param WC_Order $order Order.
+ * @return int
+ */
+function nolasharon_order_item_count( $order ) {
+	return max( 0, $order->get_item_count() - $order->get_item_count_refunded() );
+}
+
+/**
+ * "{date} · {n} items" line.
+ *
+ * @param WC_Order $order Order.
+ * @return string
+ */
+function nolasharon_order_summary_line( $order ) {
+	$count = nolasharon_order_item_count( $order );
+	return wc_format_datetime( $order->get_date_created(), 'j M Y' ) . ' · ' . sprintf(
+		/* translators: %d: number of items. */
+		_n( '%d item', '%d items', $count, 'nolasharon' ),
+		$count
+	);
+}
+
+/**
+ * Up to $max overlapping product thumbnails for an order.
+ *
+ * @param WC_Order $order Order.
+ * @param int      $max   Most images to show.
+ */
+function nolasharon_order_thumbs( $order, $max = 2 ) {
+	$shown = 0;
+	echo '<span class="ns-thumbs" aria-hidden="true">';
+	foreach ( $order->get_items() as $item ) {
+		$product = $item->get_product();
+		$image   = $product ? (int) $product->get_image_id() : 0;
+		if ( ! $image && $product && $product->get_parent_id() ) {
+			$parent = wc_get_product( $product->get_parent_id() );
+			$image  = $parent ? (int) $parent->get_image_id() : 0;
+		}
+		if ( $image ) {
+			echo wp_get_attachment_image(
+				$image,
+				'woocommerce_thumbnail',
+				false,
+				array(
+					'alt'     => '',
+					'sizes'   => '44px',
+					'loading' => 'lazy',
+				)
+			);
+		} else {
+			echo '<span class="ns-thumbs__blank"></span>';
+		}
+		if ( ++$shown >= $max ) {
+			break;
+		}
+	}
+	echo '</span>';
+}
+
+/**
+ * Order tracker (STORE-PAGES.md §3.4): four steps from the order status. Dates come from the
+ * order's own dates; never an estimate. Cancelled, failed and refunded orders get a note
+ * instead, and so does any status the tracker doesn't know.
+ *
+ * @param WC_Order $order Order.
+ */
+function nolasharon_order_tracker( $order ) {
+	$status = $order->get_status();
+	$steps  = array(
+		'pending'      => 0,
+		'on-hold'      => 0,
+		'processing'   => 1,
+		'dispatched'   => 2,
+		'ready-pickup' => 2,
+		'completed'    => 3,
+	);
+	if ( ! isset( $steps[ $status ] ) ) {
+		printf( '<p class="ns-tracker-note">%s</p>', esc_html( sprintf( /* translators: %s: order status, e.g. Cancelled. */ __( 'This order is %s.', 'nolasharon' ), strtolower( wc_get_order_status_name( $status ) ) ) ) );
+		return;
+	}
+	$pickup = nolasharon_order_is_pickup( $order );
+	$done   = $steps[ $status ];
+	$third  = $pickup ? 'ready-pickup' : 'dispatched';
+	$dates  = array(
+		$order->get_date_created(),
+		$order->get_date_paid(),
+		$order->get_meta( '_ns_status_date_' . $third ) ? new WC_DateTime( '@' . (int) $order->get_meta( '_ns_status_date_' . $third ) ) : null,
+		$order->get_date_completed(),
+	);
+	$labels = array(
+		__( 'Order placed', 'nolasharon' ),
+		__( 'Processing', 'nolasharon' ),
+		$pickup ? __( 'Ready for pickup', 'nolasharon' ) : __( 'Dispatched', 'nolasharon' ),
+		$pickup ? __( 'Collected', 'nolasharon' ) : __( 'Delivered', 'nolasharon' ),
+	);
+	?>
+	<ol class="ns-tracker" style="--fill: <?php echo esc_attr( $done / 3 ); ?>" aria-label="<?php esc_attr_e( 'Order progress', 'nolasharon' ); ?>" data-tracker>
+		<li class="ns-tracker__fill" aria-hidden="true"></li>
+		<?php foreach ( $labels as $i => $label ) : ?>
+			<?php
+			$state = $i <= $done ? 'is-done' : ( $i === $done + 1 ? 'is-next' : '' );
+			$date  = $i <= $done && $dates[ $i ] ? $dates[ $i ] : null;
+			?>
+			<li class="ns-tracker__step <?php echo esc_attr( $state ); ?>"<?php echo $i === $done ? ' aria-current="step"' : ''; ?>>
+				<span class="ns-tracker__dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" focusable="false"><path d="M5 12l5 5L20 7"/></svg></span>
+				<span class="ns-tracker__label"><?php echo esc_html( $label ); ?><span class="screen-reader-text"> <?php echo $i <= $done ? esc_html__( '(done)', 'nolasharon' ) : esc_html__( '(not yet)', 'nolasharon' ); ?></span></span>
+				<?php if ( $date ) : ?>
+					<time class="ns-tracker__when" datetime="<?php echo esc_attr( $date->date( 'c' ) ); ?>"><?php echo esc_html( wc_format_datetime( $date, 'j M' ) ); ?></time>
+				<?php endif; ?>
+			</li>
+		<?php endforeach; ?>
+	</ol>
+	<?php
+}
+
+/**
+ * Link for "Get help with this order": WhatsApp with the order number when a number is
+ * set, otherwise the Contact page.
+ *
+ * @param WC_Order $order Order.
+ * @return array( url, external )
+ */
+function nolasharon_order_help_link( $order ) {
+	/* translators: %s: order number. */
+	$whatsapp = nolasharon_whatsapp_url( sprintf( __( 'Hi, I need help with order #%s', 'nolasharon' ), $order->get_order_number() ) );
+	return $whatsapp ? array( $whatsapp, true ) : array( nolasharon_page_url( 'contact' ), false );
+}
+
+/* Orders list: status filter ---------------------------------------------------- */
+
+/**
+ * Filter chips for the orders list: key => array( label, statuses ).
+ *
+ * @return array
+ */
+function nolasharon_order_filters() {
+	$filters = array(
+		''           => array( __( 'All', 'nolasharon' ), array() ),
+		'processing' => array( __( 'Processing', 'nolasharon' ), array( 'processing' ) ),
+		'pending'    => array( __( 'Pending payment', 'nolasharon' ), nolasharon_unpaid_statuses() ),
+	);
+	if ( nolasharon_fulfilment_statuses_on() ) {
+		$filters['dispatched']   = array( __( 'Dispatched', 'nolasharon' ), array( 'dispatched' ) );
+		$filters['ready-pickup'] = array( __( 'Ready for pickup', 'nolasharon' ), array( 'ready-pickup' ) );
+	}
+	$filters['completed'] = array( __( 'Completed', 'nolasharon' ), array( 'completed' ) );
+	return $filters;
+}
+
+/**
+ * The chosen filter from ?status=, or '' for all.
+ *
+ * @return string
+ */
+function nolasharon_current_order_filter() {
+	$key = isset( $_GET['status'] ) ? sanitize_key( wp_unslash( $_GET['status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only list filter.
+	return isset( nolasharon_order_filters()[ $key ] ) ? $key : '';
+}
+
+/**
+ * Apply ?status= to the orders query.
+ *
+ * @param array $args Query args.
+ * @return array
+ */
+function nolasharon_orders_query( $args ) {
+	$key = nolasharon_current_order_filter();
+	if ( $key ) {
+		$args['status'] = nolasharon_order_filters()[ $key ][1];
+	}
+	return $args;
+}
+add_filter( 'woocommerce_my_account_my_orders_query', 'nolasharon_orders_query' );
+
+// The order page prints its own items, totals and "Order again" (view-order.php).
+remove_action( 'woocommerce_view_order', 'woocommerce_order_details_table', 10 );
+remove_action( 'woocommerce_order_details_after_order_table', 'woocommerce_order_again_button' );
