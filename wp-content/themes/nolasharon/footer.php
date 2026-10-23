@@ -25,7 +25,7 @@ $nolasharon_columns = array(
 		__( 'FAQs', 'nolasharon' )                => nolasharon_page_url( 'faqs' ),
 		__( 'Delivery Policy', 'nolasharon' )     => nolasharon_page_url( 'delivery-policy' ),
 		__( 'Returns & Exchange', 'nolasharon' )  => nolasharon_page_url( 'returns-policy' ),
-		__( 'Size Guide', 'nolasharon' )          => nolasharon_page_url( 'size-guide' ),
+		__( 'Track your order', 'nolasharon' )    => nolasharon_page_url( 'track-order' ),
 		__( 'Contact Us', 'nolasharon' )          => nolasharon_page_url( 'contact' ),
 	),
 	__( 'Visit Us', 'nolasharon' ) => array(),

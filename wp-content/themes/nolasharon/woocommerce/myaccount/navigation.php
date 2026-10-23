@@ -42,6 +42,7 @@ do_action( 'woocommerce_before_account_navigation' );
 	<div class="ns-acct__help">
 		<strong><?php esc_html_e( 'Need help?', 'nolasharon' ); ?></strong>
 		<span><?php esc_html_e( 'Questions about an order? Our team is happy to help.', 'nolasharon' ); ?></span>
+		<a href="<?php echo esc_url( nolasharon_track_order_url() ); ?>"><?php esc_html_e( 'Track an order', 'nolasharon' ); ?> <span aria-hidden="true">→</span></a>
 		<a href="<?php echo esc_url( nolasharon_page_url( 'contact' ) ); ?>"><?php esc_html_e( 'Contact us', 'nolasharon' ); ?> <span aria-hidden="true">→</span></a>
 		<?php if ( $nolasharon_whatsapp ) : ?>
 			<a href="<?php echo esc_url( $nolasharon_whatsapp ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Chat on WhatsApp', 'nolasharon' ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'nolasharon' ); ?></span></a>
