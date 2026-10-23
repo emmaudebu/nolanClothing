@@ -21,7 +21,7 @@ $nolasharon_social   = array_filter(
 		__( 'TikTok', 'nolasharon' )    => nolasharon_setting( 'nolasharon_tiktok' ),
 	)
 );
-$nolasharon_branches = nolasharon_get_branches( false );
+$nolasharon_branches = ns_get_branches();
 $nolasharon_any      = $nolasharon_phone || $nolasharon_email || $nolasharon_whatsapp || $nolasharon_hours || $nolasharon_social;
 ?>
 <header class="archive-banner">
@@ -65,11 +65,20 @@ $nolasharon_any      = $nolasharon_phone || $nolasharon_email || $nolasharon_wha
 
 			<?php if ( $nolasharon_branches ) : ?>
 				<h3 class="contact__sub"><?php esc_html_e( 'Our stores', 'nolasharon' ); ?></h3>
-				<ul class="contact__branches">
-					<?php foreach ( $nolasharon_branches as $nolasharon_branch ) : ?>
-						<li><a href="<?php echo esc_url( nolasharon_page_url( 'store-locations' ) . '#branch-' . $nolasharon_branch['id'] ); ?>"><?php echo esc_html( $nolasharon_branch['name'] ); ?></a></li>
-					<?php endforeach; ?>
-				</ul>
+				<div class="contact__branches">
+					<?php
+					foreach ( $nolasharon_branches as $nolasharon_branch ) {
+						get_template_part(
+							'template-parts/branch-card',
+							null,
+							array(
+								'branch'  => $nolasharon_branch,
+								'variant' => 'compact',
+							)
+						);
+					}
+					?>
+				</div>
 				<a class="btn btn--outline btn--sm" href="<?php echo esc_url( nolasharon_page_url( 'store-locations' ) ); ?>"><?php esc_html_e( 'Visit Our Store', 'nolasharon' ); ?></a>
 			<?php endif; ?>
 		</section>

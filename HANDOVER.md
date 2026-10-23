@@ -53,12 +53,16 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 
 ## 4. Branches and store locations
 
-**Branches** in the left menu holds one entry per store. Each branch has its own address, nearest landmark, opening hours, phone, Google Maps link, status (Open / Opening soon / Temporarily closed) and opening date.
+**Branches** in the left menu holds one entry per store. Each branch has its own tag (e.g. "Branch 1"), area, address, nearest landmark, phone, opening hours (one row per day), Google Maps link, map coordinates, pickup settings, status (Open / Opening soon / Temporarily closed) and opening date. The list shows which branches are still missing details.
 
-- Fill in a branch and click **Publish** to show it on the **Store Locations** page, the homepage store spotlight and the footer.
-- Ticking **Show a "New" badge** (used for Ogudu) puts that branch in the homepage spotlight. The spotlight always says the Ikeja stores remain open.
+- Fill in a branch and click **Publish**. It then appears on the **Store Locations** page, the homepage spotlight, the footer, the Contact page and (if pickup is on) at checkout.
+- **Order** (in the "Page Attributes" box) sets the display order.
+- **Area** groups branches under the filter tabs on Store Locations (tabs appear once there are two or more areas).
+- **Opening hours:** fill in opens/closes for each day, tick **Closed** for days you're shut, leave a day empty if not confirmed. The page shows "Open now · closes 7:00pm" in Lagos time. Add a note like "Public holiday hours may vary" if needed.
+- **New branch** (used for Ogudu) adds the "New" pill and the "Now also in…" spotlight, which always says the Ikeja stores remain open. With status **Opening soon**, the opening date shows once filled in.
+- **Map:** in Google Maps, right-click the store and click the coordinates to copy them (latitude first), and use **Share → Copy link** for the Google Maps link. Branches with coordinates get a pin on the map; the map only appears once at least one branch has them. **Get directions** uses the Google Maps link, or the coordinates.
+- **Photo:** the branch's **Featured image** is used in the spotlight.
 - Empty fields are simply hidden on the site.
-- **Get Directions** uses the Google Maps link. To embed a map, paste the "Embed a map" link from Google Maps.
 
 ## 5. Homepage, banner and site settings
 

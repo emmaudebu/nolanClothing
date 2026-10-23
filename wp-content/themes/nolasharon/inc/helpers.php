@@ -181,3 +181,18 @@ function nolasharon_youtube_id( $value ) {
 	}
 	return '';
 }
+
+/**
+ * Normalise a Nigerian phone number to +234XXXXXXXXXX, or return '' when it is not one.
+ * Accepts 0803 123 4567, 803 123 4567 and +234 803 123 4567.
+ *
+ * @param string $phone Phone as typed.
+ * @return string
+ */
+function nolasharon_ng_phone( $phone ) {
+	$digits = preg_replace( '/\D+/', '', (string) $phone );
+	if ( preg_match( '/^(?:234|0)?([789][01]\d{8})$/', $digits, $m ) ) {
+		return '+234' . $m[1];
+	}
+	return '';
+}

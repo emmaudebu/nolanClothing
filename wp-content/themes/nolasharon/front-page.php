@@ -29,8 +29,8 @@ $nolasharon_featured   = $nolasharon_has_wc ? wc_get_products(
 		'limit'      => 4,
 	)
 ) : array();
-$nolasharon_branches   = nolasharon_get_branches();
-$nolasharon_spotlight  = nolasharon_spotlight_branch( $nolasharon_branches );
+$nolasharon_branches   = ns_get_branches( array( 'include_drafts' => true ) );
+$nolasharon_spotlight  = ns_branch_spotlight( $nolasharon_branches );
 $nolasharon_video_id   = nolasharon_youtube_id( nolasharon_setting( 'nolasharon_video' ) );
 $nolasharon_new_url    = add_query_arg( 'orderby', 'date', nolasharon_shop_url() );
 
@@ -170,57 +170,19 @@ if ( nolasharon_whatsapp_url() || nolasharon_setting( 'nolasharon_phone' ) ) {
 	<p class="container admin-note"><a href="<?php echo esc_url( admin_url( 'customize.php?autofocus[section]=nolasharon_brand' ) ); ?>"><?php esc_html_e( 'Brand introduction is hidden until the client-approved description is added in Customizer → NolaSharon Settings (only admins see this).', 'nolasharon' ); ?></a></p>
 <?php endif; ?>
 
-<?php if ( $nolasharon_spotlight ) : ?>
-	<?php
-	$nolasharon_status     = nolasharon_branch_status_label( $nolasharon_spotlight );
-	$nolasharon_directions = nolasharon_branch_directions_url( $nolasharon_spotlight );
-	$nolasharon_area       = $nolasharon_spotlight['area'] ? $nolasharon_spotlight['area'] : $nolasharon_spotlight['name'];
-	?>
-	<section class="section spotlight" aria-labelledby="spotlight-title">
-		<div class="container spotlight__inner">
-			<div class="spotlight__media">
-				<?php
-				if ( $nolasharon_spotlight['image_id'] ) {
-					echo wp_get_attachment_image( $nolasharon_spotlight['image_id'], 'large', false, array( 'alt' => '' ) );
-				} else {
-					echo '<span class="spotlight__placeholder" aria-hidden="true">' . nolasharon_icon( 'store', 64 ) . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				}
-				?>
-			</div>
-			<div class="spotlight__copy">
-				<?php if ( $nolasharon_spotlight['is_draft'] ) : ?>
-					<span class="tag tag--draft"><?php esc_html_e( 'Draft branch: only editors see this section', 'nolasharon' ); ?></span>
-				<?php endif; ?>
-				<p class="spotlight__eyebrow"><?php echo esc_html( $nolasharon_status ? $nolasharon_status : __( 'New location', 'nolasharon' ) ); ?></p>
-				<h2 class="section__title" id="spotlight-title"><?php echo esc_html( sprintf( /* translators: %s: area, e.g. Ogudu. */ __( 'Now also in %s', 'nolasharon' ), $nolasharon_area ) ); ?></h2>
-				<!-- DRAFT: client to approve -->
-				<p class="spotlight__text"><?php echo esc_html( sprintf( /* translators: %s: area, e.g. Ogudu. */ __( 'Our Ikeja stores remain open. %s is our newest location.', 'nolasharon' ), $nolasharon_area ) ); ?></p>
-				<?php if ( $nolasharon_spotlight['address'] ) : ?>
-					<p class="spotlight__address"><?php echo nolasharon_icon( 'pin', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?><?php echo esc_html( $nolasharon_spotlight['address'] ); ?></p>
-				<?php endif; ?>
-				<div class="spotlight__actions">
-					<a class="btn btn--light" href="<?php echo esc_url( nolasharon_page_url( 'store-locations' ) . '#branch-' . $nolasharon_spotlight['id'] ); ?>"><?php esc_html_e( 'Visit Our Store', 'nolasharon' ); ?></a>
-					<?php if ( $nolasharon_directions ) : ?>
-						<a class="btn btn--ghost" href="<?php echo esc_url( $nolasharon_directions ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get Directions', 'nolasharon' ); ?></a>
-					<?php endif; ?>
-				</div>
-				<?php if ( count( $nolasharon_branches ) > 1 ) : ?>
-					<ul class="spotlight__branches" aria-label="<?php esc_attr_e( 'All our stores', 'nolasharon' ); ?>">
-						<?php foreach ( $nolasharon_branches as $nolasharon_branch ) : ?>
-							<li>
-								<a href="<?php echo esc_url( nolasharon_page_url( 'store-locations' ) . '#branch-' . $nolasharon_branch['id'] ); ?>"><?php echo esc_html( $nolasharon_branch['name'] ); ?></a>
-								<?php $nolasharon_label = nolasharon_branch_status_label( $nolasharon_branch ); ?>
-								<?php if ( $nolasharon_label ) : ?>
-									<span>· <?php echo esc_html( $nolasharon_label ); ?></span>
-								<?php endif; ?>
-							</li>
-						<?php endforeach; ?>
-					</ul>
-				<?php endif; ?>
-			</div>
-		</div>
-	</section>
-<?php endif; ?>
+<?php
+if ( $nolasharon_spotlight ) {
+	get_template_part(
+		'template-parts/branch-spotlight',
+		null,
+		array(
+			'branch'   => $nolasharon_spotlight,
+			'context'  => 'home',
+			'branches' => $nolasharon_branches,
+		)
+	);
+}
+?>
 
 <?php if ( $nolasharon_trust ) : ?>
 	<section class="trust" aria-label="<?php esc_attr_e( 'Shopping with us', 'nolasharon' ); ?>">

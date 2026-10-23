@@ -272,21 +272,6 @@ function nolasharon_checkout_phone_value( $value, $input ) {
 add_filter( 'woocommerce_checkout_get_value', 'nolasharon_checkout_phone_value', 10, 2 );
 
 /**
- * Normalise a Nigerian phone number to +234XXXXXXXXXX, or return '' when it is not one.
- * Accepts 0803 123 4567, 803 123 4567 and +234 803 123 4567.
- *
- * @param string $phone Phone as typed.
- * @return string
- */
-function nolasharon_ng_phone( $phone ) {
-	$digits = preg_replace( '/\D+/', '', (string) $phone );
-	if ( preg_match( '/^(?:234|0)?([789][01]\d{8})$/', $digits, $m ) ) {
-		return '+234' . $m[1];
-	}
-	return '';
-}
-
-/**
  * Save the phone number as +234XXXXXXXXXX whatever format was typed.
  *
  * @param array $data Posted checkout data.
@@ -552,7 +537,7 @@ function nolasharon_checkout_branch_options() {
 		<?php foreach ( nolasharon_pickup_branches() as $branch ) : ?>
 			<?php
 			$id   = 'ns_pickup_branch_' . $branch['id'];
-			$name = $branch['name'] . ( $branch['is_new'] ? ' (' . __( 'New', 'nolasharon' ) . ')' : '' );
+			$name = $branch['tag'] ? $branch['name'] . ' (' . $branch['tag'] . ')' : $branch['name'];
 			?>
 			<label class="ns-option ns-option--row" for="<?php echo esc_attr( $id ); ?>">
 				<input type="radio" class="ns-option__input" name="ns_pickup_branch" id="<?php echo esc_attr( $id ); ?>" value="<?php echo esc_attr( $branch['id'] ); ?>" data-label="<?php echo esc_attr( $name ); ?>" <?php checked( $branch['id'], $posted ); ?>>
@@ -561,16 +546,16 @@ function nolasharon_checkout_branch_options() {
 					<span class="ns-option__titlerow">
 						<span class="ns-option__title"><?php echo esc_html( $branch['name'] ); ?></span>
 						<?php if ( $branch['is_new'] ) : ?>
-							<span class="ns-pill ns-pill--new"><?php esc_html_e( 'New', 'nolasharon' ); ?></span>
-						<?php elseif ( $branch['area'] ) : ?>
-							<span class="ns-pill"><?php echo esc_html( $branch['area'] ); ?></span>
+							<span class="ns-pill ns-pill--new"><?php echo esc_html( $branch['tag'] ? $branch['tag'] : __( 'New', 'nolasharon' ) ); ?></span>
+						<?php elseif ( $branch['tag'] || $branch['area'] ) : ?>
+							<span class="ns-pill"><?php echo esc_html( $branch['tag'] ? $branch['tag'] : $branch['area'] ); ?></span>
 						<?php endif; ?>
 					</span>
 					<?php if ( $branch['address'] ) : ?>
 						<span class="ns-option__note"><?php echo esc_html( preg_replace( '/\s*\n\s*/', ', ', $branch['address'] ) ); ?></span>
 					<?php endif; ?>
-					<?php if ( $branch['hours'] ) : ?>
-						<span class="ns-option__meta"><?php echo esc_html( preg_replace( '/\s*\n\s*/', ' · ', $branch['hours'] ) ); ?></span>
+					<?php if ( $branch['hours_text'] ) : ?>
+						<span class="ns-option__meta"><?php echo esc_html( str_replace( "\n", ' · ', $branch['hours_text'] ) ); ?></span>
 					<?php endif; ?>
 				</span>
 				<span class="ns-free"><?php esc_html_e( 'Free', 'nolasharon' ); ?></span>
@@ -588,7 +573,7 @@ function nolasharon_checkout_branch_options() {
 function nolasharon_pickup_branch_details( $branch ) {
 	foreach ( array(
 		'address'             => __( 'Address', 'nolasharon' ),
-		'hours'               => __( 'Opening hours', 'nolasharon' ),
+		'hours_text'          => __( 'Opening hours', 'nolasharon' ),
 		'phone'               => __( 'Phone', 'nolasharon' ),
 		'pickup_instructions' => __( 'Pickup instructions', 'nolasharon' ),
 	) as $key => $label ) {
@@ -610,7 +595,7 @@ function nolasharon_save_pickup_branch( $order ) {
 	$branch = nolasharon_posted_pickup_branch();
 	if ( $branch ) {
 		$order->update_meta_data( '_ns_pickup_branch', $branch['id'] );
-		$order->update_meta_data( '_ns_pickup_branch_name', $branch['name'] );
+		$order->update_meta_data( '_ns_pickup_branch_name', $branch['tag'] ? $branch['name'] . ' (' . $branch['tag'] . ')' : $branch['name'] );
 	}
 }
 add_action( 'woocommerce_checkout_create_order', 'nolasharon_save_pickup_branch' );
@@ -626,19 +611,29 @@ function nolasharon_order_pickup_branch( $order ) {
 	if ( ! $id ) {
 		return null;
 	}
-	foreach ( nolasharon_get_branches( false ) as $branch ) {
-		if ( $branch['id'] === $id ) {
-			return $branch;
-		}
+	$post = get_post( $id );
+	if ( $post && 'ns_branch' === $post->post_type && 'trash' !== $post->post_status ) {
+		return ns_branch_data( $post );
 	}
 	// Branch since removed: fall back to the name saved with the order.
-	return array_merge(
-		array_fill_keys( array_keys( nolasharon_branch_fields() ), '' ),
-		array(
-			'id'   => $id,
-			'name' => $order->get_meta( '_ns_pickup_branch_name' ),
-		)
+	return array(
+		'id'                  => $id,
+		'name'                => $order->get_meta( '_ns_pickup_branch_name' ),
+		'address'             => '',
+		'hours_text'          => '',
+		'phone'               => '',
+		'pickup_instructions' => '',
 	);
+}
+
+/**
+ * A pickup branch's name with its tag, e.g. "NolaSharon Ikeja (Branch 1)".
+ *
+ * @param array $branch Branch from nolasharon_order_pickup_branch().
+ * @return string
+ */
+function nolasharon_pickup_branch_name( $branch ) {
+	return empty( $branch['tag'] ) ? $branch['name'] : $branch['name'] . ' (' . $branch['tag'] . ')';
 }
 
 /**
@@ -649,7 +644,7 @@ function nolasharon_order_pickup_branch( $order ) {
 function nolasharon_admin_pickup_branch( $order ) {
 	$branch = nolasharon_order_pickup_branch( $order );
 	if ( $branch ) {
-		echo '<div class="ns-admin-pickup"><h3>' . esc_html__( 'Store pickup', 'nolasharon' ) . '</h3><p><strong>' . esc_html( $branch['name'] ) . '</strong></p>';
+		echo '<div class="ns-admin-pickup"><h3>' . esc_html__( 'Store pickup', 'nolasharon' ) . '</h3><p><strong>' . esc_html( nolasharon_pickup_branch_name( $branch ) ) . '</strong></p>';
 		nolasharon_pickup_branch_details( $branch );
 		echo '</div>';
 	}
@@ -669,15 +664,15 @@ function nolasharon_email_pickup_branch( $order, $sent_to_admin, $plain_text ) {
 		return;
 	}
 	if ( $plain_text ) {
-		echo "\n" . esc_html__( 'Store pickup:', 'nolasharon' ) . ' ' . esc_html( $branch['name'] ) . "\n";
-		foreach ( array( 'address', 'hours', 'pickup_instructions' ) as $key ) {
+		echo "\n" . esc_html__( 'Store pickup:', 'nolasharon' ) . ' ' . esc_html( nolasharon_pickup_branch_name( $branch ) ) . "\n";
+		foreach ( array( 'address', 'hours_text', 'pickup_instructions' ) as $key ) {
 			if ( $branch[ $key ] ) {
 				echo esc_html( $branch[ $key ] ) . "\n";
 			}
 		}
 		return;
 	}
-	echo '<h2>' . esc_html__( 'Store pickup', 'nolasharon' ) . '</h2><p><strong>' . esc_html( $branch['name'] ) . '</strong></p>';
+	echo '<h2>' . esc_html__( 'Store pickup', 'nolasharon' ) . '</h2><p><strong>' . esc_html( nolasharon_pickup_branch_name( $branch ) ) . '</strong></p>';
 	nolasharon_pickup_branch_details( $branch );
 }
 add_action( 'woocommerce_email_order_meta', 'nolasharon_email_pickup_branch', 20, 3 );
