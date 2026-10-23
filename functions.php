@@ -19,6 +19,7 @@ require get_template_directory() . '/inc/quick-view.php';
 require get_template_directory() . '/inc/shop-filters.php';
 require get_template_directory() . '/inc/branches.php';
 require get_template_directory() . '/inc/checkout.php';
+require get_template_directory() . '/inc/account.php';
 require get_template_directory() . '/inc/content.php';
 
 /**
@@ -81,6 +82,7 @@ function nolasharon_assets() {
 			'weak'         => __( 'Weak', 'nolasharon' ),
 			'good'         => __( 'Good', 'nolasharon' ),
 			'strong'       => __( 'Strong', 'nolasharon' ),
+			'tooWeak'      => __( 'Add more characters, numbers or symbols.', 'nolasharon' ),
 		)
 	);
 	wp_enqueue_script( 'nolasharon', get_template_directory_uri() . '/assets/js/theme.js', array( 'nolasharon-ui' ), NOLASHARON_VERSION, array( 'strategy' => 'defer' ) );

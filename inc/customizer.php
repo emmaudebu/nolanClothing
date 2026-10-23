@@ -55,6 +55,12 @@ function nolasharon_settings_schema() {
 				'nolasharon_trust_delivery' => array( __( 'Delivery line', 'nolasharon' ), 'text', $text, '', __( 'e.g. "Delivery across Lagos". Confirmed areas only. Empty hides it.', 'nolasharon' ) ),
 			),
 		),
+		'nolasharon_account'      => array(
+			'title'  => __( 'Sign-in page', 'nolasharon' ),
+			'fields' => array(
+				'nolasharon_auth_image' => array( __( 'Campaign photo beside the sign-in form', 'nolasharon' ), 'image', 'absint', 0, __( 'Client-approved photo. Falls back to the placeholder illustration.', 'nolasharon' ) ),
+			),
+		),
 		'nolasharon_contact'      => array(
 			'title'  => __( 'Contact & social', 'nolasharon' ),
 			'fields' => array(

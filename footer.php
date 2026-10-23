@@ -52,6 +52,7 @@ if ( ! $nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ] ) {
 ?>
 </main>
 
+<?php if ( ! ( function_exists( 'nolasharon_is_auth_page' ) && nolasharon_is_auth_page() ) ) : ?>
 <footer class="site-footer">
 	<div class="site-footer__inner">
 		<div class="site-footer__top">
@@ -94,6 +95,7 @@ if ( ! $nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ] ) {
 		</div>
 	</div>
 </footer>
+<?php endif; ?>
 
 <?php
 // Floating WhatsApp button: only once a verified number is set (brief rule 5).

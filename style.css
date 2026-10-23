@@ -2593,6 +2593,19 @@ html.drawer-open {
 	max-width: 760px;
 }
 
+/* The cart and My Account lay out their own full-width content. */
+.content-area--auth .entry-content,
+.content-area--account .entry-content,
+.content-area--cart .entry-content {
+	max-width: none;
+}
+
+.content-area--auth .entry-content > p:empty,
+.content-area--account .entry-content > p:empty,
+.content-area--cart .entry-content > p:empty {
+	display: none;
+}
+
 .entry + .entry {
 	margin-top: 32px;
 }
@@ -5980,6 +5993,7 @@ button {
 	color: var(--ui-dark);
 }
 
+.ns-textlink[aria-disabled="true"],
 .ns-textlink:disabled {
 	color: var(--ui-muted);
 	text-decoration: none;
@@ -6135,6 +6149,11 @@ button {
 	outline-offset: -2px;
 }
 
+/* WooCommerce adds its own eye button to password fields; ours replaces it. */
+.ns-pw .show-password-input {
+	display: none !important;
+}
+
 .ns-pw__eye .ns-pw__slash {
 	opacity: 0;
 	transition: opacity 0.2s ease;
@@ -6187,10 +6206,10 @@ button {
 .ns-meter[data-score="3"] { --meter: var(--ui-brand); }
 .ns-meter[data-score="4"] { --meter: var(--ui-success); }
 
-.ns-meter[data-score="1"] span:nth-child(-n + 1),
-.ns-meter[data-score="2"] span:nth-child(-n + 2),
-.ns-meter[data-score="3"] span:nth-child(-n + 3),
-.ns-meter[data-score="4"] span {
+.ns-meter[data-score="1"] .ns-meter__bars > span:nth-child(-n + 1),
+.ns-meter[data-score="2"] .ns-meter__bars > span:nth-child(-n + 2),
+.ns-meter[data-score="3"] .ns-meter__bars > span:nth-child(-n + 3),
+.ns-meter[data-score="4"] .ns-meter__bars > span {
 	background: var(--meter);
 }
 

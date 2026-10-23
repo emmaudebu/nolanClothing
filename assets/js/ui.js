@@ -187,7 +187,13 @@
 		var label = meter.querySelector( '.ns-meter__text' );
 		meter.setAttribute( 'data-score', bars );
 		if ( label ) {
-			label.textContent = bars ? text( 'strength', 'Password strength: %s' ).replace( '%s', names[ bars ] ) : label.getAttribute( 'data-empty' );
+			var message = bars ? text( 'strength', 'Password strength: %s' ).replace( '%s', names[ bars ] ) : label.getAttribute( 'data-empty' );
+			// Below WooCommerce's minimum its script disables the button, so say what to do.
+			var params = window.wc_password_strength_meter_params;
+			if ( bars && params && score < parseInt( params.min_password_strength, 10 ) ) {
+				message += '. ' + text( 'tooWeak', 'Add more characters, numbers or symbols.' );
+			}
+			label.textContent = message;
 		}
 	}
 
