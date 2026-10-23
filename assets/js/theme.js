@@ -87,6 +87,56 @@
 		} );
 	}
 
+	// "Load More" on product listings: fetch the next page and append its cards.
+	document.querySelectorAll( '.load-more' ).forEach( function ( link ) {
+		var grid = document.getElementById( link.getAttribute( 'data-grid' ) );
+		if ( ! grid || ! window.fetch || ! window.DOMParser ) {
+			return;
+		}
+		link.addEventListener( 'click', function ( e ) {
+			e.preventDefault();
+			if ( link.classList.contains( 'is-loading' ) ) {
+				return;
+			}
+			link.classList.add( 'is-loading' );
+			link.setAttribute( 'aria-busy', 'true' );
+
+			fetch( link.href, { credentials: 'same-origin' } )
+				.then( function ( response ) {
+					if ( ! response.ok ) {
+						throw new Error( response.status );
+					}
+					return response.text();
+				} )
+				.then( function ( html ) {
+					var doc = new DOMParser().parseFromString( html, 'text/html' );
+					var cards = doc.querySelectorAll( '#' + grid.id + ' > .product-card' );
+					var next = doc.querySelector( '.load-more' );
+					var first = null;
+
+					cards.forEach( function ( card ) {
+						var node = document.importNode( card, true );
+						grid.appendChild( node );
+						first = first || node;
+					} );
+					if ( first ) {
+						first.focus( { preventScroll: true } );
+					}
+
+					if ( next ) {
+						link.href = next.getAttribute( 'href' );
+						link.classList.remove( 'is-loading' );
+						link.removeAttribute( 'aria-busy' );
+					} else {
+						link.parentElement.remove();
+					}
+				} )
+				.catch( function () {
+					window.location.href = link.href;
+				} );
+		} );
+	} );
+
 	// Click-to-load YouTube embed.
 	document.querySelectorAll( '.video-embed[data-video-id]' ).forEach( function ( box ) {
 		var btn = box.querySelector( '.video-embed__play' );

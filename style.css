@@ -1001,6 +1001,117 @@ h3 {
 	}
 }
 
+/* Product listing (shop, categories, search) ------------------------------ */
+
+.archive-banner {
+	position: relative;
+	padding-block: 34px;
+	background: linear-gradient(90deg, #2b1b12 0%, #120b07 55%, #000000 100%);
+	color: #ffffff;
+	text-align: center;
+	box-shadow: 0 18px 30px -12px rgba(0, 0, 0, 0.18);
+}
+
+.archive-banner__title {
+	margin: 0;
+	font-family: var(--serif);
+	font-weight: 500;
+	font-size: 44px;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+.archive-products {
+	padding-block: 64px 72px;
+}
+
+.product-grid--archive {
+	column-gap: 16px;
+	row-gap: 28px;
+}
+
+.product-grid--archive .product-card__name {
+	font-size: 15px;
+}
+
+.archive-products__empty {
+	text-align: center;
+}
+
+.archive-products .woocommerce-notices-wrapper:not(:empty) {
+	margin-bottom: 24px;
+}
+
+.load-more-wrap {
+	display: flex;
+	justify-content: center;
+	margin-top: 48px;
+}
+
+.load-more {
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	min-height: 44px;
+	padding: 10px 20px;
+	border: 1px solid var(--line);
+	border-radius: 2px;
+	background: var(--bg);
+	color: var(--text);
+	font-size: 13px;
+	font-weight: 500;
+	text-decoration: none;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+	transition: border-color 0.15s ease;
+}
+
+.load-more:hover {
+	border-color: var(--text);
+	color: var(--text);
+}
+
+.load-more.is-loading {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.load-more.is-loading .icon {
+	animation: ns-pulse 1s ease-in-out infinite;
+}
+
+@keyframes ns-pulse {
+	50% {
+		transform: translateY(3px);
+	}
+}
+
+@media (max-width: 760px) {
+	.archive-banner {
+		padding-block: 24px;
+	}
+
+	.archive-banner__title {
+		font-size: 30px;
+	}
+
+	.archive-products {
+		padding-block: 32px 48px;
+	}
+
+	.product-grid--archive {
+		column-gap: 12px;
+		row-gap: 24px;
+	}
+
+	.product-grid--archive .product-card__name {
+		font-size: 14px;
+	}
+
+	.load-more-wrap {
+		margin-top: 32px;
+	}
+}
+
 /* Production space video -------------------------------------------------- */
 
 .studio {
@@ -1298,5 +1409,6 @@ h3 {
 	*::before,
 	*::after {
 		transition: none !important;
+		animation: none !important;
 	}
 }
