@@ -56,12 +56,16 @@ function nolasharon_cart_count() {
 function nolasharon_header_cart() {
 	$count = nolasharon_cart_count();
 	printf(
-		'<a class="header-cart icon-btn" href="%1$s" aria-label="%2$s">%3$s<span class="header-cart__count">%4$d</span></a>',
+		'<a class="header-cart icon-btn" href="%1$s" aria-label="%2$s" data-label-one="%5$s" data-label-many="%6$s">%3$s<span class="header-cart__count">%4$d</span></a>',
 		esc_url( wc_get_cart_url() ),
 		/* translators: %d: number of items in the cart. */
 		esc_attr( sprintf( _n( 'Cart, %d item', 'Cart, %d items', $count, 'nolasharon' ), $count ) ),
 		nolasharon_icon( 'cart', 22 ), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static SVG.
-		absint( $count )
+		absint( $count ),
+		/* translators: %d: number of items in the cart (always 1). */
+		esc_attr( _n( 'Cart, %d item', 'Cart, %d items', 1, 'nolasharon' ) ),
+		/* translators: %d: number of items in the cart. */
+		esc_attr( _n( 'Cart, %d item', 'Cart, %d items', 2, 'nolasharon' ) )
 	);
 }
 

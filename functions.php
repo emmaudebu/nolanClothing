@@ -68,7 +68,22 @@ function nolasharon_assets() {
 		null
 	);
 	wp_enqueue_style( 'nolasharon', get_stylesheet_uri(), array( 'nolasharon-fonts' ), NOLASHARON_VERSION );
-	wp_enqueue_script( 'nolasharon', get_template_directory_uri() . '/assets/js/theme.js', array(), NOLASHARON_VERSION, array( 'strategy' => 'defer' ) );
+	wp_enqueue_script( 'nolasharon-ui', get_template_directory_uri() . '/assets/js/ui.js', array(), NOLASHARON_VERSION, array( 'strategy' => 'defer' ) );
+	wp_localize_script(
+		'nolasharon-ui',
+		'nsUIStrings',
+		array(
+			'showPassword' => __( 'Show password', 'nolasharon' ),
+			'hidePassword' => __( 'Hide password', 'nolasharon' ),
+			/* translators: %s: strength, e.g. "Good". */
+			'strength'     => __( 'Password strength: %s', 'nolasharon' ),
+			'veryWeak'     => __( 'Very weak', 'nolasharon' ),
+			'weak'         => __( 'Weak', 'nolasharon' ),
+			'good'         => __( 'Good', 'nolasharon' ),
+			'strong'       => __( 'Strong', 'nolasharon' ),
+		)
+	);
+	wp_enqueue_script( 'nolasharon', get_template_directory_uri() . '/assets/js/theme.js', array( 'nolasharon-ui' ), NOLASHARON_VERSION, array( 'strategy' => 'defer' ) );
 }
 add_action( 'wp_enqueue_scripts', 'nolasharon_assets' );
 
@@ -92,9 +107,10 @@ function nolasharon_resource_hints( $urls, $relation_type ) {
 add_filter( 'wp_resource_hints', 'nolasharon_resource_hints', 10, 2 );
 
 /**
- * Apply the saved light/dark preference before first paint to avoid a flash.
+ * Apply the saved light/dark preference before first paint to avoid a flash, and flag that
+ * JavaScript runs (html.ns-js) so enhanced-only controls such as the password eye can show.
  */
 function nolasharon_theme_mode_script() {
-	echo "<script>try{var m=localStorage.getItem('ns-theme');if(m)document.documentElement.setAttribute('data-theme',m);}catch(e){}</script>\n";
+	echo "<script>document.documentElement.classList.add('ns-js');try{var m=localStorage.getItem('ns-theme');if(m)document.documentElement.setAttribute('data-theme',m);}catch(e){}</script>\n";
 }
 add_action( 'wp_head', 'nolasharon_theme_mode_script', 1 );

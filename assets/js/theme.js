@@ -89,7 +89,6 @@
 
 	// Wishlist hearts. State comes from the cookie the server keeps in sync, so cached pages stay correct.
 	var wishCfg = window.nolasharonWishlist;
-	var toastTimer;
 
 	function wishlistIds() {
 		if ( ! wishCfg ) {
@@ -115,25 +114,7 @@
 	}
 
 	function toast( message, link ) {
-		var el = document.querySelector( '.toast' );
-		if ( ! el ) {
-			el = document.createElement( 'div' );
-			el.className = 'toast';
-			el.setAttribute( 'role', 'status' );
-			document.body.appendChild( el );
-		}
-		el.textContent = message;
-		if ( link ) {
-			var a = document.createElement( 'a' );
-			a.href = link;
-			a.textContent = wishCfg.view;
-			el.appendChild( a );
-		}
-		el.classList.add( 'is-visible' );
-		clearTimeout( toastTimer );
-		toastTimer = setTimeout( function () {
-			el.classList.remove( 'is-visible' );
-		}, 3000 );
+		window.nsUI.toast( message, link ? { label: wishCfg.view, href: link } : null );
 	}
 
 	if ( wishCfg ) {
@@ -413,9 +394,7 @@
 						throw new Error( json.data && json.data.message );
 					}
 					dialog.close();
-					document.querySelectorAll( '.header-cart__count' ).forEach( function ( badge ) {
-						badge.textContent = json.data.count;
-					} );
+					window.nsUI.cartCount( json.data.count );
 					if ( typeof openDrawer === 'function' ) {
 						openDrawer();
 					} else {
@@ -508,11 +487,7 @@
 		var drawerBody = drawer.querySelector( '[data-drawer-body]' );
 		var qtyTimer;
 
-		var setCount = function ( count ) {
-			document.querySelectorAll( '.header-cart__count' ).forEach( function ( badge ) {
-				badge.textContent = count;
-			} );
-		};
+		var setCount = window.nsUI.cartCount;
 
 		var request = function ( op, extra ) {
 			var body = new FormData();
