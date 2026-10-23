@@ -411,4 +411,49 @@
 				} );
 		} );
 	}
+	/* Addresses: edit inline ------------------------------------------------ */
+
+	var addrEdit = document.querySelector( '[data-addr-edit]' );
+	var addrForm = document.querySelector( '[data-addr-form]' );
+	if ( addrEdit && addrForm ) {
+		var addrLabel = addrEdit.textContent;
+		addrForm.hidden = false;
+		ui.collapse( addrForm, false );
+		addrEdit.setAttribute( 'role', 'button' );
+		addrEdit.setAttribute( 'aria-expanded', 'false' );
+		addrEdit.addEventListener( 'click', function ( e ) {
+			e.preventDefault();
+			var open = addrEdit.getAttribute( 'aria-expanded' ) !== 'true';
+			ui.collapse( addrForm, open );
+			addrEdit.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			addrEdit.textContent = open ? addrEdit.getAttribute( 'data-label-cancel' ) : addrLabel;
+			if ( open ) {
+				var first = addrForm.querySelector( 'input:not([type="hidden"])' );
+				setTimeout( function () {
+					first.focus( { preventScroll: true } );
+				}, ui.reduced ? 0 : 200 );
+			}
+		} );
+		addrEdit.addEventListener( 'keydown', function ( e ) {
+			if ( e.key === ' ' ) {
+				e.preventDefault();
+				addrEdit.click();
+			}
+		} );
+	}
+
+	/* Account details: the password section folds away until asked for ------ */
+
+	var pwToggle = document.querySelector( '[data-pw-toggle]' );
+	var pwSection = document.querySelector( '[data-pw-section]' );
+	if ( pwToggle && pwSection ) {
+		pwToggle.hidden = false;
+		pwSection.classList.add( 'is-js' );
+		ui.collapse( pwSection, pwSection.hasAttribute( 'data-open' ) );
+		pwToggle.addEventListener( 'click', function () {
+			var open = pwToggle.getAttribute( 'aria-expanded' ) !== 'true';
+			pwToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			ui.collapse( pwSection, open );
+		} );
+	}
 }() );
