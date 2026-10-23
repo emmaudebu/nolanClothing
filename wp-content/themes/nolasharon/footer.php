@@ -84,8 +84,6 @@ if ( ! $nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ] ) {
 		<div class="site-footer__bottom">
 			<p>
 				&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php esc_html_e( 'NolaSharon Clothing', 'nolasharon' ); ?>
-				<span aria-hidden="true">|</span>
-				<button class="footer-theme-toggle theme-toggle" type="button" aria-label="<?php esc_attr_e( 'Switch to dark theme', 'nolasharon' ); ?>" data-label-dark="<?php esc_attr_e( 'Switch to dark theme', 'nolasharon' ); ?>" data-label-light="<?php esc_attr_e( 'Switch to light theme', 'nolasharon' ); ?>"><?php esc_html_e( 'Theme', 'nolasharon' ); ?> <?php echo nolasharon_icon( 'sun', 14 ) . nolasharon_icon( 'moon', 14 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
 			</p>
 			<p>
 				<a href="<?php echo esc_url( get_privacy_policy_url() ? get_privacy_policy_url() : nolasharon_page_url( 'privacy-policy' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'nolasharon' ); ?></a>

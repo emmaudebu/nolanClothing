@@ -42,38 +42,6 @@
 	background: var(--co-bg);
 }
 
-:root[data-theme="dark"] .woocommerce-checkout {
-	--co-bg: #121212;
-	--co-card: #1b1917;
-	--co-text: #f2f2f2;
-	--co-text-2: #d4d0cc;
-	--co-text-3: #bdb7b1;
-	--co-muted: #a69d95;
-	--co-line: #2e2a26;
-	--co-line-2: #3a3530;
-	--co-track: #3a3530;
-	--co-field: #4a443e;
-	--co-soft: #23201d;
-	--co-tint: #2c2824;
-	--co-sel: #2a231d;
-	--co-active: #5a4a3c;
-	--co-brand: #c9a98c;
-	--co-brand-hover: #a88a70;
-	--co-dot: #6b635b;
-	--co-dark: #e9dccf;
-	--co-dark-hover: #ffffff;
-	--co-on-dark: #1b1310;
-	--co-success: #7cc683;
-	--co-success-bg: #1d2a1f;
-	--co-success-text: #b9e3bd;
-	--co-error: #ff8a80;
-	--co-error-bg: #3a1f1f;
-	--co-focus: #8ab4ff;
-	--co-shadow-active: 0 14px 34px rgba(0, 0, 0, 0.4);
-	--co-shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
-	--co-shadow-sel: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
 /* Checkout header ---------------------------------------------------------- */
 
 .co-header {
@@ -1026,10 +994,6 @@
 	background: var(--co-brand);
 	color: var(--co-on-dark);
 	font-weight: 600;
-}
-
-:root[data-theme="dark"] .ns-pill--new {
-	color: #1b1310;
 }
 
 /* The pickup rate is chosen through the toggle; its card only shows without JavaScript. */

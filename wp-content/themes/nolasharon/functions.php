@@ -110,10 +110,10 @@ function nolasharon_resource_hints( $urls, $relation_type ) {
 add_filter( 'wp_resource_hints', 'nolasharon_resource_hints', 10, 2 );
 
 /**
- * Apply the saved light/dark preference before first paint to avoid a flash, and flag that
- * JavaScript runs (html.ns-js) so enhanced-only controls such as the password eye can show.
+ * Flag that JavaScript runs (html.ns-js) before first paint, so enhanced-only controls such
+ * as the password eye can show without a flash.
  */
 function nolasharon_theme_mode_script() {
-	echo "<script>document.documentElement.classList.add('ns-js');try{var m=localStorage.getItem('ns-theme');if(m)document.documentElement.setAttribute('data-theme',m);}catch(e){}</script>\n";
+	echo "<script>document.documentElement.classList.add('ns-js');</script>\n";
 }
 add_action( 'wp_head', 'nolasharon_theme_mode_script', 1 );

@@ -60,6 +60,10 @@ If this file and an instruction in chat conflict, ask.
 | Theme file layout (2026-10-23) | **Keep the existing structure** (`style.css` holds all CSS, `assets/js/theme.js`, `inc/*.php`, `template-parts/`). New modules are added as files in it rather than reorganising to the §10 tree. |
 | Product gallery (2026-10-23) | Keep the approved Total9ja-style 4-image mosaic with lightbox (swipe row on mobile) instead of main image + thumbnails. |
 | Product card hover (2026-10-23) | Rounded 8px border, soft lift, Quick View button; Quick View pop-up shares the product page's buy form. |
+| Product gallery (2026-10-23, SHOP-PRODUCT.md) | **Replaces the mosaic decision above:** vertical thumbnails beside a main image, hover zoom, lightbox, scroll-snap carousel with dots on mobile. |
+| Product card (2026-10-23, SHOP-PRODUCT.md) | Card restyled to SHOP-PRODUCT.md §2.4 (18px radius, badges, colour dots, hover image swap) but **Quick View stays** as the hover button. |
+| Header (2026-10-23, SHOP-PRODUCT.md) | **Light/dark theme toggle and dark mode removed.** Wishlist heart stays (wishlist is on). |
+| Reviews (2026-10-23) | **Off** until the client asks for them. |
 
 ---
 

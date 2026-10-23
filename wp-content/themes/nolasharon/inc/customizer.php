@@ -32,6 +32,7 @@ function nolasharon_settings_schema() {
 			'title'  => __( 'Homepage hero', 'nolasharon' ),
 			'fields' => array(
 				'nolasharon_hero_image'       => array( __( 'Campaign image', 'nolasharon' ), 'image', 'absint', 0, __( 'Falls back to the placeholder illustration.', 'nolasharon' ) ),
+				'nolasharon_hero_eyebrow'     => array( __( 'Eyebrow (small outlined label above the headline; empty hides it)', 'nolasharon' ), 'text', $text, __( 'NolaSharon Clothing · Lagos', 'nolasharon' ), '' ),
 				'nolasharon_hero_title'       => array( __( 'Headline', 'nolasharon' ), 'text', $text, __( 'Your Style, Your Way.', 'nolasharon' ), '' ),
 				'nolasharon_hero_text'        => array( __( 'Supporting text', 'nolasharon' ), 'textarea', $textarea, __( 'Discover fashion pieces to complement your style and shop the NolaSharon Clothing collection.', 'nolasharon' ), '' ),
 				'nolasharon_hero_btn1_label'  => array( __( 'Main button label', 'nolasharon' ), 'text', $text, __( 'Shop Now', 'nolasharon' ), '' ),
