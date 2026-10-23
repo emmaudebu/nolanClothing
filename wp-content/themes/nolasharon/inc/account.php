@@ -771,3 +771,257 @@ add_filter( 'woocommerce_my_account_my_orders_query', 'nolasharon_orders_query' 
 // The order page prints its own items, totals and "Order again" (view-order.php).
 remove_action( 'woocommerce_view_order', 'woocommerce_order_details_table', 10 );
 remove_action( 'woocommerce_order_details_after_order_table', 'woocommerce_order_again_button' );
+
+/* Addresses (STORE-PAGES.md §3.5) ------------------------------------------------ */
+
+/**
+ * The delivery address fields on My Account, as at checkout: name, street, city/area,
+ * state and phone. Nigeria is fixed (hidden); no company, second line, postcode or email.
+ *
+ * @param array $fields Billing fields.
+ * @return array
+ */
+function nolasharon_account_billing_fields( $fields ) {
+	if ( ! is_account_page() ) {
+		return $fields;
+	}
+	unset( $fields['billing_company'], $fields['billing_address_2'], $fields['billing_postcode'], $fields['billing_email'] );
+
+	$settings = array(
+		'billing_first_name' => array( 'autocomplete' => 'given-name', 'class' => array( 'ns-af--half' ) ),
+		'billing_last_name'  => array( 'autocomplete' => 'family-name', 'class' => array( 'ns-af--half' ) ),
+		'billing_address_1'  => array(
+			'label'        => __( 'Street address', 'nolasharon' ),
+			'placeholder'  => __( 'House number, street name', 'nolasharon' ),
+			'autocomplete' => 'street-address',
+			'class'        => array( 'ns-af--full' ),
+		),
+		'billing_city'       => array(
+			'label'        => __( 'City / area', 'nolasharon' ),
+			'placeholder'  => __( 'e.g. Ogudu, Ikeja, Lekki', 'nolasharon' ),
+			'autocomplete' => 'address-level2',
+			'class'        => array( 'ns-af--half' ),
+		),
+		'billing_state'      => array(
+			'label'    => __( 'State', 'nolasharon' ),
+			'required' => true,
+			'class'    => array( 'ns-af--half' ),
+		),
+		'billing_phone'      => array(
+			'label'             => __( 'Phone number', 'nolasharon' ),
+			'type'              => 'tel',
+			'required'          => true,
+			'autocomplete'      => 'tel-national',
+			'placeholder'       => __( '801 234 5678', 'nolasharon' ),
+			'class'             => array( 'ns-af--full', 'ns-phone-row' ),
+			'custom_attributes' => array(
+				'inputmode'  => 'tel',
+				'data-phone' => '1',
+			),
+		),
+		'billing_country'    => array(
+			'type'    => 'hidden',
+			'default' => 'NG',
+			'class'   => array( 'ns-row-hidden' ),
+		),
+	);
+	foreach ( $settings as $key => $setting ) {
+		if ( isset( $fields[ $key ] ) ) {
+			$fields[ $key ] = array_merge( $fields[ $key ], $setting );
+			if ( ! empty( $fields[ $key ]['required'] ) && 'billing_phone' !== $key && ( ! isset( $fields[ $key ]['type'] ) || 'hidden' !== $fields[ $key ]['type'] ) ) {
+				$fields[ $key ]['custom_attributes'] = array_merge( isset( $fields[ $key ]['custom_attributes'] ) ? $fields[ $key ]['custom_attributes'] : array(), array( 'data-required' => 'text' ) );
+			}
+		}
+	}
+	return $fields;
+}
+add_filter( 'woocommerce_billing_fields', 'nolasharon_account_billing_fields', 20 );
+
+/**
+ * Address form values: a saved +234 number without the prefix (the prefix box shows it),
+ * and Nigeria / Lagos when nothing is saved yet.
+ *
+ * @param mixed  $value Field value.
+ * @param string $key   Field key.
+ * @return mixed
+ */
+function nolasharon_account_phone_value( $value, $key ) {
+	if ( 'billing_phone' === $key && $value ) {
+		$phone = nolasharon_ng_phone( $value );
+		return $phone ? substr( $phone, 4 ) : $value;
+	}
+	if ( 'billing_country' === $key && ! $value ) {
+		return 'NG';
+	}
+	if ( 'billing_state' === $key && ! $value ) {
+		return 'LA'; // Lagos, as at checkout.
+	}
+	return $value;
+}
+add_filter( 'woocommerce_my_account_edit_address_field_value', 'nolasharon_account_phone_value', 10, 2 );
+
+/**
+ * The delivery address fields with the customer's saved values, for the inline form on the
+ * Addresses page (the same values WooCommerce's own edit page uses).
+ *
+ * @return array
+ */
+function nolasharon_account_address_fields() {
+	$fields = WC()->countries->get_address_fields( 'NG', 'billing_' );
+	foreach ( $fields as $key => $field ) {
+		$fields[ $key ]['value'] = apply_filters( 'woocommerce_my_account_edit_address_field_value', get_user_meta( get_current_user_id(), $key, true ), $key, 'billing' );
+	}
+	return $fields;
+}
+
+/**
+ * Save the phone as +234XXXXXXXXXX whatever format was typed.
+ *
+ * @param string $value Posted value.
+ * @return string
+ */
+function nolasharon_account_save_phone( $value ) {
+	$phone = nolasharon_ng_phone( $value );
+	return $phone ? $phone : $value;
+}
+add_filter( 'woocommerce_process_myaccount_field_billing_phone', 'nolasharon_account_save_phone' );
+
+/**
+ * Reject numbers that aren't Nigerian.
+ *
+ * @param int    $user_id      User ID.
+ * @param string $address_type billing or shipping.
+ */
+function nolasharon_account_validate_address( $user_id, $address_type ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce checked the nonce.
+	$phone = isset( $_POST['billing_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['billing_phone'] ) ) : '';
+	if ( 'billing' === $address_type && '' !== $phone && ! nolasharon_ng_phone( $phone ) ) {
+		wc_add_notice( __( 'Please enter a valid Nigerian phone number, for example 0801 234 5678.', 'nolasharon' ), 'error' );
+	}
+}
+add_action( 'woocommerce_after_save_address_validation', 'nolasharon_account_validate_address', 10, 2 );
+
+/**
+ * The address form has no email field, so keep the billing email in step with the account.
+ *
+ * @param int    $user_id      User ID.
+ * @param string $address_type billing or shipping.
+ */
+function nolasharon_account_keep_billing_email( $user_id, $address_type ) {
+	if ( 'billing' === $address_type && ! get_user_meta( $user_id, 'billing_email', true ) ) {
+		$user = get_userdata( $user_id );
+		update_user_meta( $user_id, 'billing_email', $user->user_email );
+	}
+}
+add_action( 'woocommerce_customer_save_address', 'nolasharon_account_keep_billing_email', 10, 2 );
+
+/* Account details (STORE-PAGES.md §3.6) -------------------------------------------- */
+
+/**
+ * Phone number after the email field.
+ */
+function nolasharon_account_phone_field() {
+	$user  = wp_get_current_user();
+	$saved = nolasharon_ng_phone( get_user_meta( $user->ID, 'billing_phone', true ) );
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- refilling the form after a failed post.
+	$value = isset( $_POST['account_phone'] ) ? sanitize_text_field( wp_unslash( $_POST['account_phone'] ) ) : ( $saved ? substr( $saved, 4 ) : get_user_meta( $user->ID, 'billing_phone', true ) );
+	?>
+	<p class="ns-field ns-af--half">
+		<label for="account_phone"><?php esc_html_e( 'Phone number', 'nolasharon' ); ?> <span class="ns-field__opt"><?php esc_html_e( '(optional)', 'nolasharon' ); ?></span></label>
+		<span class="ns-phone">
+			<span class="ns-phone__prefix" aria-hidden="true">+234</span>
+			<input type="tel" name="account_phone" id="account_phone" inputmode="tel" autocomplete="tel-national" placeholder="<?php esc_attr_e( '801 234 5678', 'nolasharon' ); ?>" value="<?php echo esc_attr( $value ); ?>" data-phone>
+		</span>
+	</p>
+	<?php
+}
+add_action( 'woocommerce_edit_account_form_fields', 'nolasharon_account_phone_field' );
+
+/**
+ * Validate the phone number.
+ *
+ * @param WP_Error $errors Errors.
+ */
+function nolasharon_account_validate_details( $errors ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce checked the nonce.
+	$phone = isset( $_POST['account_phone'] ) ? trim( sanitize_text_field( wp_unslash( $_POST['account_phone'] ) ) ) : '';
+	if ( '' !== $phone && ! nolasharon_ng_phone( $phone ) ) {
+		$errors->add( 'account_phone', __( 'Please enter a valid Nigerian phone number, for example 0801 234 5678.', 'nolasharon' ) );
+	}
+}
+add_action( 'woocommerce_save_account_details_errors', 'nolasharon_account_validate_details' );
+
+/**
+ * Save the phone number as the billing phone.
+ *
+ * @param int $user_id User ID.
+ */
+function nolasharon_account_save_details( $user_id ) {
+	// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce checked the nonce.
+	if ( ! isset( $_POST['account_phone'] ) ) {
+		return;
+	}
+	$phone = trim( sanitize_text_field( wp_unslash( $_POST['account_phone'] ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+	update_user_meta( $user_id, 'billing_phone', '' === $phone ? '' : nolasharon_ng_phone( $phone ) );
+}
+add_action( 'woocommerce_save_account_details', 'nolasharon_account_save_details' );
+
+/**
+ * Shorter toast wording for saved addresses and account details.
+ *
+ * @param string $translation Translated text.
+ * @param string $text        Original text.
+ * @param string $domain      Text domain.
+ * @return string
+ */
+function nolasharon_account_notice_text( $translation, $text, $domain ) {
+	if ( 'woocommerce' !== $domain ) {
+		return $translation;
+	}
+	if ( 'Address changed successfully.' === $text ) {
+		return __( 'Address saved', 'nolasharon' );
+	}
+	if ( 'Account details changed successfully.' === $text ) {
+		return __( 'Account details saved', 'nolasharon' );
+	}
+	return $translation;
+}
+add_filter( 'gettext', 'nolasharon_account_notice_text', 10, 3 );
+
+/**
+ * WooCommerce's enhanced select isn't needed for the state list on My Account.
+ */
+function nolasharon_account_dequeue_select() {
+	if ( is_account_page() ) {
+		wp_dequeue_script( 'selectWoo' );
+		wp_dequeue_style( 'select2' );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'nolasharon_account_dequeue_select', 100 );
+
+/**
+ * The delivery address form, posting to WooCommerce's edit-address handler.
+ *
+ * @param array  $fields       Address fields with a 'value' each.
+ * @param string $action       Form action URL ('' posts to the current page).
+ * @param string $load_address billing or shipping.
+ */
+function nolasharon_address_form( $fields, $action = '', $load_address = 'billing' ) {
+	?>
+	<form method="post" class="ns-af" action="<?php echo esc_url( $action ); ?>" novalidate data-account-form>
+		<?php do_action( "woocommerce_before_edit_address_form_{$load_address}" ); ?>
+		<div class="ns-af__fields">
+			<?php
+			foreach ( $fields as $key => $field ) {
+				woocommerce_form_field( $key, $field, wc_get_post_data_by_key( $key, isset( $field['value'] ) ? $field['value'] : '' ) );
+			}
+			?>
+		</div>
+		<?php do_action( "woocommerce_after_edit_address_form_{$load_address}" ); ?>
+		<?php wp_nonce_field( 'woocommerce-edit_address', 'woocommerce-edit-address-nonce' ); ?>
+		<input type="hidden" name="action" value="edit_address" />
+		<input type="hidden" name="save_address" value="<?php esc_attr_e( 'Save address', 'woocommerce' ); ?>" />
+		<button type="submit" class="ns-btn" data-loading="saving"><?php esc_html_e( 'Save address', 'nolasharon' ); ?></button>
+	</form>
+	<?php
+}
