@@ -143,13 +143,45 @@
 		} );
 	}
 
-	// Dialogs (size guide, lightbox, quick view, drawer): delegated so content loaded later works too.
+	// Size guide: inches or centimetres, with the chosen size's row highlighted.
+	function prepareSizeGuide( dialog, form ) {
+		var units = dialog.querySelector( '[data-units]' );
+		var chosen = form ? form.querySelector( '.attr-group--size input:checked' ) : null;
+		var size = chosen ? chosen.getAttribute( 'data-label' ).toLowerCase() : '';
+		dialog.querySelectorAll( 'tr[data-size]' ).forEach( function ( row ) {
+			row.classList.toggle( 'is-chosen', row.getAttribute( 'data-size' ) === size );
+		} );
+		if ( units.hidden ) {
+			units.hidden = false;
+			units.addEventListener( 'click', function ( e ) {
+				var btn = e.target.closest( '[data-unit]' );
+				if ( ! btn ) {
+					return;
+				}
+				var cm = btn.getAttribute( 'data-unit' ) === 'cm';
+				window.nsUI.seg( units, cm ? 1 : 0 );
+				var line = dialog.querySelector( '[data-unit-line]' );
+				line.textContent = line.getAttribute( cm ? 'data-cm' : 'data-in' );
+				dialog.querySelectorAll( 'td[data-in]' ).forEach( function ( cell ) {
+					var value = cell.getAttribute( 'data-in' );
+					cell.textContent = cm ? value.replace( /\d+(?:\.\d+)?/g, function ( n ) {
+						return String( Math.round( parseFloat( n ) * 2.54 ) );
+					} ) : value;
+				} );
+			} );
+		}
+	}
+
+	// Dialogs (size guide, quick view, drawer): delegated so content loaded later works too.
 	document.addEventListener( 'click', function ( e ) {
 		var opener = e.target.closest( '[data-open-dialog]' );
 		if ( opener ) {
 			var target = document.getElementById( opener.getAttribute( 'data-open-dialog' ) );
 			if ( target && target.showModal ) {
-				target.showModal();
+				if ( target.hasAttribute( 'data-size-guide' ) ) {
+					prepareSizeGuide( target, opener.closest( 'form' ) );
+				}
+				window.nsUI.modal( target, opener );
 			}
 			return;
 		}
@@ -158,63 +190,35 @@
 			closer.closest( 'dialog' ).close();
 			return;
 		}
-		// A click on the dialog element itself is a click on its backdrop.
+		// A click on the dialog element outside its box is a click on its backdrop.
 		if ( e.target.tagName === 'DIALOG' ) {
-			e.target.close();
+			var box = e.target.getBoundingClientRect();
+			if ( e.clientX < box.left || e.clientX > box.right || e.clientY < box.top || e.clientY > box.bottom ) {
+				e.target.close();
+			}
 		}
 	} );
 
-	// Product image lightbox.
-	var lightbox = document.getElementById( 'lightbox' );
-	var galleryItems = document.querySelectorAll( '.pgallery__item' );
-	if ( lightbox && galleryItems.length ) {
-		var lbImg = lightbox.querySelector( '.lightbox__img' );
-		var lbCount = lightbox.querySelector( '.lightbox__count' );
-		var lbIndex = 0;
-
-		var showImage = function ( index ) {
-			lbIndex = ( index + galleryItems.length ) % galleryItems.length;
-			lbImg.src = galleryItems[ lbIndex ].getAttribute( 'data-full' );
-			if ( lbCount ) {
-				lbCount.textContent = ( lbIndex + 1 ) + ' / ' + galleryItems.length;
-			}
-		};
-
-		galleryItems.forEach( function ( item ) {
-			item.addEventListener( 'click', function () {
-				showImage( parseInt( item.getAttribute( 'data-index' ), 10 ) );
-				lightbox.showModal();
-			} );
-		} );
-		lightbox.querySelectorAll( '.lightbox__nav' ).forEach( function ( btn ) {
-			btn.addEventListener( 'click', function () {
-				showImage( lbIndex + parseInt( btn.getAttribute( 'data-dir' ), 10 ) );
-			} );
-		} );
-		lightbox.addEventListener( 'keydown', function ( e ) {
-			if ( e.key === 'ArrowLeft' || e.key === 'ArrowRight' ) {
-				showImage( lbIndex + ( e.key === 'ArrowLeft' ? -1 : 1 ) );
-			}
-		} );
-	}
-
-	// Buy form: colour and size choices, sold-out options, price/stock updates and Add to Cart.
-	// Used on the product page and for forms loaded into the quick view.
+	// Buy form (SHOP-PRODUCT.md §3.3–§3.4): colour and size choices, sold-out options, the
+	// price and stock line, the WhatsApp link and Add to Cart in place. Used on the product
+	// page and for forms loaded into the quick view. Dispatches "ns:selection" so the gallery
+	// can show the chosen variation's photo and the sticky bar its summary.
 	function initBuyForm( form ) {
 		// The quick view's submit button sits in its footer, linked by the form attribute.
 		var submit = form.querySelector( '.pbuy__submit' ) || document.querySelector( '.pbuy__submit[form="' + form.id + '"]' );
-		var hint = form.querySelector( '.pbuy__hint' );
+		var hint = form.querySelector( '[data-hint]' );
 		var qty = form.querySelector( '.qty__input' );
 		var variations = form.hasAttribute( 'data-variations' ) ? JSON.parse( form.getAttribute( 'data-variations' ) ) : null;
 		var groups = Array.prototype.slice.call( form.querySelectorAll( '[data-attribute]' ) );
-		var scope = form.closest( '.pbuy, .qv__inner' ) || document;
+		var scope = form.closest( '.pinfo, .qv__inner' ) || document;
 		var priceBox = scope.querySelector( '[data-price]' );
 		var stickyPrice = form.id === 'ns-form' ? document.querySelector( '[data-sticky-price]' ) : null;
 		var defaultPrice = priceBox ? priceBox.innerHTML : '';
 		var stock = form.querySelector( '[data-stock]' );
 		var variationInput = form.querySelector( 'input[name="variation_id"]' );
-		var resetBtn = form.querySelector( '[data-reset]' );
+		var wa = form.querySelector( '[data-wa]' );
 		var current = null;
+		var busy = false;
 
 		var selection = function () {
 			var sel = {};
@@ -223,6 +227,11 @@
 				sel[ group.getAttribute( 'data-attribute' ) ] = checked ? checked.value : '';
 			} );
 			return sel;
+		};
+
+		var chosenLabel = function ( group ) {
+			var checked = group.querySelector( 'input:checked' );
+			return checked ? checked.getAttribute( 'data-label' ) : '';
 		};
 
 		// A variation fits when every chosen value matches (an empty variation value means "any").
@@ -236,9 +245,25 @@
 			return ! variations || !! current;
 		};
 
+		var setStock = function ( text, state ) {
+			stock.className = 'pbuy__stock stock--' + state;
+			stock.querySelector( '[data-stock-text]' ).textContent = text;
+		};
+
+		var summary = function () {
+			var parts = [];
+			groups.forEach( function ( group ) {
+				var label = chosenLabel( group );
+				if ( label ) {
+					parts.push( group.classList.contains( 'attr-group--size' ) && wa ? wa.getAttribute( 'data-wa-size' ).replace( '%s', label ) : label );
+				}
+			} );
+			return parts;
+		};
+
 		var refresh = function () {
+			var sel = selection();
 			if ( variations ) {
-				var sel = selection();
 				groups.forEach( function ( group ) {
 					var name = group.getAttribute( 'data-attribute' );
 					group.querySelectorAll( 'input' ).forEach( function ( input ) {
@@ -248,11 +273,17 @@
 							return v.ok && fits( v, test );
 						} );
 						input.disabled = ! available;
+						if ( ! available && input.checked ) {
+							input.checked = false;
+						}
 						input.closest( 'label' ).classList.toggle( 'is-soldout', ! available );
 						input.closest( 'label' ).querySelector( '[data-opt-status]' ).textContent = available ? '' : ', ' + hint.getAttribute( 'data-sold-out' );
 					} );
-					var chosen = group.querySelector( 'input:checked' );
-					group.querySelector( '[data-chosen]' ).textContent = chosen ? ': ' + chosen.getAttribute( 'data-label' ) : '';
+					var chosen = group.querySelector( '[data-chosen]' );
+					chosen.textContent = chosenLabel( group ) || chosen.getAttribute( 'data-empty' );
+					if ( chosenLabel( group ) ) {
+						group.querySelector( '[data-group-error]' ).hidden = true;
+					}
 				} );
 
 				sel = selection();
@@ -276,89 +307,159 @@
 						box.innerHTML = current ? current.price : defaultPrice;
 					}
 				} );
-				stock.hidden = ! current;
 				if ( current ) {
-					stock.querySelector( '[data-stock-text]' ).textContent = current.stock;
-					stock.querySelector( '.stock-dot' ).className = 'stock-dot stock-dot--' + current.state;
-				}
-				if ( current && current.max ) {
-					qty.max = current.max;
-					qty.value = Math.min( parseInt( qty.value, 10 ) || 1, current.max );
+					setStock( current.stock, current.state );
+				} else if ( complete ) {
+					setStock( stock.getAttribute( 'data-sold-out' ), 'outofstock' );
 				} else {
-					qty.removeAttribute( 'max' );
+					setStock( stock.getAttribute( 'data-prompt' ), 'none' );
 				}
-				resetBtn.hidden = ! groups.some( function ( group ) {
-					return group.querySelector( 'input:checked' );
-				} );
+				if ( qty ) {
+					if ( current && current.max ) {
+						qty.max = current.max;
+						qty.value = Math.min( parseInt( qty.value, 10 ) || 1, current.max );
+					} else {
+						qty.removeAttribute( 'max' );
+					}
+				}
 			}
 
-			submit.classList.toggle( 'is-disabled', ! ready() );
-			submit.setAttribute( 'aria-disabled', ready() ? 'false' : 'true' );
 			if ( ready() ) {
 				hint.textContent = '';
 			}
+
+			// WhatsApp message with the chosen colour and size.
+			if ( wa ) {
+				var parts = summary();
+				var name = form.getAttribute( 'data-name' ) + ( parts.length ? ' (' + parts.join( ', ' ) + ')' : '' );
+				var text = wa.getAttribute( 'data-wa-text' ).replace( '%1$s', name ).replace( '%2$s', form.getAttribute( 'data-url' ) );
+				wa.href = wa.getAttribute( 'data-wa' ).replace( '__NS_WA__', encodeURIComponent( text ) );
+			}
+
+			// The photo for the choice so far: the variation's, or any variation in the chosen colour.
+			var image = current && current.image ? current.image : null;
+			if ( ! image && variations ) {
+				variations.some( function ( v ) {
+					if ( v.image && fits( v, sel ) && Object.keys( sel ).some( function ( k ) {
+						return sel[ k ];
+					} ) ) {
+						image = v.image;
+						return true;
+					}
+					return false;
+				} );
+			}
+			form.dispatchEvent( new CustomEvent( 'ns:selection', {
+				bubbles: true,
+				detail: { variation: current, image: image, summary: summary(), ready: ready() }
+			} ) );
 		};
 
-		// Quick view: add without leaving the page, then show the cart panel.
+		var shake = function ( group ) {
+			group.classList.remove( 'is-shake' );
+			void group.offsetWidth; // Restart the animation.
+			group.classList.add( 'is-shake' );
+		};
+
+		var setButton = function ( state ) {
+			if ( ! submit || ! submit.hasAttribute( 'data-label-adding' ) ) {
+				return;
+			}
+			var label = submit.querySelector( '[data-submit-label]' );
+			if ( ! label.hasAttribute( 'data-default' ) ) {
+				label.setAttribute( 'data-default', label.textContent );
+			}
+			submit.classList.toggle( 'is-loading', state === 'adding' );
+			submit.classList.toggle( 'is-added', state === 'added' );
+			submit.setAttribute( 'aria-busy', state === 'adding' ? 'true' : 'false' );
+			label.textContent = state === 'adding' ? submit.getAttribute( 'data-label-adding' ) : state === 'added' ? submit.getAttribute( 'data-label-added' ) : label.getAttribute( 'data-default' );
+		};
+
+		// Add without leaving the page, then show the drawer with the line just added.
 		var addInPlace = function () {
 			var dialog = form.closest( 'dialog' );
-			var label = submit.innerHTML;
-			submit.disabled = true;
-			submit.textContent = dialog.getAttribute( 'data-adding' );
+			var qvButton = dialog && submit ? submit : null;
+			var qvLabel = qvButton ? qvButton.innerHTML : '';
+			busy = true;
+			hint.textContent = '';
+			setButton( 'adding' );
+			if ( qvButton ) {
+				qvButton.disabled = true;
+				qvButton.textContent = dialog.getAttribute( 'data-adding' );
+			}
 
-			fetch( dialog.getAttribute( 'data-add' ), { method: 'POST', body: new FormData( form ), credentials: 'same-origin' } )
+			fetch( form.getAttribute( 'data-add' ), { method: 'POST', body: new FormData( form ), credentials: 'same-origin' } )
 				.then( function ( response ) {
 					return response.json();
 				} )
 				.then( function ( json ) {
-					if ( ! json.success ) {
-						throw new Error( json.data && json.data.message );
+					if ( ! json || ! json.success ) {
+						throw new Error( json && json.data && json.data.message );
 					}
-					dialog.close();
+					// WooCommerce's own fragments (mini cart widgets); the header badge bumps below.
+					Object.keys( json.data.fragments || {} ).forEach( function ( selector ) {
+						if ( selector.indexOf( 'header-cart' ) === -1 ) {
+							document.querySelectorAll( selector ).forEach( function ( el ) {
+								el.outerHTML = json.data.fragments[ selector ];
+							} );
+						}
+					} );
 					window.nsUI.cartCount( json.data.count );
-					if ( typeof openDrawer === 'function' ) {
-						openDrawer();
+					if ( dialog ) {
+						dialog.close();
 					} else {
-						window.location.href = document.querySelector( '.header-cart' ).href;
+						setButton( 'added' );
+						setTimeout( function () {
+							setButton( '' );
+						}, 2600 );
+					}
+					if ( typeof openDrawer === 'function' ) {
+						openDrawer( json.data.key );
 					}
 				} )
 				.catch( function ( err ) {
-					hint.textContent = err.message || dialog.getAttribute( 'data-error' );
+					setButton( '' );
+					hint.textContent = ( err && err.message ) || hint.getAttribute( 'data-error' );
 				} )
 				.then( function () {
-					submit.disabled = false;
-					submit.innerHTML = label;
+					busy = false;
+					if ( qvButton ) {
+						qvButton.disabled = false;
+						qvButton.innerHTML = qvLabel;
+					}
 				} );
 		};
 
 		form.addEventListener( 'change', refresh );
 
 		form.addEventListener( 'submit', function ( e ) {
+			if ( busy ) {
+				e.preventDefault();
+				return;
+			}
 			if ( ! ready() ) {
 				e.preventDefault();
 				var sel = selection();
 				var empty = groups.filter( function ( group ) {
 					return ! sel[ group.getAttribute( 'data-attribute' ) ];
 				} );
-				hint.textContent = hint.getAttribute( empty.length ? 'data-msg-choose' : 'data-msg-soldout' );
-				var focus = ( empty[ 0 ] || groups[ 0 ] ).querySelector( 'input:not(:disabled)' );
-				if ( focus ) {
-					focus.focus();
+				if ( empty.length ) {
+					empty[ 0 ].querySelector( '[data-group-error]' ).hidden = false;
+					shake( empty[ 0 ] );
+					var focus = empty[ 0 ].querySelector( 'input:not(:disabled)' );
+					if ( focus ) {
+						focus.focus();
+					}
+				} else {
+					hint.textContent = hint.getAttribute( 'data-msg-soldout' );
 				}
-			} else if ( form.hasAttribute( 'data-ajax' ) ) {
+				return;
+			}
+			if ( form.hasAttribute( 'data-ajax' ) && window.fetch ) {
 				e.preventDefault();
 				addInPlace();
 			}
 		} );
-
-		if ( resetBtn ) {
-			resetBtn.addEventListener( 'click', function () {
-				form.querySelectorAll( '[data-attribute] input:checked' ).forEach( function ( input ) {
-					input.checked = false;
-				} );
-				refresh();
-			} );
-		}
 
 		form.querySelectorAll( '.qty__btn' ).forEach( function ( btn ) {
 			btn.addEventListener( 'click', function () {
@@ -381,24 +482,35 @@
 
 	document.querySelectorAll( '.pbuy__form' ).forEach( initBuyForm );
 
-	// Sticky Add to Cart bar on phones, shown while the main button is off screen.
+	// Sticky Add to Cart bar on phones, shown once the main button scrolls out of view.
 	var sticky = document.querySelector( '[data-sticky-buy]' );
-	if ( sticky && 'IntersectionObserver' in window ) {
-		var stickyForm = document.getElementById( sticky.querySelector( '[data-sticky-submit]' ).getAttribute( 'data-sticky-submit' ) );
-		var mainActions = stickyForm && stickyForm.querySelector( '.pbuy__actions' );
-		if ( mainActions ) {
-			new IntersectionObserver( function ( entries ) {
-				sticky.hidden = entries[ 0 ].isIntersecting;
-			} ).observe( mainActions );
-
-			sticky.querySelector( '[data-sticky-submit]' ).addEventListener( 'click', function () {
-				var mainSubmit = stickyForm.querySelector( '.pbuy__submit' );
-				if ( mainSubmit.getAttribute( 'aria-disabled' ) === 'true' ) {
-					stickyForm.scrollIntoView( { behavior: 'smooth', block: 'center' } );
-				}
-				stickyForm.requestSubmit( mainSubmit );
+	var stickyForm = document.getElementById( 'ns-form' );
+	if ( sticky && stickyForm ) {
+		var mainActions = stickyForm.querySelector( '.pbuy__actions' );
+		var stickyMeta = sticky.querySelector( '[data-sticky-meta]' );
+		var stickyFrame;
+		var placeSticky = function () {
+			cancelAnimationFrame( stickyFrame );
+			stickyFrame = requestAnimationFrame( function () {
+				sticky.classList.toggle( 'is-shown', mainActions.getBoundingClientRect().bottom < 0 );
 			} );
-		}
+		};
+		window.addEventListener( 'scroll', placeSticky, { passive: true } );
+		window.addEventListener( 'resize', placeSticky );
+		placeSticky();
+
+		stickyForm.addEventListener( 'ns:selection', function ( e ) {
+			stickyMeta.textContent = e.detail.summary.length ? e.detail.summary.join( ' · ' ) : stickyMeta.getAttribute( 'data-empty' );
+		} );
+
+		sticky.querySelector( '[data-sticky-submit]' ).addEventListener( 'click', function () {
+			var mainSubmit = stickyForm.querySelector( '.pbuy__submit' );
+			var missing = stickyForm.querySelector( '[data-attribute]:not(:has(input:checked))' );
+			if ( missing ) {
+				missing.scrollIntoView( { behavior: window.nsUI.reduced ? 'auto' : 'smooth', block: 'center' } );
+			}
+			stickyForm.requestSubmit( mainSubmit );
+		} );
 	}
 
 	// Cart panel: the bag, opened from the header cart. Checkout happens on the Checkout page.
@@ -438,8 +550,13 @@
 			drawerBody.prepend( p );
 		};
 
+		var title = drawer.querySelector( '[data-drawer-title]' );
+		var check = drawer.querySelector( '[data-drawer-check]' );
+
 		var render = function ( data ) {
 			drawerBody.innerHTML = data.body;
+			title.textContent = title.getAttribute( data.added ? 'data-added' : 'data-bag' );
+			check.hidden = ! data.added;
 			setCount( data.count );
 			if ( data.message ) {
 				showMessage( data.message );
@@ -458,15 +575,11 @@
 				} );
 		};
 
-		openDrawer = function () {
-			var date = drawer.querySelector( '[data-drawer-date]' );
-			var now = new Date();
-			date.textContent = date.getAttribute( 'data-today' ) + ' ' +
-				now.toLocaleDateString( undefined, { month: 'short', day: 'numeric', year: 'numeric' } ) + ' ' +
-				now.toLocaleTimeString( undefined, { hour: '2-digit', minute: '2-digit' } );
+		// added: the cart key of a line just added, to show "Added to your cart".
+		openDrawer = function ( added ) {
 			drawer.showModal();
 			root.classList.add( 'drawer-open' );
-			send( 'load' );
+			send( 'load', added ? { added: added } : null );
 		};
 
 		drawer.addEventListener( 'close', function () {
@@ -552,9 +665,6 @@
 					}
 					qvBody.innerHTML = json.data.html;
 					quickView.setAttribute( 'aria-labelledby', 'qv-title' );
-					if ( json.data.sizeGuide && ! document.getElementById( 'size-guide' ) ) {
-						document.body.insertAdjacentHTML( 'beforeend', json.data.sizeGuide );
-					}
 					var buyForm = qvBody.querySelector( '.pbuy__form' );
 					if ( buyForm ) {
 						initBuyForm( buyForm );

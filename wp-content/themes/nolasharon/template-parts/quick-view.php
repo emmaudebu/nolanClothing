@@ -36,7 +36,7 @@ $nolasharon_image_id = $nolasharon_product->get_image_id();
 	<?php if ( $nolasharon_buyable ) : ?>
 		<?php get_template_part( 'template-parts/buy-form', null, array( 'product' => $nolasharon_product, 'context' => 'quick' ) ); ?>
 	<?php elseif ( ! $nolasharon_product->is_in_stock() ) : ?>
-		<p class="pbuy__stock-status pbuy__stock-status--out"><span class="stock-dot stock-dot--outofstock" aria-hidden="true"></span><?php esc_html_e( 'Sold out', 'nolasharon' ); ?></p>
+		<p class="pbuy__stock stock--outofstock"><span class="pbuy__dot" aria-hidden="true"></span><?php esc_html_e( 'Sold out', 'nolasharon' ); ?></p>
 	<?php else : ?>
 		<p class="drawer-note"><?php esc_html_e( 'This piece has more options. See the full details to choose yours.', 'nolasharon' ); ?></p>
 	<?php endif; ?>

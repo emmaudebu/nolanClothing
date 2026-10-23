@@ -25,16 +25,7 @@ function nolasharon_quick_view_ajax() {
 	get_template_part( 'template-parts/quick-view', null, array( 'product' => $product ) );
 	$html = ob_get_clean();
 
-	ob_start();
-	get_template_part( 'template-parts/size-guide' );
-	$size_guide = ob_get_clean();
-
-	wp_send_json_success(
-		array(
-			'html'      => $html,
-			'sizeGuide' => $size_guide,
-		)
-	);
+	wp_send_json_success( array( 'html' => $html ) );
 }
 add_action( 'wc_ajax_ns_quick_view', 'nolasharon_quick_view_ajax' );
 
@@ -43,7 +34,10 @@ add_action( 'wc_ajax_ns_quick_view', 'nolasharon_quick_view_ajax' );
  * Handles simple products and size/colour variations, with WooCommerce's own validation and stock checks.
  */
 function nolasharon_ajax_add_to_cart() {
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- adding to the cart needs no nonce, as with WooCommerce's own add-to-cart.
+	if ( ! check_ajax_referer( 'ns-add-to-cart', 'ns_nonce', false ) ) {
+		wp_send_json_error( array( 'message' => __( 'This page has been open a while. Please refresh it and try again.', 'nolasharon' ) ), 403 );
+	}
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- checked above.
 	$product_id   = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
 	$quantity     = isset( $_POST['quantity'] ) ? max( 1, absint( $_POST['quantity'] ) ) : 1;
 	$variation_id = isset( $_POST['variation_id'] ) ? absint( $_POST['variation_id'] ) : 0;
@@ -69,10 +63,10 @@ function nolasharon_ajax_add_to_cart() {
 			wp_send_json_error( array( 'message' => __( 'This combination is sold out. Please choose another.', 'nolasharon' ) ) );
 		}
 		$passed = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity, $variation_id, $attributes );
-		$added  = $passed && false !== WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $attributes );
+		$added  = $passed ? WC()->cart->add_to_cart( $product_id, $quantity, $variation_id, $attributes ) : false;
 	} else {
 		$passed = apply_filters( 'woocommerce_add_to_cart_validation', true, $product_id, $quantity );
-		$added  = $passed && false !== WC()->cart->add_to_cart( $product_id, $quantity );
+		$added  = $passed ? WC()->cart->add_to_cart( $product_id, $quantity ) : false;
 	}
 
 	// The cart panel opens straight away, so it should not reopen on the next page load.
@@ -85,7 +79,21 @@ function nolasharon_ajax_add_to_cart() {
 	}
 
 	wc_clear_notices();
-	wp_send_json_success( array( 'count' => WC()->cart->get_cart_contents_count() ) );
+	do_action( 'woocommerce_ajax_added_to_cart', $product_id );
+
+	// The same fragments WooCommerce returns, so its header cart and widgets stay in sync.
+	ob_start();
+	woocommerce_mini_cart();
+	$mini_cart = ob_get_clean();
+
+	wp_send_json_success(
+		array(
+			'count'     => WC()->cart->get_cart_contents_count(),
+			'key'       => $added,
+			'fragments' => apply_filters( 'woocommerce_add_to_cart_fragments', array( 'div.widget_shopping_cart_content' => '<div class="widget_shopping_cart_content">' . $mini_cart . '</div>' ) ),
+			'cart_hash' => WC()->cart->get_cart_hash(),
+		)
+	);
 }
 add_action( 'wc_ajax_ns_add_to_cart', 'nolasharon_ajax_add_to_cart' );
 
