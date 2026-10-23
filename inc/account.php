@@ -198,13 +198,18 @@ function nolasharon_auth_back_to_signin() {
 
 /**
  * Where to send the shopper after signing in or registering: back to checkout when they
- * came from there (?return=checkout), otherwise WooCommerce's default (My Account).
+ * came from there (?return=checkout), to their orders (?return=orders, from Track your
+ * order), otherwise WooCommerce's default (My Account).
  *
  * @return string Empty for the default.
  */
 function nolasharon_auth_return_url() {
 	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only redirect hint.
-	return isset( $_GET['return'] ) && 'checkout' === $_GET['return'] ? wc_get_checkout_url() : '';
+	$return = isset( $_GET['return'] ) ? sanitize_key( $_GET['return'] ) : '';
+	if ( 'checkout' === $return ) {
+		return wc_get_checkout_url();
+	}
+	return 'orders' === $return ? wc_get_account_endpoint_url( 'orders' ) : '';
 }
 
 /**
@@ -659,8 +664,9 @@ function nolasharon_order_thumbs( $order, $max = 2 ) {
  * instead, and so does any status the tracker doesn't know.
  *
  * @param WC_Order $order Order.
+ * @param bool     $large Large variant for the Track your order page (46px dots with step icons).
  */
-function nolasharon_order_tracker( $order ) {
+function nolasharon_order_tracker( $order, $large = false ) {
 	$status = $order->get_status();
 	$steps  = array(
 		'pending'      => 0,
@@ -690,7 +696,15 @@ function nolasharon_order_tracker( $order ) {
 		$pickup ? __( 'Collected', 'nolasharon' ) : __( 'Delivered', 'nolasharon' ),
 	);
 	?>
-	<ol class="ns-tracker" style="--fill: <?php echo esc_attr( $done / 3 ); ?>" aria-label="<?php esc_attr_e( 'Order progress', 'nolasharon' ); ?>" data-tracker>
+	<?php
+	$icons = array(
+		'<path d="M6 7h12l-1 13H7L6 7zM9 7a3 3 0 0 1 6 0"/>',
+		'<path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+		$pickup ? '<path d="M4 10l1.5-5h13L20 10M4 10v10h16V10M4 10h16M9 20v-5h6v5"/>' : '<path d="M3 7h11v10H3zM14 10h4l3 3v4h-7"/>',
+		'<path d="M5 12l5 5L20 7"/>',
+	);
+	?>
+	<ol class="ns-tracker<?php echo $large ? ' ns-tracker--lg' : ''; ?>" style="--fill: <?php echo esc_attr( $done / 3 ); ?>" aria-label="<?php esc_attr_e( 'Order progress', 'nolasharon' ); ?>" data-tracker>
 		<li class="ns-tracker__fill" aria-hidden="true"></li>
 		<?php foreach ( $labels as $i => $label ) : ?>
 			<?php
@@ -698,7 +712,7 @@ function nolasharon_order_tracker( $order ) {
 			$date  = $i <= $done && $dates[ $i ] ? $dates[ $i ] : null;
 			?>
 			<li class="ns-tracker__step <?php echo esc_attr( $state ); ?>"<?php echo $i === $done ? ' aria-current="step"' : ''; ?>>
-				<span class="ns-tracker__dot" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" focusable="false"><path d="M5 12l5 5L20 7"/></svg></span>
+				<span class="ns-tracker__dot" aria-hidden="true"><svg class="ns-tracker__check" width="<?php echo $large ? 18 : 14; ?>" height="<?php echo $large ? 18 : 14; ?>" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" focusable="false"><path d="M5 12l5 5L20 7"/></svg><?php if ( $large ) : ?><svg class="ns-tracker__icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" focusable="false"><?php echo $icons[ $i ]; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static SVG. ?></svg><?php endif; ?></span>
 				<span class="ns-tracker__label"><?php echo esc_html( $label ); ?><span class="screen-reader-text"> <?php echo $i <= $done ? esc_html__( '(done)', 'nolasharon' ) : esc_html__( '(not yet)', 'nolasharon' ); ?></span></span>
 				<?php if ( $date ) : ?>
 					<time class="ns-tracker__when" datetime="<?php echo esc_attr( $date->date( 'c' ) ); ?>"><?php echo esc_html( wc_format_datetime( $date, 'j M' ) ); ?></time>

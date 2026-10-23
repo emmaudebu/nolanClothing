@@ -131,6 +131,17 @@ defined( 'ABSPATH' ) || exit;
 
 			<?php endif; ?>
 
+			<p class="ns-thanks__support">
+				<?php
+				printf(
+					/* translators: 1: link to the Track your order page, 2: order number. */
+					esc_html__( 'Check on this order any time on %1$s with order number %2$s.', 'nolasharon' ),
+					'<a href="' . esc_url( nolasharon_track_order_url() ) . '">' . esc_html__( 'Track your order', 'nolasharon' ) . '</a>', // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+					'<strong>' . esc_html( $order->get_order_number() ) . '</strong>' // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				);
+				?>
+			</p>
+
 			<?php $nolasharon_support = nolasharon_order_support_links( $order ); ?>
 			<?php if ( $nolasharon_support ) : ?>
 				<p class="ns-thanks__support">
