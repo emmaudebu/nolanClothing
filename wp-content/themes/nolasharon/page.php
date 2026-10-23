@@ -9,10 +9,20 @@ defined( 'ABSPATH' ) || exit;
 
 get_header();
 
-// Checkout and the thank-you page print their own heading.
+// Checkout, the thank-you page, the cart and My Account print their own heading and layout.
 $nolasharon_own_title = function_exists( 'is_checkout' ) && is_checkout() && ! is_checkout_pay_page();
+$nolasharon_layout    = '';
+if ( $nolasharon_own_title ) {
+	$nolasharon_layout = ' content-area--checkout';
+} elseif ( function_exists( 'is_account_page' ) && is_account_page() ) {
+	$nolasharon_own_title = true;
+	$nolasharon_layout    = nolasharon_is_auth_page() ? ' content-area--auth' : ' content-area--account';
+} elseif ( function_exists( 'is_cart' ) && is_cart() ) {
+	$nolasharon_own_title = true;
+	$nolasharon_layout    = ' content-area--cart';
+}
 ?>
-<div class="container content-area<?php echo $nolasharon_own_title ? ' content-area--checkout' : ''; ?>">
+<div class="container content-area<?php echo esc_attr( $nolasharon_layout ); ?>">
 	<?php
 	while ( have_posts() ) :
 		the_post();

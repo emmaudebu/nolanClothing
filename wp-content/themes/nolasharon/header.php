@@ -19,6 +19,8 @@ defined( 'ABSPATH' ) || exit;
 
 <?php if ( function_exists( 'nolasharon_is_checkout_form' ) && nolasharon_is_checkout_form() ) : ?>
 	<?php get_template_part( 'template-parts/checkout-header' ); ?>
+<?php elseif ( function_exists( 'nolasharon_is_auth_page' ) && nolasharon_is_auth_page() ) : ?>
+	<?php // Sign-in screens: the brand panel carries the logo and a "Back to shop" link. ?>
 <?php else : ?>
 
 <?php
@@ -73,6 +75,9 @@ if ( ! nolasharon_unconfirmed( $nolasharon_announce ) ) :
 			<?php endif; ?>
 
 			<?php
+			if ( function_exists( 'nolasharon_header_account' ) ) {
+				nolasharon_header_account();
+			}
 			if ( function_exists( 'nolasharon_header_cart' ) ) {
 				nolasharon_header_cart();
 			}

@@ -188,6 +188,13 @@ $options = array(
 	'woocommerce_enable_guest_checkout'             => 'yes',
 	'woocommerce_enable_signup_and_login_from_checkout' => 'yes',
 	'woocommerce_enable_checkout_login_reminder'    => 'yes',
+	// Accounts (STORE-PAGES.md §2): sign-up on My Account, username from the email, the
+	// customer sets their own password on the form.
+	'woocommerce_enable_myaccount_registration'     => 'yes',
+	'woocommerce_registration_generate_username'    => 'yes',
+	'woocommerce_registration_generate_password'    => 'no',
+	// Cart page (STORE-PAGES.md §4): delivery is worked out at checkout.
+	'woocommerce_enable_shipping_calc'              => 'no',
 	'woocommerce_default_catalog_orderby'           => 'date',
 	'woocommerce_manage_stock'                      => 'yes',
 	'woocommerce_hide_out_of_stock_items'           => 'no',
