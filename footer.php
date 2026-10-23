@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 $nolasharon_phone    = nolasharon_setting( 'nolasharon_phone' );
 $nolasharon_email    = nolasharon_setting( 'nolasharon_email' );
 $nolasharon_whatsapp = nolasharon_whatsapp_url();
-$nolasharon_branches = function_exists( 'nolasharon_get_branches' ) ? nolasharon_get_branches( false ) : array();
+$nolasharon_branches = function_exists( 'ns_get_branches' ) ? ns_get_branches() : array();
 $nolasharon_cats     = function_exists( 'nolasharon_nav_categories' ) ? nolasharon_nav_categories() : array();
 
 $nolasharon_shop_links = array( __( 'Shop all', 'nolasharon' ) => nolasharon_shop_url() );
@@ -39,11 +39,12 @@ $nolasharon_columns = array(
 	),
 );
 foreach ( $nolasharon_branches as $nolasharon_branch ) {
-	$nolasharon_label = $nolasharon_branch['name'];
-	if ( 'opening_soon' === $nolasharon_branch['status'] ) {
-		$nolasharon_label .= ' · ' . __( 'opening soon', 'nolasharon' );
+	// e.g. "Ikeja (Branch 1)", "Ogudu (New)".
+	$nolasharon_label = $nolasharon_branch['area'] ? $nolasharon_branch['area'] : $nolasharon_branch['name'];
+	if ( $nolasharon_branch['tag'] ) {
+		$nolasharon_label .= ' (' . $nolasharon_branch['tag'] . ')';
 	}
-	$nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ][ $nolasharon_label ] = nolasharon_page_url( 'store-locations' ) . '#branch-' . $nolasharon_branch['id'];
+	$nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ][ $nolasharon_label ] = ns_branch_url( $nolasharon_branch );
 }
 if ( ! $nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ] ) {
 	$nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ][ __( 'Store Locations', 'nolasharon' ) ] = nolasharon_page_url( 'store-locations' );

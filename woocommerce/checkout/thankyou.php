@@ -95,8 +95,8 @@ defined( 'ABSPATH' ) || exit;
 						<div>
 							<dt><?php esc_html_e( 'Pickup from', 'nolasharon' ); ?></dt>
 							<dd>
-								<?php echo esc_html( $nolasharon_branch['name'] ); ?>
-								<?php foreach ( array( 'address', 'hours' ) as $nolasharon_key ) : ?>
+								<?php echo esc_html( nolasharon_pickup_branch_name( $nolasharon_branch ) ); ?>
+								<?php foreach ( array( 'address', 'hours_text' ) as $nolasharon_key ) : ?>
 									<?php if ( $nolasharon_branch[ $nolasharon_key ] ) : ?>
 										<span class="ns-thanks__sub"><?php echo nl2br( esc_html( $nolasharon_branch[ $nolasharon_key ] ) ); ?></span>
 									<?php endif; ?>
