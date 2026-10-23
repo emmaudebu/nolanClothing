@@ -4594,6 +4594,7 @@ button {
 .product-card__media {
 	border-radius: calc(var(--radius) - 3px);
 	isolation: isolate; /* Keeps the zoomed image clipped to the rounded corners in Safari. */
+	z-index: 2; /* Isolation traps the Quick View button inside; lift the media above the name link's overlay so it stays clickable. */
 }
 
 .product-card__media img {
