@@ -121,7 +121,7 @@ function nolasharon_cart_currency_note() {
 
 /**
  * Whether the cart shows the coupon box. Off until the client confirms they want discount
- * codes ([[CONFIRM: extras]]); turn on with add_filter( 'nolasharon_cart_coupons', '__return_true' ).
+ * codes (see HANDOVER.md); turn on with add_filter( 'nolasharon_cart_coupons', '__return_true' ).
  *
  * @return bool
  */
