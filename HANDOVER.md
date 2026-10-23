@@ -78,11 +78,13 @@ To upload your logo, go to **Appearance → Customize → Site Identity → Logo
 ## 6. Delivery and store pickup
 
 - **Delivery fees:** **WooCommerce → Settings → Shipping**. Click a zone (e.g. *Lagos*) → edit each rate → set the cost and remove "[[CONFIRM: fee]]" from the name.
+- **Area note on the delivery cards:** each flat rate also has a **Checkout note (NolaSharon)** field, shown under its name at checkout (e.g. "Ikeja, Ogudu, Yaba, Surulere…"). Leave it empty to hide it.
+- **Terms checkbox:** checkout asks customers to accept the Terms & Conditions and the Returns & Exchange Policy. The Terms page is set under **WooCommerce → Settings → Advanced → Terms and conditions**.
 - **Store pickup** stays off until you're ready. To turn it on:
   1. Tick **Pickup available at this branch** on each branch that offers it, and add **Pickup instructions**.
   2. Tick **Enable store pickup at checkout** in Customize → NolaSharon Settings → Shop, delivery & pickup.
 
-  Customers can then choose a branch at checkout. The branch appears on the order, emails and confirmation page.
+  Pickup is free and offered for every state. Customers can then choose a branch at checkout. The branch appears on the order, emails and confirmation page.
 
 ## 7. Payments (Paystack)
 

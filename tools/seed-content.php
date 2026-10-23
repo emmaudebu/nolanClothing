@@ -199,6 +199,7 @@ $options = array(
 	'woocommerce_coming_soon'                       => 'no',
 	'comment_moderation'                            => 1, // Reviews are published only after approval.
 	'blogname'                                      => 'NolaSharon Clothing',
+	'woocommerce_terms_page_id'                     => get_page_by_path( 'terms-and-conditions' ) ? get_page_by_path( 'terms-and-conditions' )->ID : '',
 );
 foreach ( $options as $key => $value ) {
 	update_option( $key, $value );
