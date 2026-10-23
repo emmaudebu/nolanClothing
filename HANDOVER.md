@@ -24,11 +24,15 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
    - **Attributes tab:** add **Colour** and **Size**, pick the values, and tick **Used for variations**. Click **Save attributes**.
    - **Variations tab:** choose **Generate variations**. For each one, set the **Regular price**, optional **Sale price**, tick **Manage stock?** and enter the **Stock quantity**.
 4. **Product categories** (right-hand side): tick Women, Men, etc.
-5. **Product image** and **Product gallery** (right-hand side): the first four images make the product page gallery. Use portrait photos (4:5 works best).
+5. **Product image** and **Product gallery** (right-hand side): the main photo, then extra angles and close-ups. They show as thumbnails beside the main photo (a swipe carousel on phones); shoppers can zoom and open them full screen. Use portrait photos (4:5 works best) and fill in each photo's **Alternative text** in the media library. A variation can have its own photo (Variations tab), which shows when that colour or size is chosen. The first gallery photo also appears when someone hovers over the product in the shop.
 6. To show it on the homepage under **Featured Pieces**, click the star next to the product in **Products → All Products**.
 7. Click **Publish**.
 
+**Reviews** are switched off for now (no reviews or stars show). Tell us if you want them on.
+
 **Edit prices, photos or descriptions:** **Products → All Products** → click the product → change → **Update**.
+
+**Size guides:** go to **Products → Categories → Edit** and fill in **Size chart** with your own measurements in inches: the first line is the column names (e.g. `Size, Bust, Waist, Hips`), then one line per size (e.g. `S, 34, 28, 37`). Every product in that category then shows a **Size guide** link, with an inches/centimetres switch. A product that fits differently can have its own chart (Product data → **Inventory** tab). With no chart, the link is hidden.
 
 **Sizes and colours:**
 - To add a new size or colour, go to **Products → Attributes → Configure terms**.
@@ -83,6 +87,8 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 - **Contact & social:** phone, **WhatsApp number** (the WhatsApp buttons only appear once this is filled in), email, customer service hours, Instagram, Facebook and TikTok.
 - **Shop, delivery & pickup:** the delivery and returns notes shown on product pages, **Enable store pickup**, the optional order statuses (see Orders), and how many days a product counts as "New".
 - **Sign-in page:** the campaign photo beside the sign-in form.
+- **Homepage hero:** also has the small outlined label above the headline ("NolaSharon Clothing · Lagos"); empty hides it.
+- **Shop price filter bands:** the price choices in the shop filters, one per line as min-max in naira (e.g. `0-30000`, `30000-50000`, `50000-`). Set these to suit your real prices.
 
 **"Shop Our Collection" on the homepage** shows up to four product categories. Go to **Products → Categories → Edit** on a category: tick **Show in "Shop Our Collection"**, set **Homepage order** (1 is the big tile), pick a **Tile colour**, add an optional short **Tile subtitle**, and set the category **Thumbnail** (the tilted photo). If no category is ticked, the main categories show.
 
