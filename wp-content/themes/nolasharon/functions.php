@@ -7,11 +7,19 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'NOLASHARON_VERSION', '0.2.0' );
+define( 'NOLASHARON_VERSION', '0.8.0' );
 
 require get_template_directory() . '/inc/helpers.php';
 require get_template_directory() . '/inc/customizer.php';
 require get_template_directory() . '/inc/woocommerce.php';
+require get_template_directory() . '/inc/product.php';
+require get_template_directory() . '/inc/wishlist.php';
+require get_template_directory() . '/inc/drawer.php';
+require get_template_directory() . '/inc/quick-view.php';
+require get_template_directory() . '/inc/shop-filters.php';
+require get_template_directory() . '/inc/branches.php';
+require get_template_directory() . '/inc/checkout.php';
+require get_template_directory() . '/inc/content.php';
 
 /**
  * Theme supports and menus.
@@ -21,6 +29,15 @@ function nolasharon_setup() {
 	add_theme_support( 'post-thumbnails' );
 	add_theme_support( 'html5', array( 'search-form', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
 	add_theme_support( 'responsive-embeds' );
+	add_theme_support(
+		'custom-logo',
+		array(
+			'height'      => 120,
+			'width'       => 360,
+			'flex-height' => true,
+			'flex-width'  => true,
+		)
+	);
 
 	add_theme_support(
 		'woocommerce',
@@ -29,14 +46,12 @@ function nolasharon_setup() {
 			'single_image_width'    => 900,
 		)
 	);
-	add_theme_support( 'wc-product-gallery-zoom' );
-	add_theme_support( 'wc-product-gallery-lightbox' );
-	add_theme_support( 'wc-product-gallery-slider' );
+	// No wc-product-gallery-* support: the theme has its own gallery and lightbox,
+	// so WooCommerce's zoom, slider and PhotoSwipe scripts are not loaded.
 
 	register_nav_menus(
 		array(
-			'primary'   => __( 'Primary navigation', 'nolasharon' ),
-			'resources' => __( 'Resources dropdown', 'nolasharon' ),
+			'primary' => __( 'Primary navigation', 'nolasharon' ),
 		)
 	);
 }
@@ -48,7 +63,7 @@ add_action( 'after_setup_theme', 'nolasharon_setup' );
 function nolasharon_assets() {
 	wp_enqueue_style(
 		'nolasharon-fonts',
-		'https://fonts.googleapis.com/css2?family=Allura&family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500;600;700;800&display=swap',
+		'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap',
 		array(),
 		null
 	);

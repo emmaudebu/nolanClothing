@@ -58,12 +58,17 @@ function nolasharon_img( $name ) {
 }
 
 /**
- * Print the text logo ("NolaSharon" over "CLOTHING").
+ * Print the logo: the uploaded custom logo when set, otherwise the text logo ("NolaSharon" over "CLOTHING").
  *
  * @param string $tag Wrapper element: "a" links to home, anything else renders a span.
  */
 function nolasharon_logo( $tag = 'a' ) {
-	$inner = '<span class="logo__name">NolaSharon</span><span class="logo__sub">Clothing</span>';
+	$logo_id = (int) get_theme_mod( 'custom_logo' );
+	if ( $logo_id ) {
+		$inner = wp_get_attachment_image( $logo_id, 'medium', false, array( 'class' => 'logo__img', 'alt' => '' ) );
+	} else {
+		$inner = '<span class="logo__name">NolaSharon</span><span class="logo__sub">Clothing</span>';
+	}
 	if ( 'a' === $tag ) {
 		printf( '<a class="logo" href="%1$s" rel="home" aria-label="%2$s">%3$s</a>', esc_url( home_url( '/' ) ), esc_attr__( 'NolaSharon Clothing, home', 'nolasharon' ), $inner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
 	} else {
@@ -90,7 +95,26 @@ function nolasharon_icon( $name, $size = 20 ) {
 		'arrow'      => '<path d="M5 12h14M13 6l6 6-6 6"/>',
 		'truck'      => '<path d="M3 7h11v10H3zM14 10h4l3 3v4h-7"/>',
 		'cloud-down' => '<path d="M7 17.5A4.5 4.5 0 0 1 6.6 8.5a6 6 0 0 1 11.6 1.6A3.8 3.8 0 0 1 17.5 17.5"/><path d="M12 11v9M9 17l3 3 3-3"/>',
-		'play'     =>'<path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/>',
+		'play'       => '<path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/>',
+		'external'   => '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+		'heart'      => '<path d="M12 20s-7.5-4.6-9.2-9.3C1.6 7.4 3.7 4 7.1 4c2 0 3.4 1.1 4.9 2.9C13.5 5.1 14.9 4 16.9 4c3.4 0 5.5 3.4 4.3 6.7C19.5 15.4 12 20 12 20z"/>',
+		'star'       => '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',
+		'trash'      => '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+		'user'       => '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.2 18.4a6.5 6.5 0 0 1 11.6 0"/>',
+		'store'      => '<path d="M4 10v10h16V10M3 6l1.5-3h15L21 6v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M10 20v-5h4v5"/>',
+		'receipt'    => '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',
+		'minus'      => '<path d="M5 12h14"/>',
+		'plus'       => '<path d="M12 5v14M5 12h14"/>',
+		'prev'       => '<path d="M15 6l-6 6 6 6"/>',
+		'next'       => '<path d="M9 6l6 6-6 6"/>',
+		'weight'     => '<path d="M5.5 20h13L17 9H7z"/><path d="M9.5 9a2.5 2.5 0 1 1 5 0"/>',
+		'pin'        => '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+		'clock'      => '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+		'phone'      => '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+		'mail'       => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+		'filter'     => '<path d="M4 6h16M7 12h10M10 18h4"/>',
+		'card'       => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>',
+		'chat'       => '<path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8M8 13h5"/>',
 		'whatsapp'   => '<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2L9 9.5z" fill="currentColor" stroke="none"/>',
 	);
 	if ( ! isset( $paths[ $name ] ) ) {
@@ -105,13 +129,40 @@ function nolasharon_icon( $name, $size = 20 ) {
 }
 
 /**
- * WhatsApp chat URL from the Customizer number, or the contact page if none is set.
+ * WhatsApp chat URL, or an empty string when no verified number is set (brief rule 5).
  *
+ * @param string $message Prefilled message; defaults to the Customizer message.
  * @return string
  */
-function nolasharon_whatsapp_url() {
-	$number = preg_replace( '/\D+/', '', (string) get_theme_mod( 'nolasharon_whatsapp', '' ) );
-	return $number ? 'https://wa.me/' . $number : nolasharon_page_url( 'contact' );
+function nolasharon_whatsapp_url( $message = null ) {
+	$number = preg_replace( '/\D+/', '', (string) nolasharon_setting( 'nolasharon_whatsapp' ) );
+	if ( ! $number ) {
+		return '';
+	}
+	$message = null === $message ? (string) nolasharon_setting( 'nolasharon_wa_message' ) : $message;
+	return 'https://wa.me/' . $number . ( '' !== $message ? '?text=' . rawurlencode( $message ) : '' );
+}
+
+/**
+ * A tel: link for a phone number, or an empty string.
+ *
+ * @param string $phone Phone number as typed.
+ * @return string
+ */
+function nolasharon_tel_url( $phone ) {
+	$digits = preg_replace( '/[^\d+]/', '', (string) $phone );
+	return $digits ? 'tel:' . $digits : '';
+}
+
+/**
+ * Whether a value is still a "[[CONFIRM: ...]]" placeholder or empty, so it must not be shown.
+ *
+ * @param mixed $value Value.
+ * @return bool
+ */
+function nolasharon_unconfirmed( $value ) {
+	$value = trim( (string) $value );
+	return '' === $value || false !== strpos( $value, '[[CONFIRM' );
 }
 
 /**
