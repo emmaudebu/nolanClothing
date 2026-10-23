@@ -1,0 +1,525 @@
+/**
+ * Product page (SHOP-PRODUCT.md §3). Loaded only on is_product(). The buy form and size
+ * guide styles live in style.css because the quick view uses them too.
+ */
+
+.pp {
+	padding-top: 20px;
+	padding-bottom: 80px;
+}
+
+.pp__crumbs {
+	margin-bottom: 18px;
+	color: #555555;
+	font-size: 13px;
+}
+
+.pp__crumbs a {
+	color: #555555;
+}
+
+.pp__crumbs [aria-current] {
+	color: #111111;
+}
+
+.pp__layout {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 44px;
+}
+
+/* Gallery */
+
+.pg {
+	position: relative;
+	display: flex;
+	flex: 1 1 560px;
+	gap: 14px;
+	min-width: 0;
+}
+
+.pg__thumbs {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.pg__thumb {
+	width: 78px;
+	height: 96px;
+	padding: 0;
+	overflow: hidden;
+	border: 2px solid transparent;
+	border-radius: 12px;
+	background: #f1ece6;
+	opacity: 0.7;
+	cursor: pointer;
+	transition: border-color 0.25s ease, opacity 0.25s ease;
+}
+
+.pg__thumb:hover,
+.pg__thumb[aria-pressed="true"] {
+	opacity: 1;
+}
+
+.pg__thumb[aria-pressed="true"] {
+	border-color: #2b1b12;
+}
+
+.pg__thumb:focus-visible {
+	outline: 2px solid var(--ui-focus);
+	outline-offset: 2px;
+}
+
+.pg__thumb img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.pg__main {
+	position: relative;
+	flex: 1;
+	min-width: 0;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	border-radius: 22px;
+	background: #f1ece6;
+	cursor: zoom-in;
+}
+
+.pg__slide {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0;
+	transition: opacity 0.5s ease, transform 0.2s ease-out;
+}
+
+.pg__slide.is-active {
+	opacity: 1;
+}
+
+.pg__open {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	cursor: zoom-in;
+}
+
+.pg__open:focus-visible {
+	outline: 3px solid var(--ui-focus);
+	outline-offset: -3px;
+}
+
+.pg__hint {
+	position: absolute;
+	right: 16px;
+	bottom: 16px;
+	z-index: 2;
+	display: none;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 12px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.92);
+	color: #2b1b12;
+	font-size: 12px;
+	font-weight: 600;
+	pointer-events: none;
+	transition: opacity 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+	.ns-js .pg__hint {
+		display: flex;
+	}
+}
+
+.pg__main.is-zooming .pg__hint {
+	opacity: 0;
+}
+
+.pg__badges {
+	position: absolute;
+	top: 16px;
+	left: calc(78px + 14px + 16px);
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 6px;
+	pointer-events: none;
+}
+
+.pg:not(:has(.pg__thumbs)) .pg__badges {
+	left: 16px;
+}
+
+.pg__badges .pbadge {
+	padding: 6px 12px;
+	font-size: 11px;
+}
+
+.pg__track,
+.pg__dots {
+	display: none;
+}
+
+/* Info column */
+
+.pinfo {
+	position: sticky;
+	top: calc(var(--header-h) + 18px);
+	display: flex;
+	flex: 1 1 420px;
+	flex-direction: column;
+	gap: 18px;
+	min-width: 0;
+}
+
+.pinfo__eyebrow {
+	color: #8c6448;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+}
+
+.pinfo__title {
+	margin: 6px 0 10px;
+	font-family: var(--serif);
+	font-size: 40px;
+	font-weight: 500;
+	line-height: 1.1;
+}
+
+.pinfo__price-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 6px 12px;
+}
+
+.pinfo__price {
+	font-size: 26px;
+	font-weight: 600;
+}
+
+.pinfo__sku {
+	color: #555555;
+	font-size: 13px;
+}
+
+.pinfo__short {
+	color: #444444;
+}
+
+.pinfo__short p {
+	margin: 0;
+}
+
+.pinfo__tiles {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.pinfo__tile {
+	display: flex;
+	gap: 10px;
+	margin: 0;
+	padding: 14px;
+	border-radius: 14px;
+	background: #f7f5f2;
+	color: #444444;
+	font-size: 13px;
+	text-decoration: none;
+}
+
+.pinfo__tile .icon {
+	color: #8c6448;
+}
+
+a.pinfo__tile:hover {
+	background: #f1ece6;
+	color: #111111;
+}
+
+/* Accordions */
+
+.pacc {
+	border-top: 1px solid #eee8e2;
+}
+
+.pacc__item {
+	border-bottom: 1px solid #eee8e2;
+}
+
+.pacc__head {
+	margin: 0;
+	font-size: inherit;
+}
+
+.pacc__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	min-height: 56px;
+	padding: 0;
+	border: 0;
+	background: transparent;
+	color: #111111;
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.pacc__toggle:focus-visible {
+	outline: 2px solid var(--ui-focus);
+	outline-offset: 2px;
+}
+
+.pacc__icon {
+	display: flex;
+	transition: transform 0.35s var(--ui-ease);
+}
+
+.pacc__toggle[aria-expanded="true"] .pacc__icon {
+	transform: rotate(45deg);
+}
+
+.pacc__inner {
+	padding: 0 0 18px;
+	color: #444444;
+	font-size: 14px;
+}
+
+.pacc__inner p {
+	margin: 0 0 8px;
+}
+
+.pacc__details {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+}
+
+.pacc__details div {
+	display: grid;
+	grid-template-columns: 140px 1fr;
+	gap: 12px;
+}
+
+.pacc__details dt {
+	color: #111111;
+	font-weight: 600;
+}
+
+.pacc__details dd {
+	margin: 0;
+}
+
+/* Related */
+
+.pp__related {
+	margin-top: 80px;
+}
+
+.pp__related-head {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 22px;
+}
+
+.pp__related-title {
+	margin: 0;
+	font-family: var(--serif);
+	font-size: 34px;
+	font-weight: 500;
+}
+
+.pp__related-all {
+	color: #2b1b12;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* Sticky add bar (phones only, after the main button scrolls away) */
+
+.sticky-buy {
+	display: none;
+}
+
+@media (max-width: 860px) {
+	.pp {
+		padding-bottom: 100px;
+	}
+
+	.pp__layout {
+		gap: 24px;
+	}
+
+	.pg {
+		flex-direction: column;
+		flex-basis: 100%;
+		gap: 0;
+	}
+
+	.pg__thumbs,
+	.pg__main {
+		display: none;
+	}
+
+	.pg__track {
+		display: flex;
+		width: 100%;
+		overflow-x: auto;
+		border-radius: 18px;
+		scroll-snap-type: x mandatory;
+		scrollbar-width: none;
+	}
+
+	.pg__track::-webkit-scrollbar {
+		display: none;
+	}
+
+	.pg__track:focus-visible {
+		outline: 2px solid var(--ui-focus);
+		outline-offset: 2px;
+	}
+
+	.pg__cell {
+		flex: 0 0 100%;
+		aspect-ratio: 4 / 5;
+		padding: 0;
+		overflow: hidden;
+		border: 0;
+		background: #f1ece6;
+		scroll-snap-align: start;
+	}
+
+	.pg__cell img {
+		display: block;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	.pg__dots {
+		display: flex;
+		justify-content: center;
+		gap: 6px;
+		margin-top: -26px;
+		padding-bottom: 14px;
+		position: relative;
+		z-index: 1;
+	}
+
+	.pg__dot {
+		width: 7px;
+		height: 7px;
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.7);
+		box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
+		transition: width 0.35s var(--ui-ease), background-color 0.35s ease;
+	}
+
+	.pg__dot.is-active {
+		width: 20px;
+		background: #2b1b12;
+	}
+
+	.pg__badges {
+		top: 14px;
+		left: 14px;
+	}
+
+	.pinfo {
+		position: static;
+		flex-basis: 100%;
+	}
+
+	.pinfo__title {
+		font-size: 30px;
+	}
+
+	.pp__related {
+		margin-top: 56px;
+	}
+
+	.pp__related-title {
+		font-size: 26px;
+	}
+
+	.sticky-buy {
+		position: fixed;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		z-index: 40;
+		display: flex;
+		align-items: center;
+		gap: 14px;
+		padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+		border-top: 1px solid #ece7e1;
+		background: #ffffff;
+		box-shadow: 0 -10px 30px rgba(43, 27, 18, 0.08);
+		visibility: hidden;
+		transform: translateY(110%);
+		transition: transform 0.4s var(--ui-ease), visibility 0s linear 0.4s;
+	}
+
+	.sticky-buy.is-shown {
+		visibility: visible;
+		transform: none;
+		transition: transform 0.4s var(--ui-ease), visibility 0s;
+	}
+
+	.sticky-buy__info {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+		line-height: 1.2;
+	}
+
+	.sticky-buy__meta {
+		overflow: hidden;
+		color: #555555;
+		font-size: 12px;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.sticky-buy__price {
+		font-size: 20px;
+		font-weight: 600;
+	}
+
+	.sticky-buy__price .price-row__off {
+		display: none;
+	}
+
+	.sticky-buy__btn {
+		flex: 1;
+		min-height: 52px;
+	}
+
+	.single-product .whatsapp-float {
+		bottom: 96px;
+	}
+}

@@ -49,10 +49,22 @@ function nolasharon_drawer_ajax() {
 	$notices = wp_list_pluck( wc_get_notices( 'error' ), 'notice' );
 	wc_clear_notices();
 
+	// Straight after an add to cart: the "Added to your cart" view of that line.
+	$added = 'load' === $op && isset( $_POST['added'] ) ? wc_clean( wp_unslash( $_POST['added'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- read-only view.
+	if ( $added && WC()->cart->get_cart_item( $added ) ) {
+		ob_start();
+		get_template_part( 'template-parts/drawer/added', null, array( 'key' => $added ) );
+		$body = ob_get_clean();
+	} else {
+		$added = '';
+		$body  = nolasharon_drawer_part( 'body' );
+	}
+
 	wp_send_json_success(
 		array(
 			'count'   => WC()->cart->get_cart_contents_count(),
-			'body'    => nolasharon_drawer_part( 'body' ),
+			'added'   => (bool) $added,
+			'body'    => $body,
 			'message' => wp_strip_all_tags( implode( ' ', $notices ) ),
 		)
 	);
