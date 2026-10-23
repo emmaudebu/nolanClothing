@@ -17,6 +17,24 @@ defined( 'ABSPATH' ) || exit;
 <?php wp_body_open(); ?>
 <a class="skip-link screen-reader-text" href="#main"><?php esc_html_e( 'Skip to content', 'nolasharon' ); ?></a>
 
+<?php
+$nolasharon_announce = nolasharon_setting( 'nolasharon_announce_text' );
+if ( ! nolasharon_unconfirmed( $nolasharon_announce ) ) :
+	$nolasharon_announce_link = nolasharon_setting( 'nolasharon_announce_link' );
+	?>
+	<div class="announce" id="announce" data-key="<?php echo esc_attr( md5( $nolasharon_announce ) ); ?>">
+		<p class="announce__text">
+			<?php if ( $nolasharon_announce_link ) : ?>
+				<a href="<?php echo esc_url( $nolasharon_announce_link ); ?>"><?php echo esc_html( $nolasharon_announce ); ?></a>
+			<?php else : ?>
+				<?php echo esc_html( $nolasharon_announce ); ?>
+			<?php endif; ?>
+		</p>
+		<button class="announce__close" type="button" aria-label="<?php esc_attr_e( 'Dismiss announcement', 'nolasharon' ); ?>"><?php echo nolasharon_icon( 'close', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
+	</div>
+	<script>try{var a=document.getElementById('announce');if(localStorage.getItem('ns-announce')===a.getAttribute('data-key'))a.hidden=true;}catch(e){}</script>
+<?php endif; ?>
+
 <header class="site-header">
 	<div class="container site-header__inner">
 		<?php nolasharon_logo(); ?>
@@ -42,6 +60,13 @@ defined( 'ABSPATH' ) || exit;
 			<button class="icon-btn search-toggle" type="button" aria-label="<?php esc_attr_e( 'Search', 'nolasharon' ); ?>" aria-controls="header-search" aria-expanded="false">
 				<?php echo nolasharon_icon( 'search' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 			</button>
+
+			<?php if ( function_exists( 'nolasharon_wishlist_url' ) ) : ?>
+				<a class="icon-btn header-wishlist" href="<?php echo esc_url( nolasharon_wishlist_url() ); ?>" aria-label="<?php esc_attr_e( 'Wishlist', 'nolasharon' ); ?>">
+					<?php echo nolasharon_icon( 'heart', 21 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					<span class="header-wishlist__count" data-wishlist-count hidden>0</span>
+				</a>
+			<?php endif; ?>
 
 			<?php
 			if ( function_exists( 'nolasharon_header_cart' ) ) {
