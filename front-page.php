@@ -65,6 +65,9 @@ if ( nolasharon_whatsapp_url() || nolasharon_setting( 'nolasharon_phone' ) ) {
 	<span class="hero__watermark" aria-hidden="true">NolaSharon</span>
 	<div class="container hero__inner">
 		<div class="hero__copy">
+			<?php if ( nolasharon_setting( 'nolasharon_hero_eyebrow' ) ) : ?>
+				<span class="hero__eyebrow"><?php echo esc_html( nolasharon_setting( 'nolasharon_hero_eyebrow' ) ); ?></span>
+			<?php endif; ?>
 			<h1 class="hero__title" id="hero-title"><?php echo esc_html( nolasharon_setting( 'nolasharon_hero_title' ) ); ?></h1>
 			<?php if ( nolasharon_setting( 'nolasharon_hero_text' ) ) : ?>
 				<p class="hero__text"><?php echo esc_html( nolasharon_setting( 'nolasharon_hero_text' ) ); ?></p>

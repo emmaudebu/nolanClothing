@@ -402,10 +402,6 @@
 	margin: 0;
 }
 
-:root[data-theme="dark"] .ns-auth__done {
-	border-color: #2f4a33;
-}
-
 /* Check your email */
 
 .ns-auth__mail {
@@ -1498,10 +1494,6 @@ a.ns-items__name:hover {
 .ns-addr__card.is-empty {
 	border-style: dashed;
 	border-color: var(--ui-track);
-	background: var(--ui-soft);
-}
-
-:root[data-theme="dark"] .ns-addr__card {
 	background: var(--ui-soft);
 }
 

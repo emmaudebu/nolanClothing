@@ -50,10 +50,6 @@ if ( ! nolasharon_unconfirmed( $nolasharon_announce ) ) :
 		</nav>
 
 		<div class="site-header__tools">
-			<button class="icon-btn theme-toggle" type="button" aria-label="<?php esc_attr_e( 'Switch to dark theme', 'nolasharon' ); ?>" data-label-dark="<?php esc_attr_e( 'Switch to dark theme', 'nolasharon' ); ?>" data-label-light="<?php esc_attr_e( 'Switch to light theme', 'nolasharon' ); ?>">
-				<?php echo nolasharon_icon( 'sun' ) . nolasharon_icon( 'moon' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</button>
-
 			<form class="header-search" id="header-search" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 				<label class="screen-reader-text" for="header-search-input"><?php esc_html_e( 'Search products', 'nolasharon' ); ?></label>
 				<?php echo nolasharon_icon( 'search', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

@@ -34,7 +34,7 @@ $nolasharon_item       = function ( $label, $url, $current = false ) {
 <ul class="main-nav__list">
 	<?php
 	$nolasharon_item( __( 'Home', 'nolasharon' ), home_url( '/' ), is_front_page() );
-	$nolasharon_item( __( 'Shop', 'nolasharon' ), nolasharon_shop_url(), function_exists( 'is_shop' ) && is_shop() );
+	$nolasharon_item( __( 'Shop', 'nolasharon' ), nolasharon_shop_url(), function_exists( 'is_shop' ) && ( is_shop() || is_product_taxonomy() || is_product() ) );
 	?>
 	<?php if ( $nolasharon_categories ) : ?>
 		<li class="has-sub">

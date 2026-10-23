@@ -1,35 +1,11 @@
 /**
- * NolaSharon theme interactions: light/dark toggle, menu, search, wishlist, Load More,
+ * NolaSharon theme interactions: menu, search, wishlist, Load More,
  * dialogs, gallery, buy form, cart panel, quick view, filters and the click-to-load video.
  */
 ( function () {
 	'use strict';
 
 	var root = document.documentElement;
-
-	// Light / dark theme.
-	function currentTheme() {
-		return root.getAttribute( 'data-theme' ) === 'dark' ? 'dark' : 'light';
-	}
-
-	function syncThemeButtons() {
-		var dark = currentTheme() === 'dark';
-		document.querySelectorAll( '.theme-toggle' ).forEach( function ( btn ) {
-			btn.setAttribute( 'aria-label', btn.getAttribute( dark ? 'data-label-light' : 'data-label-dark' ) );
-		} );
-	}
-
-	document.querySelectorAll( '.theme-toggle' ).forEach( function ( btn ) {
-		btn.addEventListener( 'click', function () {
-			var next = currentTheme() === 'dark' ? 'light' : 'dark';
-			root.setAttribute( 'data-theme', next );
-			try {
-				localStorage.setItem( 'ns-theme', next );
-			} catch ( e ) {}
-			syncThemeButtons();
-		} );
-	} );
-	syncThemeButtons();
 
 	// Mobile menu.
 	var menuToggle = document.querySelector( '.menu-toggle' );
