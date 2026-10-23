@@ -98,29 +98,11 @@ if ( nolasharon_whatsapp_url() || nolasharon_setting( 'nolasharon_phone' ) ) {
 	</div>
 </section>
 
-<?php if ( $nolasharon_categories ) : ?>
-	<section class="section container" aria-labelledby="collections-title">
-		<div class="section__head">
-			<h2 class="section__title" id="collections-title"><?php esc_html_e( 'Shop Our Collection', 'nolasharon' ); ?></h2>
-			<a class="text-link" href="<?php echo esc_url( nolasharon_shop_url() ); ?>"><?php esc_html_e( 'Explore Our Collection', 'nolasharon' ); ?></a>
-		</div>
-		<div class="collection-grid collection-grid--<?php echo esc_attr( count( $nolasharon_categories ) ); ?>">
-			<?php foreach ( $nolasharon_categories as $nolasharon_cat ) : ?>
-				<?php $nolasharon_thumb_id = (int) get_term_meta( $nolasharon_cat->term_id, 'thumbnail_id', true ); ?>
-				<a class="collection-tile" href="<?php echo esc_url( get_term_link( $nolasharon_cat ) ); ?>">
-					<?php
-					if ( $nolasharon_thumb_id ) {
-						echo wp_get_attachment_image( $nolasharon_thumb_id, 'woocommerce_thumbnail', false, array( 'alt' => '' ) );
-					} else {
-						echo '<span class="collection-tile__placeholder" aria-hidden="true"></span>';
-					}
-					?>
-					<span class="collection-tile__name"><?php echo esc_html( $nolasharon_cat->name ); ?><?php echo nolasharon_icon( 'arrow', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
-				</a>
-			<?php endforeach; ?>
-		</div>
-	</section>
-<?php endif; ?>
+<?php
+if ( $nolasharon_categories ) {
+	get_template_part( 'template-parts/category-cards', null, array( 'categories' => $nolasharon_categories ) );
+}
+?>
 
 <?php if ( $nolasharon_new ) : ?>
 	<section class="section section--tint" aria-labelledby="new-in-title">

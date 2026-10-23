@@ -113,7 +113,22 @@ function nolasharon_nav_categories() {
 }
 
 /**
- * Categories for the homepage cards: those ticked "Show on homepage", else the top-level ones.
+ * Tile colours for the homepage collection section (STORE-PAGES.md §1).
+ *
+ * @return array tone => label
+ */
+function nolasharon_tile_tones() {
+	return array(
+		'brand' => __( 'Brown (white text)', 'nolasharon' ),
+		'dark'  => __( 'Dark brown (white text)', 'nolasharon' ),
+		'sand'  => __( 'Sand (dark text)', 'nolasharon' ),
+		'cream' => __( 'Cream (dark text)', 'nolasharon' ),
+	);
+}
+
+/**
+ * Categories for the homepage collection section: those ticked "Show on the homepage",
+ * else the top-level ones, ordered by "Homepage order" then name. Up to four.
  *
  * @return WP_Term[]
  */
@@ -122,33 +137,114 @@ function nolasharon_home_categories() {
 	$flagged = array_filter(
 		$all,
 		function ( $term ) {
-			return '1' === get_term_meta( $term->term_id, 'nolasharon_home', true );
+			return '1' === get_term_meta( $term->term_id, 'ns_home_featured', true );
 		}
 	);
-	return array_slice( $flagged ? array_values( $flagged ) : $all, 0, 4 );
+	$terms   = $flagged ? array_values( $flagged ) : $all;
+	usort(
+		$terms,
+		function ( $a, $b ) {
+			$oa = (int) get_term_meta( $a->term_id, 'ns_home_order', true );
+			$ob = (int) get_term_meta( $b->term_id, 'ns_home_order', true );
+			// Unnumbered categories go after numbered ones.
+			$oa = $oa > 0 ? $oa : PHP_INT_MAX;
+			$ob = $ob > 0 ? $ob : PHP_INT_MAX;
+			return $oa === $ob ? strcasecmp( $a->name, $b->name ) : $oa <=> $ob;
+		}
+	);
+	return array_slice( $terms, 0, 4 );
 }
 
 /**
- * "Show on homepage" checkbox on the product category screens.
+ * Move the old "Show on homepage" flag to ns_home_featured (runs once).
+ */
+function nolasharon_migrate_category_meta() {
+	if ( get_option( 'nolasharon_cat_meta_v2' ) ) {
+		return;
+	}
+	$terms = get_terms(
+		array(
+			'taxonomy'   => 'product_cat',
+			'hide_empty' => false,
+			'meta_key'   => 'nolasharon_home', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- one-off migration.
+		)
+	);
+	if ( ! is_wp_error( $terms ) ) {
+		foreach ( $terms as $term ) {
+			if ( '1' === get_term_meta( $term->term_id, 'nolasharon_home', true ) ) {
+				update_term_meta( $term->term_id, 'ns_home_featured', '1' );
+			}
+			delete_term_meta( $term->term_id, 'nolasharon_home' );
+		}
+	}
+	update_option( 'nolasharon_cat_meta_v2', 1 );
+}
+add_action( 'init', 'nolasharon_migrate_category_meta', 20 );
+
+/**
+ * Homepage fields on the product category screens: show, order, tile colour, subtitle.
  *
  * @param WP_Term|string $term Term being edited, or the taxonomy slug on the add screen.
  */
 function nolasharon_category_home_field( $term ) {
-	$checked = $term instanceof WP_Term && '1' === get_term_meta( $term->term_id, 'nolasharon_home', true );
-	wp_nonce_field( 'nolasharon_cat_home', 'nolasharon_cat_home_nonce' );
-	if ( $term instanceof WP_Term ) {
-		echo '<tr class="form-field"><th scope="row">' . esc_html__( 'Homepage', 'nolasharon' ) . '</th><td>';
-	} else {
-		echo '<div class="form-field">';
+	$edit     = $term instanceof WP_Term;
+	$featured = $edit && '1' === get_term_meta( $term->term_id, 'ns_home_featured', true );
+	$order    = $edit ? (int) get_term_meta( $term->term_id, 'ns_home_order', true ) : 0;
+	$tone     = $edit ? get_term_meta( $term->term_id, 'ns_tile_tone', true ) : '';
+	$subtitle = $edit ? get_term_meta( $term->term_id, 'ns_tile_subtitle', true ) : '';
+
+	$fields = array(
+		'ns_home_featured' => array(
+			__( 'Homepage', 'nolasharon' ),
+			sprintf( '<label><input type="checkbox" name="ns_home_featured" id="ns_home_featured" value="1" %1$s> %2$s</label>', checked( $featured, true, false ), esc_html__( 'Show in "Shop Our Collection" on the homepage', 'nolasharon' ) ),
+			__( 'Up to four categories show. If none are ticked, the top-level categories show.', 'nolasharon' ),
+		),
+		'ns_home_order'    => array(
+			__( 'Homepage order', 'nolasharon' ),
+			sprintf( '<input type="number" name="ns_home_order" id="ns_home_order" min="0" step="1" value="%s" style="width:6em">', $order ? esc_attr( $order ) : '' ),
+			__( '1 is the big tile, then 2, 3 and 4.', 'nolasharon' ),
+		),
+		'ns_tile_tone'     => array(
+			__( 'Tile colour', 'nolasharon' ),
+			'<select name="ns_tile_tone" id="ns_tile_tone"><option value="">' . esc_html__( 'Automatic', 'nolasharon' ) . '</option>' . implode(
+				'',
+				array_map(
+					function ( $key, $label ) use ( $tone ) {
+						return sprintf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $key ), selected( $tone, $key, false ), esc_html( $label ) );
+					},
+					array_keys( nolasharon_tile_tones() ),
+					nolasharon_tile_tones()
+				)
+			) . '</select>',
+			'',
+		),
+		'ns_tile_subtitle' => array(
+			__( 'Tile subtitle', 'nolasharon' ),
+			sprintf( '<input type="text" name="ns_tile_subtitle" id="ns_tile_subtitle" value="%s" maxlength="80">', esc_attr( $subtitle ) ),
+			__( 'Optional short line under the name on the large tiles, e.g. "Dresses, sets and everyday pieces." Hidden when empty.', 'nolasharon' ),
+		),
+	);
+
+	if ( ! $edit ) {
+		wp_nonce_field( 'nolasharon_cat_home', 'nolasharon_cat_home_nonce' );
 	}
-	printf( '<label><input type="checkbox" name="nolasharon_home" value="1" %1$s> %2$s</label>', checked( $checked, true, false ), esc_html__( 'Show on homepage', 'nolasharon' ) );
-	echo $term instanceof WP_Term ? '</td></tr>' : '</div>';
+	foreach ( $fields as $id => $field ) {
+		$desc = $field[2] ? '<p class="description">' . esc_html( $field[2] ) . '</p>' : '';
+		if ( $edit ) {
+			if ( 'ns_home_featured' === $id ) {
+				wp_nonce_field( 'nolasharon_cat_home', 'nolasharon_cat_home_nonce' );
+			}
+			printf( '<tr class="form-field"><th scope="row"><label for="%1$s">%2$s</label></th><td>%3$s%4$s</td></tr>', esc_attr( $id ), esc_html( $field[0] ), $field[1], $desc ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
+		} else {
+			printf( '<div class="form-field"><label for="%1$s">%2$s</label>%3$s%4$s</div>', esc_attr( $id ), esc_html( $field[0] ), $field[1], $desc ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
+		}
+	}
 }
 add_action( 'product_cat_add_form_fields', 'nolasharon_category_home_field' );
 add_action( 'product_cat_edit_form_fields', 'nolasharon_category_home_field' );
 
 /**
- * Save the "Show on homepage" flag.
+ * Save the homepage fields.
  *
  * @param int $term_id Term ID.
  */
@@ -156,7 +252,11 @@ function nolasharon_category_home_save( $term_id ) {
 	if ( ! isset( $_POST['nolasharon_cat_home_nonce'] ) || ! wp_verify_nonce( sanitize_key( $_POST['nolasharon_cat_home_nonce'] ), 'nolasharon_cat_home' ) || ! current_user_can( 'manage_product_terms' ) ) {
 		return;
 	}
-	update_term_meta( $term_id, 'nolasharon_home', empty( $_POST['nolasharon_home'] ) ? '' : '1' );
+	$tone = isset( $_POST['ns_tile_tone'] ) ? sanitize_key( $_POST['ns_tile_tone'] ) : '';
+	update_term_meta( $term_id, 'ns_home_featured', empty( $_POST['ns_home_featured'] ) ? '' : '1' );
+	update_term_meta( $term_id, 'ns_home_order', isset( $_POST['ns_home_order'] ) ? absint( $_POST['ns_home_order'] ) : 0 );
+	update_term_meta( $term_id, 'ns_tile_tone', isset( nolasharon_tile_tones()[ $tone ] ) ? $tone : '' );
+	update_term_meta( $term_id, 'ns_tile_subtitle', isset( $_POST['ns_tile_subtitle'] ) ? sanitize_text_field( wp_unslash( $_POST['ns_tile_subtitle'] ) ) : '' );
 }
 add_action( 'created_product_cat', 'nolasharon_category_home_save' );
 add_action( 'edited_product_cat', 'nolasharon_category_home_save' );
