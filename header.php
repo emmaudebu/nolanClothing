@@ -17,6 +17,10 @@ defined( 'ABSPATH' ) || exit;
 <?php wp_body_open(); ?>
 <a class="skip-link screen-reader-text" href="#main"><?php esc_html_e( 'Skip to content', 'nolasharon' ); ?></a>
 
+<?php if ( function_exists( 'nolasharon_is_checkout_form' ) && nolasharon_is_checkout_form() ) : ?>
+	<?php get_template_part( 'template-parts/checkout-header' ); ?>
+<?php else : ?>
+
 <?php
 $nolasharon_announce = nolasharon_setting( 'nolasharon_announce_text' );
 if ( ! nolasharon_unconfirmed( $nolasharon_announce ) ) :
@@ -80,5 +84,7 @@ if ( ! nolasharon_unconfirmed( $nolasharon_announce ) ) :
 		</div>
 	</div>
 </header>
+
+<?php endif; ?>
 
 <main id="main" class="site-main">
