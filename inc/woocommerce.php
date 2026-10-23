@@ -262,7 +262,8 @@ add_action( 'created_product_cat', 'nolasharon_category_home_save' );
 add_action( 'edited_product_cat', 'nolasharon_category_home_save' );
 
 /**
- * Card badges (brief §6): "Sold out", "Sale" and "New" (younger than the configured days). Never "Bestseller".
+ * Card and gallery badges (SHOP-PRODUCT.md §2.4): "New" (younger than the configured days),
+ * "Sale −{x}%" and "Sold out". Never "Bestseller".
  *
  * @param WC_Product $product Product.
  * @return array class => label
@@ -271,16 +272,62 @@ function nolasharon_product_badges( $product ) {
 	if ( ! $product->is_in_stock() ) {
 		return array( 'soldout' => __( 'Sold out', 'nolasharon' ) );
 	}
-	$badges = array();
-	if ( $product->is_on_sale() ) {
-		$badges['sale'] = __( 'Sale', 'nolasharon' );
-	}
+	$badges  = array();
 	$days    = (int) nolasharon_setting( 'nolasharon_new_days' );
 	$created = $product->get_date_created();
 	if ( $days > 0 && $created && $created->getTimestamp() > time() - $days * DAY_IN_SECONDS ) {
 		$badges['new'] = __( 'New', 'nolasharon' );
 	}
+	if ( $product->is_on_sale() ) {
+		$pct           = nolasharon_sale_percent( $product );
+		/* translators: %d: discount percentage. */
+		$badges['sale'] = $pct ? sprintf( __( 'Sale −%d%%', 'nolasharon' ), $pct ) : __( 'Sale', 'nolasharon' );
+	}
 	return $badges;
+}
+
+/**
+ * The biggest discount on a product, in whole percent (variable products: across variations).
+ *
+ * @param WC_Product $product Product or variation.
+ * @return int
+ */
+function nolasharon_sale_percent( $product ) {
+	if ( ! $product->is_on_sale() ) {
+		return 0;
+	}
+	$pairs = array();
+	if ( $product->is_type( 'variable' ) ) {
+		$prices = $product->get_variation_prices( true );
+		foreach ( $prices['price'] as $id => $price ) {
+			$pairs[] = array( (float) $prices['regular_price'][ $id ], (float) $price );
+		}
+	} else {
+		$pairs[] = array( (float) $product->get_regular_price(), (float) $product->get_price() );
+	}
+	$best = 0;
+	foreach ( $pairs as $pair ) {
+		if ( $pair[0] > 0 && $pair[1] < $pair[0] ) {
+			$best = max( $best, (int) round( ( $pair[0] - $pair[1] ) / $pair[0] * 100 ) );
+		}
+	}
+	return $best;
+}
+
+/**
+ * The product's main category, skipping the "Sample" demo bucket.
+ *
+ * @param WC_Product $product Product.
+ * @return WP_Term|null
+ */
+function nolasharon_primary_category( $product ) {
+	$id = $product->get_parent_id() ? $product->get_parent_id() : $product->get_id();
+	foreach ( (array) get_the_terms( $id, 'product_cat' ) as $term ) {
+		if ( $term instanceof WP_Term && 'sample' !== $term->slug && 'uncategorized' !== $term->slug ) {
+			return $term;
+		}
+	}
+	return null;
 }
 
 /**
@@ -322,7 +369,8 @@ function nolasharon_product_image( $product ) {
 }
 
 /**
- * Price block: struck regular price, red sale price and "% off" when on sale.
+ * Price block: struck regular price, red sale price and "% off" when on sale. Used on the
+ * product page, in the quick view and for variation prices.
  *
  * @param WC_Product $product Product.
  */
@@ -343,13 +391,13 @@ function nolasharon_product_price( $product ) {
 	if ( $product->is_on_sale() && $regular > $current && $regular > 0 ) {
 		$pct = (int) round( ( $regular - $current ) / $regular * 100 );
 		printf(
-			'<s class="price-row__regular"><span class="screen-reader-text">%1$s</span>%2$s</s> <span class="price-row__sale"><span class="screen-reader-text">%3$s</span>%4$s</span> <span class="price-row__off">%5$s</span>',
-			esc_html__( 'Was', 'nolasharon' ),
-			wp_kses_post( wc_price( $regular ) ),
+			'<span class="price-row__sale"><span class="screen-reader-text">%1$s</span>%2$s</span> <s class="price-row__regular"><span class="screen-reader-text">%3$s</span>%4$s</s> <span class="price-row__off">%5$s</span>',
 			esc_html__( 'Now', 'nolasharon' ),
 			wp_kses_post( wc_price( $current ) ),
+			esc_html__( 'Was', 'nolasharon' ),
+			wp_kses_post( wc_price( $regular ) ),
 			/* translators: %d: discount percentage. */
-			esc_html( sprintf( __( '%d%% off', 'nolasharon' ), $pct ) )
+			esc_html( sprintf( __( 'Save %d%%', 'nolasharon' ), $pct ) )
 		);
 	} else {
 		echo '<span class="price-row__current">' . wp_kses_post( wc_price( $current ) ) . '</span>';
@@ -358,43 +406,99 @@ function nolasharon_product_price( $product ) {
 }
 
 /**
- * Product card used on the homepage, listings, related products and the wishlist.
- *
- * The product name link stretches over the whole card (see .product-card__name::after),
- * so the quick view and wishlist buttons can sit on top without nesting inside a link.
+ * Product card (SHOP-PRODUCT.md §2.4) for listings, the homepage, related products and the
+ * wishlist: 4:5 image that cross-fades to the first gallery image on hover, badges, a
+ * Quick view pill (or "View details" when sold out), category, name, price and colour dots.
+ * The image and name link to the product; the image link is out of the tab order.
  *
  * @param WC_Product $product Product.
+ * @param string     $class   Extra class, e.g. "pcard--compact".
  */
-function nolasharon_product_card( $product ) {
+function nolasharon_product_card( $product, $class = '' ) {
+	$url      = $product->get_permalink();
+	$name     = $product->get_name();
+	$soldout  = ! $product->is_in_stock();
+	$category = nolasharon_primary_category( $product );
+	$second   = array_slice( $product->get_gallery_image_ids(), 0, 1 );
+	$colours  = nolasharon_product_colours( $product );
+	$badges   = nolasharon_product_badges( $product );
 	?>
-	<div class="product-card">
-		<span class="product-card__media">
-			<?php /* The image links too; hidden from tab order and screen readers since the name link already covers it. */ ?>
-			<a class="product-card__img-link" href="<?php echo esc_url( $product->get_permalink() ); ?>" tabindex="-1" aria-hidden="true">
+	<article class="pcard<?php echo $soldout ? ' is-soldout' : ''; ?><?php echo $class ? ' ' . esc_attr( $class ) : ''; ?>">
+		<div class="pcard__media">
+			<a class="pcard__img" href="<?php echo esc_url( $url ); ?>" tabindex="-1" aria-hidden="true">
 				<?php nolasharon_product_image( $product ); ?>
+				<?php if ( $second && $product->get_image_id() ) : ?>
+					<?php echo wp_get_attachment_image( $second[0], 'woocommerce_thumbnail', false, array( 'alt' => '', 'class' => 'pcard__alt', 'loading' => 'lazy' ) ); ?>
+				<?php endif; ?>
 			</a>
-			<?php $badges = nolasharon_product_badges( $product ); ?>
 			<?php if ( $badges ) : ?>
-				<span class="badges">
-					<?php foreach ( $badges as $class => $label ) : ?>
-						<span class="badge badge--<?php echo esc_attr( $class ); ?>"><?php echo esc_html( $label ); ?></span>
+				<span class="pcard__badges">
+					<?php foreach ( $badges as $type => $label ) : ?>
+						<span class="pbadge pbadge--<?php echo esc_attr( $type ); ?>"><?php echo esc_html( $label ); ?></span>
 					<?php endforeach; ?>
 				</span>
 			<?php endif; ?>
-			<button class="quick-view-btn" type="button" data-quick-view="<?php echo esc_attr( $product->get_id() ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: product name. */ __( 'Quick view: %s', 'nolasharon' ), $product->get_name() ) ); ?>"><?php esc_html_e( 'Quick View', 'nolasharon' ); ?></button>
-		</span>
-		<a class="product-card__name" href="<?php echo esc_url( $product->get_permalink() ); ?>"><?php echo esc_html( $product->get_name() ); ?></a>
-		<?php nolasharon_product_price( $product ); ?>
-		<?php $colours = array_slice( nolasharon_product_colours( $product ), 0, 6 ); ?>
-		<?php if ( $colours ) : ?>
-			<span class="card-swatches">
-				<span class="screen-reader-text"><?php esc_html_e( 'Colours:', 'nolasharon' ); ?></span>
-				<?php foreach ( $colours as $colour ) : ?>
-					<span class="card-swatch" title="<?php echo esc_attr( $colour['name'] ); ?>" style="--swatch: <?php echo esc_attr( $colour['hex'] ? $colour['hex'] : '#cccccc' ); ?>"><span class="screen-reader-text"><?php echo esc_html( $colour['name'] ); ?></span></span>
-				<?php endforeach; ?>
-			</span>
-		<?php endif; ?>
-		<?php nolasharon_wishlist_button( $product, 'card' ); ?>
-	</div>
+			<?php if ( $soldout ) : ?>
+				<a class="pcard__cta" href="<?php echo esc_url( $url ); ?>" tabindex="-1" aria-hidden="true"><?php esc_html_e( 'View details', 'nolasharon' ); ?></a>
+			<?php else : ?>
+				<button class="pcard__cta quick-view-btn" type="button" data-quick-view="<?php echo esc_attr( $product->get_id() ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: product name. */ __( 'Quick view: %s', 'nolasharon' ), $name ) ); ?>"><?php esc_html_e( 'Quick view', 'nolasharon' ); ?></button>
+			<?php endif; ?>
+			<?php
+			if ( function_exists( 'nolasharon_wishlist_button' ) ) {
+				nolasharon_wishlist_button( $product, 'card' );
+			}
+			?>
+		</div>
+		<div class="pcard__body">
+			<?php if ( $category ) : ?>
+				<span class="pcard__cat"><?php echo esc_html( $category->name ); ?></span>
+			<?php endif; ?>
+			<a class="pcard__name" href="<?php echo esc_url( $url ); ?>"><?php echo esc_html( $name ); ?></a>
+			<?php nolasharon_card_price( $product ); ?>
+			<?php if ( $colours ) : ?>
+				<span class="pcard__dots">
+					<span class="screen-reader-text"><?php echo esc_html( sprintf( /* translators: %s: colour names. */ __( 'Colours: %s', 'nolasharon' ), implode( ', ', wp_list_pluck( $colours, 'name' ) ) ) ); ?></span>
+					<?php foreach ( array_slice( $colours, 0, 5 ) as $colour ) : ?>
+						<span class="pcard__dot" title="<?php echo esc_attr( $colour['name'] ); ?>" style="--swatch: <?php echo esc_attr( $colour['hex'] ? $colour['hex'] : '#cccccc' ); ?>" aria-hidden="true"></span>
+					<?php endforeach; ?>
+					<?php if ( count( $colours ) > 5 ) : ?>
+						<span class="pcard__more" aria-hidden="true">+<?php echo esc_html( count( $colours ) - 5 ); ?></span>
+					<?php endif; ?>
+				</span>
+			<?php endif; ?>
+		</div>
+	</article>
 	<?php
+}
+
+/**
+ * Card price: the sale price in red with the regular price struck through after it.
+ * Variable products show their lowest price.
+ *
+ * @param WC_Product $product Product.
+ */
+function nolasharon_card_price( $product ) {
+	if ( '' === $product->get_price() ) {
+		return;
+	}
+	if ( $product->is_type( 'variable' ) ) {
+		$regular = (float) $product->get_variation_regular_price( 'min' );
+		$current = (float) $product->get_variation_price( 'min' );
+	} else {
+		$regular = (float) $product->get_regular_price();
+		$current = (float) $product->get_price();
+	}
+	echo '<span class="pcard__price">';
+	if ( $product->is_on_sale() && $regular > $current ) {
+		printf(
+			'<span class="pcard__now"><span class="screen-reader-text">%1$s</span>%2$s</span> <s class="pcard__was"><span class="screen-reader-text">%3$s</span>%4$s</s>',
+			esc_html__( 'Now', 'nolasharon' ),
+			wp_kses_post( wc_price( $current ) ),
+			esc_html__( 'Was', 'nolasharon' ),
+			wp_kses_post( wc_price( $regular ) )
+		);
+	} else {
+		echo wp_kses_post( wc_price( $current ) );
+	}
+	echo '</span>';
 }

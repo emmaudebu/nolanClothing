@@ -1,5 +1,5 @@
 /**
- * NolaSharon theme interactions: menu, search, wishlist, Load More,
+ * NolaSharon theme interactions: menu, search, wishlist,
  * dialogs, gallery, buy form, cart panel, quick view, filters and the click-to-load video.
  */
 ( function () {
@@ -127,8 +127,8 @@
 					// On the wishlist page, drop the card that was removed.
 					var page = btn.closest( '[data-wishlist-page]' );
 					if ( page && ! json.data.added ) {
-						btn.closest( '.product-card' ).remove();
-						if ( ! page.querySelector( '.product-card' ) ) {
+						btn.closest( '.pcard' ).remove();
+						if ( ! page.querySelector( '.pcard' ) ) {
 							page.querySelector( '.wishlist__empty' ).hidden = false;
 						}
 					}
@@ -142,61 +142,6 @@
 				} );
 		} );
 	}
-
-	// "Load More" on product listings: fetch the next page and append its cards.
-	document.querySelectorAll( '.load-more' ).forEach( function ( link ) {
-		var grid = document.getElementById( link.getAttribute( 'data-grid' ) );
-		if ( ! grid || ! window.fetch || ! window.DOMParser ) {
-			return;
-		}
-		link.addEventListener( 'click', function ( e ) {
-			e.preventDefault();
-			if ( link.classList.contains( 'is-loading' ) ) {
-				return;
-			}
-			link.classList.add( 'is-loading' );
-			link.setAttribute( 'aria-busy', 'true' );
-
-			fetch( link.href, { credentials: 'same-origin' } )
-				.then( function ( response ) {
-					if ( ! response.ok ) {
-						throw new Error( response.status );
-					}
-					return response.text();
-				} )
-				.then( function ( html ) {
-					var doc = new DOMParser().parseFromString( html, 'text/html' );
-					var cards = doc.querySelectorAll( '#' + grid.id + ' > .product-card' );
-					var next = doc.querySelector( '.load-more' );
-					var first = null;
-
-					cards.forEach( function ( card, i ) {
-						var node = document.importNode( card, true );
-						node.classList.add( 'is-entering' );
-						node.style.animationDelay = ( i % 4 ) * 0.06 + 's'; // Stagger each row.
-						grid.appendChild( node );
-						first = first || node;
-					} );
-					if ( first ) {
-						first.querySelector( 'a' ).focus( { preventScroll: true } );
-					}
-					if ( wishCfg ) {
-						syncWishlist();
-					}
-
-					if ( next ) {
-						link.href = next.getAttribute( 'href' );
-						link.classList.remove( 'is-loading' );
-						link.removeAttribute( 'aria-busy' );
-					} else {
-						link.parentElement.remove();
-					}
-				} )
-				.catch( function () {
-					window.location.href = link.href;
-				} );
-		} );
-	} );
 
 	// Dialogs (size guide, lightbox, quick view, drawer): delegated so content loaded later works too.
 	document.addEventListener( 'click', function ( e ) {
@@ -574,38 +519,6 @@
 			} catch ( e ) {}
 		} );
 	}
-
-	// Shop filters: a slide-in panel on small screens; the sort menu applies straight away.
-	var filters = document.getElementById( 'shop-filters' );
-	if ( filters ) {
-		var setFilters = function ( open ) {
-			filters.classList.toggle( 'is-open', open );
-			document.body.classList.toggle( 'filters-open', open );
-			document.querySelectorAll( '[data-filters-open]' ).forEach( function ( btn ) {
-				btn.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
-			} );
-			if ( open ) {
-				filters.querySelector( '[data-filters-close]' ).focus();
-			}
-		};
-		document.addEventListener( 'click', function ( e ) {
-			if ( e.target.closest( '[data-filters-open]' ) ) {
-				setFilters( true );
-			} else if ( e.target.closest( '[data-filters-close]' ) || e.target.matches( '.filters-backdrop' ) ) {
-				setFilters( false );
-			}
-		} );
-		document.addEventListener( 'keydown', function ( e ) {
-			if ( e.key === 'Escape' && filters.classList.contains( 'is-open' ) ) {
-				setFilters( false );
-			}
-		} );
-	}
-	document.querySelectorAll( '[data-autosubmit]' ).forEach( function ( select ) {
-		select.addEventListener( 'change', function () {
-			select.form.submit();
-		} );
-	} );
 
 	// Quick view: opened from the product cards, filled on demand.
 	var quickView = document.getElementById( 'quick-view' );
