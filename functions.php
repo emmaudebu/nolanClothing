@@ -20,6 +20,7 @@ require get_template_directory() . '/inc/shop-filters.php';
 require get_template_directory() . '/inc/branches.php';
 require get_template_directory() . '/inc/checkout.php';
 require get_template_directory() . '/inc/account.php';
+require get_template_directory() . '/inc/cart.php';
 require get_template_directory() . '/inc/content.php';
 
 /**
