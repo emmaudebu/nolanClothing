@@ -50,6 +50,14 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 - **Payment status:** *Processing* means paid and ready to prepare. *Pending payment* means the customer didn't finish paying. *On hold* means waiting for a manual check (e.g. bank transfer).
 - **Update fulfilment:** change the status to **Completed** once delivered or collected, then click **Update**. The customer is emailed automatically.
 - **Refunds:** open the order → **Refund** → enter the amount → refund via the payment gateway (Paystack) or manually.
+- **"Dispatched" and "Ready for pickup" (optional):** once you've agreed how orders are fulfilled, tick **Use "Dispatched" and "Ready for pickup" order statuses** in **Appearance → Customize → NolaSharon Settings → Shop, delivery & pickup**. Staff can then set those statuses on an order, and the customer's order tracker in My Account shows the extra step. Leave it off until the process is confirmed.
+
+### Customer accounts
+
+- Customers can check out as guests or create an account from **My Account** (name, email, optional phone, password). In their account they see their orders with a progress tracker, can pay for unpaid orders, re-order completed ones, and edit their delivery address and details.
+- Settings live in **WooCommerce → Settings → Accounts & Privacy**. Keep "Allow customers to create an account on the My account page" and guest checkout on.
+- **Password reset and welcome emails** need working email: set up **WP Mail SMTP** with your email provider before launch, then send a test.
+- **Security:** install a login-protection plugin (**Wordfence** or **Limit Login Attempts Reloaded**) so repeated wrong passwords are blocked.
 
 ## 4. Branches and store locations
 
@@ -73,7 +81,10 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 - **Brand introduction:** your short "about us" paragraph and photo.
 - **Customer trust strip:** a line each for payment and delivery, once confirmed.
 - **Contact & social:** phone, **WhatsApp number** (the WhatsApp buttons only appear once this is filled in), email, customer service hours, Instagram, Facebook and TikTok.
-- **Shop, delivery & pickup:** the delivery and returns notes shown on product pages, **Enable store pickup**, and how many days a product counts as "New".
+- **Shop, delivery & pickup:** the delivery and returns notes shown on product pages, **Enable store pickup**, the optional order statuses (see Orders), and how many days a product counts as "New".
+- **Sign-in page:** the campaign photo beside the sign-in form.
+
+**"Shop Our Collection" on the homepage** shows up to four product categories. Go to **Products → Categories → Edit** on a category: tick **Show in "Shop Our Collection"**, set **Homepage order** (1 is the big tile), pick a **Tile colour**, add an optional short **Tile subtitle**, and set the category **Thumbnail** (the tilted photo). If no category is ticked, the main categories show.
 
 To upload your logo, go to **Appearance → Customize → Site Identity → Logo**.
 
@@ -98,7 +109,7 @@ To upload your logo, go to **Appearance → Customize → Site Identity → Logo
 
 ## 8. Discount codes (if you use them)
 
-**Marketing → Coupons → Add coupon**: set the code, discount and expiry. Only publish offers that are approved.
+**Marketing → Coupons → Add coupon**: set the code, discount and expiry. Only publish offers that are approved. The coupon box on the cart and checkout is hidden for now; tell us when you want discount codes and we'll switch it on.
 
 ## 9. Reviews
 

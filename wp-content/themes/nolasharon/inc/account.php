@@ -471,7 +471,7 @@ function nolasharon_account_icon( $endpoint, $size = 19 ) {
 
 /**
  * Whether the "Dispatched" and "Ready for pickup" statuses are switched on. They stay off
- * until the client confirms the fulfilment process ([[CONFIRM: fulfilment process]]).
+ * until the client confirms the fulfilment process.
  *
  * @return bool
  */
