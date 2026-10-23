@@ -195,6 +195,10 @@ $options = array(
 	'woocommerce_registration_generate_password'    => 'no',
 	// Cart page (STORE-PAGES.md §4): delivery is worked out at checkout.
 	'woocommerce_enable_shipping_calc'              => 'no',
+	// Shop filters (SHOP-PRODUCT.md §2.3) use the attribute lookup table; reviews stay off
+	// until the client asks for them.
+	'woocommerce_attribute_lookup_enabled'          => 'yes',
+	'woocommerce_enable_reviews'                    => 'no',
 	'woocommerce_default_catalog_orderby'           => 'date',
 	'woocommerce_manage_stock'                      => 'yes',
 	'woocommerce_hide_out_of_stock_items'           => 'no',

@@ -119,7 +119,7 @@ if ( $nolasharon_categories ) {
 				?>
 			</div>
 			<div class="section__cta">
-				<a class="btn btn--outline" href="<?php echo esc_url( $nolasharon_new_url ); ?>"><?php esc_html_e( 'View New Arrivals', 'nolasharon' ); ?></a>
+				<a class="ns-btn ns-btn--ghost" href="<?php echo esc_url( $nolasharon_new_url ); ?>"><?php esc_html_e( 'View New Arrivals', 'nolasharon' ); ?></a>
 			</div>
 		</div>
 	</section>
