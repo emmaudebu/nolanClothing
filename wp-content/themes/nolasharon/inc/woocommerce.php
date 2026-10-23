@@ -17,6 +17,16 @@ remove_action( 'woocommerce_after_main_content', 'woocommerce_output_content_wra
 remove_action( 'woocommerce_sidebar', 'woocommerce_get_sidebar', 10 );
 
 /**
+ * Five rows of four on product listings.
+ *
+ * @return int
+ */
+function nolasharon_products_per_page() {
+	return 20;
+}
+add_filter( 'loop_shop_per_page', 'nolasharon_products_per_page' );
+
+/**
  * Current cart item count.
  *
  * @return int
