@@ -45,19 +45,41 @@ $nolasharon_btn2_link  = nolasharon_setting( 'nolasharon_hero_btn2_link' ) ? nol
 $nolasharon_brand_text = nolasharon_setting( 'nolasharon_brand_text' );
 $nolasharon_brand_img  = (int) nolasharon_setting( 'nolasharon_brand_image' );
 
-// Trust strip: only items backed by a filled-in setting (brief §4 I).
-$nolasharon_trust = array();
-if ( ! nolasharon_unconfirmed( nolasharon_setting( 'nolasharon_trust_payment' ) ) ) {
-	$nolasharon_trust[] = array( 'card', __( 'Payment', 'nolasharon' ), nolasharon_setting( 'nolasharon_trust_payment' ), '' );
+// Brand introduction photos and the areas badge (published branches).
+$nolasharon_brand_img_2 = (int) nolasharon_setting( 'nolasharon_brand_image_2' );
+$nolasharon_areas       = array_values( array_unique( array_filter( wp_list_pluck( ns_get_branches(), 'area' ) ) ) );
+
+// Trust strip (TRACK-ORDER.md Part B §I, brief §4 I): each item only when what it says is true.
+$nolasharon_trust    = array();
+$nolasharon_gateways = function_exists( 'WC' ) ? array_filter(
+	WC()->payment_gateways()->payment_gateways(),
+	function ( $gateway ) {
+		return 'yes' === $gateway->enabled;
+	}
+) : array();
+if ( $nolasharon_gateways ) {
+	$nolasharon_line    = nolasharon_setting( 'nolasharon_trust_payment' );
+	$nolasharon_trust[] = array( 'card', __( 'Secure payment', 'nolasharon' ), nolasharon_unconfirmed( $nolasharon_line ) ? __( 'Pay safely online at checkout.', 'nolasharon' ) : $nolasharon_line, '' );
 }
-if ( ! nolasharon_unconfirmed( nolasharon_setting( 'nolasharon_trust_delivery' ) ) ) {
-	$nolasharon_trust[] = array( 'truck', __( 'Delivery', 'nolasharon' ), nolasharon_setting( 'nolasharon_trust_delivery' ), nolasharon_page_url( 'delivery-policy' ) );
+if ( class_exists( 'WC_Shipping_Zones' ) && WC_Shipping_Zones::get_zones() ) {
+	$nolasharon_line    = nolasharon_setting( 'nolasharon_trust_delivery' );
+	$nolasharon_trust[] = array( 'truck', __( 'Home delivery', 'nolasharon' ), nolasharon_unconfirmed( $nolasharon_line ) ? __( 'Delivery fee shown at checkout for your area.', 'nolasharon' ) : $nolasharon_line, nolasharon_page_url( 'delivery-policy' ) );
 }
-if ( function_exists( 'nolasharon_pickup_branches' ) && nolasharon_pickup_branches() ) {
-	$nolasharon_trust[] = array( 'store', __( 'Store pickup', 'nolasharon' ), __( 'Collect your order from one of our branches.', 'nolasharon' ), nolasharon_page_url( 'store-locations' ) );
+$nolasharon_published = ns_get_branches();
+if ( $nolasharon_published ) {
+	$nolasharon_old = array_values( array_unique( array_filter( wp_list_pluck( wp_list_filter( $nolasharon_published, array( 'is_new' => false ) ), 'area' ) ) ) );
+	$nolasharon_new_areas = array_values( array_unique( array_filter( wp_list_pluck( wp_list_filter( $nolasharon_published, array( 'is_new' => true ) ), 'area' ) ) ) );
+	if ( $nolasharon_old && $nolasharon_new_areas ) {
+		/* translators: 1: established areas, e.g. "Ikeja", 2: new area, e.g. "Ogudu". */
+		$nolasharon_stores = sprintf( __( '%1$s and our new %2$s branch.', 'nolasharon' ), implode( ', ', $nolasharon_old ), implode( ', ', $nolasharon_new_areas ) );
+	} else {
+		/* translators: %s: areas. */
+		$nolasharon_stores = sprintf( __( 'Find us in %s.', 'nolasharon' ), implode( ', ', array_merge( $nolasharon_old, $nolasharon_new_areas ) ) );
+	}
+	$nolasharon_trust[] = array( 'store', __( 'Visit our stores', 'nolasharon' ), $nolasharon_stores, nolasharon_page_url( 'store-locations' ) );
 }
 if ( nolasharon_whatsapp_url() || nolasharon_setting( 'nolasharon_phone' ) ) {
-	$nolasharon_trust[] = array( 'chat', __( 'Customer support', 'nolasharon' ), nolasharon_whatsapp_url() ? __( 'Questions? Chat with us on WhatsApp.', 'nolasharon' ) : __( 'Questions? Give us a call.', 'nolasharon' ), nolasharon_page_url( 'contact' ) );
+	$nolasharon_trust[] = array( 'chat', __( 'Friendly support', 'nolasharon' ), nolasharon_whatsapp_url() ? __( 'Questions? Chat with us on WhatsApp.', 'nolasharon' ) : __( 'Questions? Give us a call.', 'nolasharon' ), nolasharon_page_url( 'contact' ) );
 }
 ?>
 
@@ -138,31 +160,54 @@ if ( $nolasharon_categories ) {
 	</section>
 <?php endif; ?>
 
-<?php if ( ! nolasharon_unconfirmed( $nolasharon_brand_text ) ) : ?>
-	<section class="section brand-intro" aria-labelledby="brand-title">
-		<div class="container brand-intro__inner">
-			<?php if ( $nolasharon_brand_img ) : ?>
-				<div class="brand-intro__media"><?php echo wp_get_attachment_image( $nolasharon_brand_img, 'large', false, array( 'alt' => '' ) ); ?></div>
-			<?php endif; ?>
-			<div class="brand-intro__copy">
-				<h2 class="section__title" id="brand-title"><?php echo esc_html( nolasharon_setting( 'nolasharon_brand_title' ) ); ?></h2>
-				<?php echo wp_kses_post( wpautop( esc_html( $nolasharon_brand_text ) ) ); ?>
-				<a class="btn btn--outline" href="<?php echo esc_url( nolasharon_page_url( 'about-us' ) ); ?>"><?php esc_html_e( 'About Us', 'nolasharon' ); ?></a>
+<section class="section hbrand" aria-labelledby="brand-title">
+	<div class="container hbrand__inner<?php echo $nolasharon_brand_img ? '' : ' is-text-only'; ?>">
+		<?php if ( $nolasharon_brand_img ) : ?>
+			<div class="hbrand__collage">
+				<span class="hbrand__panel" aria-hidden="true"></span>
+				<span class="hbrand__photo hbrand__photo--1"><?php echo wp_get_attachment_image( $nolasharon_brand_img, 'large', false, array( 'alt' => '' ) ); ?></span>
+				<?php if ( $nolasharon_brand_img_2 ) : ?>
+					<span class="hbrand__photo hbrand__photo--2"><?php echo wp_get_attachment_image( $nolasharon_brand_img_2, 'large', false, array( 'alt' => '' ) ); ?></span>
+				<?php endif; ?>
+				<?php if ( $nolasharon_areas ) : ?>
+					<span class="hbrand__badge"><span class="hbrand__badge-city"><?php esc_html_e( 'Lagos', 'nolasharon' ); ?></span><span><?php echo esc_html( implode( ' · ', $nolasharon_areas ) ); ?></span></span>
+				<?php endif; ?>
 			</div>
+		<?php endif; ?>
+		<div class="hbrand__copy">
+			<span class="hbrand__eyebrow"><?php esc_html_e( 'About NolaSharon', 'nolasharon' ); ?></span>
+			<h2 class="hbrand__title" id="brand-title"><?php echo esc_html( nolasharon_setting( 'nolasharon_brand_title' ) ); ?></h2>
+			<?php if ( ! nolasharon_unconfirmed( $nolasharon_brand_text ) ) : ?>
+				<?php echo wp_kses_post( wpautop( esc_html( $nolasharon_brand_text ) ) ); ?>
+			<?php elseif ( current_user_can( 'edit_theme_options' ) ) : ?>
+				<p class="admin-note"><a href="<?php echo esc_url( admin_url( 'customize.php?autofocus[section]=nolasharon_brand' ) ); ?>"><?php esc_html_e( 'The brand description shows here once the client-approved text is added in Customizer → NolaSharon Settings (only admins see this).', 'nolasharon' ); ?></a></p>
+			<?php endif; ?>
+			<ul class="hbrand__tiles">
+				<li><span class="hbrand__tile-icon" aria-hidden="true"><?php echo nolasharon_icon( 'cart', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span><?php esc_html_e( 'Shop online, any time', 'nolasharon' ); ?></li>
+				<li><span class="hbrand__tile-icon" aria-hidden="true"><?php echo nolasharon_icon( 'store', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span><?php esc_html_e( 'Visit us in store in Lagos', 'nolasharon' ); ?></li>
+			</ul>
+			<a class="ns-cols__link hbrand__link" href="<?php echo esc_url( nolasharon_page_url( 'about-us' ) ); ?>"><?php esc_html_e( 'Read our story', 'nolasharon' ); ?> <span aria-hidden="true">→</span></a>
+			<?php if ( $nolasharon_video_id ) : ?>
+				<?php $nolasharon_video_title = nolasharon_setting( 'nolasharon_video_title' ); ?>
+				<?php /* Lightweight embed: the YouTube iframe only loads after the visitor presses play. */ ?>
+				<div class="video-embed hbrand__video" data-video-id="<?php echo esc_attr( $nolasharon_video_id ); ?>">
+					<img src="<?php echo esc_url( 'https://i.ytimg.com/vi/' . $nolasharon_video_id . '/hqdefault.jpg' ); ?>" alt="" loading="lazy" decoding="async">
+					<button class="video-embed__play" type="button" aria-label="<?php echo esc_attr( $nolasharon_video_title ? sprintf( /* translators: %s: video title. */ __( 'Play video: %s', 'nolasharon' ), $nolasharon_video_title ) : __( 'Play video', 'nolasharon' ) ); ?>">
+						<?php echo nolasharon_icon( 'play', 24 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+					</button>
+				</div>
+			<?php endif; ?>
 		</div>
-	</section>
-<?php elseif ( current_user_can( 'edit_theme_options' ) ) : ?>
-	<p class="container admin-note"><a href="<?php echo esc_url( admin_url( 'customize.php?autofocus[section]=nolasharon_brand' ) ); ?>"><?php esc_html_e( 'Brand introduction is hidden until the client-approved description is added in Customizer → NolaSharon Settings (only admins see this).', 'nolasharon' ); ?></a></p>
-<?php endif; ?>
+	</div>
+</section>
 
 <?php
 if ( $nolasharon_spotlight ) {
 	get_template_part(
-		'template-parts/branch-spotlight',
+		'template-parts/home-spotlight',
 		null,
 		array(
 			'branch'   => $nolasharon_spotlight,
-			'context'  => 'home',
 			'branches' => $nolasharon_branches,
 		)
 	);
@@ -170,39 +215,22 @@ if ( $nolasharon_spotlight ) {
 ?>
 
 <?php if ( $nolasharon_trust ) : ?>
-	<section class="trust" aria-label="<?php esc_attr_e( 'Shopping with us', 'nolasharon' ); ?>">
-		<ul class="container trust__list">
+	<section class="htrust" aria-label="<?php esc_attr_e( 'Shopping with NolaSharon', 'nolasharon' ); ?>">
+		<ul class="container htrust__list">
 			<?php foreach ( $nolasharon_trust as $nolasharon_item ) : ?>
-				<li class="trust__item">
-					<?php echo nolasharon_icon( $nolasharon_item[0], 28 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-					<div>
+				<li class="htrust__item">
+					<span class="htrust__icon" aria-hidden="true"><?php echo nolasharon_icon( $nolasharon_item[0], 24 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+					<span class="htrust__text">
 						<strong><?php echo esc_html( $nolasharon_item[1] ); ?></strong>
 						<?php if ( $nolasharon_item[3] ) : ?>
 							<a href="<?php echo esc_url( $nolasharon_item[3] ); ?>"><?php echo esc_html( $nolasharon_item[2] ); ?></a>
 						<?php else : ?>
 							<span><?php echo esc_html( $nolasharon_item[2] ); ?></span>
 						<?php endif; ?>
-					</div>
+					</span>
 				</li>
 			<?php endforeach; ?>
 		</ul>
-	</section>
-<?php endif; ?>
-
-<?php if ( $nolasharon_video_id ) : ?>
-	<section class="section container studio" aria-labelledby="studio-title">
-		<?php $nolasharon_video_title = nolasharon_setting( 'nolasharon_video_title' ); ?>
-		<?php if ( $nolasharon_video_title ) : ?>
-			<h2 class="section__title studio__title" id="studio-title"><?php echo esc_html( $nolasharon_video_title ); ?></h2>
-		<?php endif; ?>
-		<a class="text-link" href="<?php echo esc_url( nolasharon_page_url( 'about-us' ) ); ?>"><?php esc_html_e( 'Read about us', 'nolasharon' ); ?></a>
-		<?php /* Lightweight embed: the YouTube iframe only loads after the visitor presses play. */ ?>
-		<div class="video-embed" data-video-id="<?php echo esc_attr( $nolasharon_video_id ); ?>">
-			<img src="<?php echo esc_url( 'https://i.ytimg.com/vi/' . $nolasharon_video_id . '/hqdefault.jpg' ); ?>" alt="" loading="lazy" decoding="async">
-			<button class="video-embed__play" type="button" aria-label="<?php echo esc_attr( $nolasharon_video_title ? sprintf( /* translators: %s: video title. */ __( 'Play video: %s', 'nolasharon' ), $nolasharon_video_title ) : __( 'Play video', 'nolasharon' ) ); ?>">
-				<?php echo nolasharon_icon( 'play', 24 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-			</button>
-		</div>
 	</section>
 <?php endif; ?>
 

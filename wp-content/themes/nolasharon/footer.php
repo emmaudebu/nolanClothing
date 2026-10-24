@@ -14,28 +14,31 @@ $nolasharon_whatsapp = nolasharon_whatsapp_url();
 $nolasharon_branches = function_exists( 'ns_get_branches' ) ? ns_get_branches() : array();
 $nolasharon_cats     = function_exists( 'nolasharon_nav_categories' ) ? nolasharon_nav_categories() : array();
 
-$nolasharon_shop_links = array( __( 'Shop all', 'nolasharon' ) => nolasharon_shop_url() );
+$nolasharon_shop_links = array(
+	__( 'All products', 'nolasharon' ) => nolasharon_shop_url(),
+	__( 'New arrivals', 'nolasharon' ) => add_query_arg( 'orderby', 'date', nolasharon_shop_url() ),
+);
 foreach ( $nolasharon_cats as $nolasharon_cat ) {
 	$nolasharon_shop_links[ $nolasharon_cat->name ] = get_term_link( $nolasharon_cat );
 }
 
 $nolasharon_columns = array(
-	__( 'Shop', 'nolasharon' )    => $nolasharon_shop_links,
-	__( 'Help', 'nolasharon' )    => array(
-		__( 'FAQs', 'nolasharon' )                => nolasharon_page_url( 'faqs' ),
-		__( 'Delivery Policy', 'nolasharon' )     => nolasharon_page_url( 'delivery-policy' ),
-		__( 'Returns & Exchange', 'nolasharon' )  => nolasharon_page_url( 'returns-policy' ),
-		__( 'Track your order', 'nolasharon' )    => nolasharon_page_url( 'track-order' ),
-		__( 'Contact Us', 'nolasharon' )          => nolasharon_page_url( 'contact' ),
+	__( 'Shop', 'nolasharon' )     => $nolasharon_shop_links,
+	__( 'Help', 'nolasharon' )     => array(
+		__( 'FAQs', 'nolasharon' )               => nolasharon_page_url( 'faqs' ),
+		__( 'Delivery policy', 'nolasharon' )    => nolasharon_page_url( 'delivery-policy' ),
+		__( 'Returns & exchange', 'nolasharon' ) => nolasharon_page_url( 'returns-policy' ),
+		__( 'Track your order', 'nolasharon' )   => nolasharon_page_url( 'track-order' ),
 	),
-	__( 'Visit Us', 'nolasharon' ) => array(),
+	__( 'Visit us', 'nolasharon' ) => array(),
 	__( 'Contact', 'nolasharon' )  => array(
+		__( 'Contact us', 'nolasharon' ) => nolasharon_page_url( 'contact' ),
+		__( 'WhatsApp', 'nolasharon' )   => $nolasharon_whatsapp,
 		$nolasharon_phone ? $nolasharon_phone : __( 'Call us', 'nolasharon' ) => nolasharon_tel_url( $nolasharon_phone ),
-		__( 'WhatsApp', 'nolasharon' )  => $nolasharon_whatsapp,
 		$nolasharon_email ? $nolasharon_email : __( 'Email', 'nolasharon' ) => $nolasharon_email ? 'mailto:' . $nolasharon_email : '',
-		__( 'Instagram', 'nolasharon' ) => nolasharon_setting( 'nolasharon_instagram' ),
-		__( 'Facebook', 'nolasharon' )  => nolasharon_setting( 'nolasharon_facebook' ),
-		__( 'TikTok', 'nolasharon' )    => nolasharon_setting( 'nolasharon_tiktok' ),
+		__( 'Instagram', 'nolasharon' )  => nolasharon_setting( 'nolasharon_instagram' ),
+		__( 'Facebook', 'nolasharon' )   => nolasharon_setting( 'nolasharon_facebook' ),
+		__( 'TikTok', 'nolasharon' )     => nolasharon_setting( 'nolasharon_tiktok' ),
 	),
 );
 foreach ( $nolasharon_branches as $nolasharon_branch ) {
@@ -44,10 +47,10 @@ foreach ( $nolasharon_branches as $nolasharon_branch ) {
 	if ( $nolasharon_branch['tag'] ) {
 		$nolasharon_label .= ' (' . $nolasharon_branch['tag'] . ')';
 	}
-	$nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ][ $nolasharon_label ] = ns_branch_url( $nolasharon_branch );
+	$nolasharon_columns[ __( 'Visit us', 'nolasharon' ) ][ $nolasharon_label ] = ns_branch_url( $nolasharon_branch );
 }
-if ( ! $nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ] ) {
-	$nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ][ __( 'Store Locations', 'nolasharon' ) ] = nolasharon_page_url( 'store-locations' );
+if ( ! $nolasharon_columns[ __( 'Visit us', 'nolasharon' ) ] ) {
+	$nolasharon_columns[ __( 'Visit us', 'nolasharon' ) ][ __( 'Store Locations', 'nolasharon' ) ] = nolasharon_page_url( 'store-locations' );
 }
 ?>
 </main>
@@ -58,8 +61,9 @@ if ( ! $nolasharon_columns[ __( 'Visit Us', 'nolasharon' ) ] ) {
 		<div class="site-footer__top">
 			<div class="site-footer__brand">
 				<?php nolasharon_logo( 'span' ); ?>
-				<!-- DRAFT: client to approve -->
-				<p class="site-footer__line"><?php esc_html_e( 'Fashion for women and men. Shop online or visit us in Lagos.', 'nolasharon' ); ?></p>
+				<?php if ( nolasharon_setting( 'nolasharon_footer_line' ) ) : ?>
+					<p class="site-footer__line"><?php echo esc_html( nolasharon_setting( 'nolasharon_footer_line' ) ); ?></p>
+				<?php endif; ?>
 			</div>
 			<nav class="site-footer__cols" aria-label="<?php esc_attr_e( 'Footer', 'nolasharon' ); ?>">
 				<?php foreach ( $nolasharon_columns as $nolasharon_heading => $nolasharon_links ) : ?>

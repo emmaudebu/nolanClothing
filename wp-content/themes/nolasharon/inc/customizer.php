@@ -25,7 +25,8 @@ function nolasharon_settings_schema() {
 			'title'  => __( 'Announcement bar', 'nolasharon' ),
 			'fields' => array(
 				'nolasharon_announce_text' => array( __( 'Announcement text', 'nolasharon' ), 'text', $text, '', __( 'Confirmed information only. Leave empty to hide the bar.', 'nolasharon' ) ),
-				'nolasharon_announce_link' => array( __( 'Announcement link (optional)', 'nolasharon' ), 'url', $url, '', '' ),
+				'nolasharon_announce_link'  => array( __( 'Announcement link (optional)', 'nolasharon' ), 'url', $url, '', '' ),
+				'nolasharon_announce_label' => array( __( 'Announcement link text', 'nolasharon' ), 'text', $text, __( 'Find out more', 'nolasharon' ), __( 'e.g. "Find a store". Shown after the text when a link is set.', 'nolasharon' ) ),
 			),
 		),
 		'nolasharon_hero'         => array(
@@ -44,9 +45,10 @@ function nolasharon_settings_schema() {
 		'nolasharon_brand'        => array(
 			'title'  => __( 'Homepage: brand introduction', 'nolasharon' ),
 			'fields' => array(
-				'nolasharon_brand_title' => array( __( 'Heading', 'nolasharon' ), 'text', $text, __( 'About NolaSharon Clothing', 'nolasharon' ), '' ),
+				'nolasharon_brand_title' => array( __( 'Heading', 'nolasharon' ), 'text', $text, __( 'Style and confidence, made easy', 'nolasharon' ), __( 'Draft heading: client to approve.', 'nolasharon' ) ),
 				'nolasharon_brand_text'  => array( __( 'Short brand description', 'nolasharon' ), 'textarea', $textarea, '', __( 'Client-approved copy. Leave empty to hide the section.', 'nolasharon' ) ),
-				'nolasharon_brand_image' => array( __( 'Image', 'nolasharon' ), 'image', 'absint', 0, '' ),
+				'nolasharon_brand_image'   => array( __( 'Photo 1 (large, tilted left)', 'nolasharon' ), 'image', 'absint', 0, '' ),
+				'nolasharon_brand_image_2' => array( __( 'Photo 2 (framed, tilted right)', 'nolasharon' ), 'image', 'absint', 0, '' ),
 			),
 		),
 		'nolasharon_trust'        => array(
@@ -73,6 +75,7 @@ function nolasharon_settings_schema() {
 				'nolasharon_instagram'  => array( __( 'Instagram URL', 'nolasharon' ), 'url', $url, '', '' ),
 				'nolasharon_facebook'   => array( __( 'Facebook URL', 'nolasharon' ), 'url', $url, '', '' ),
 				'nolasharon_tiktok'     => array( __( 'TikTok URL', 'nolasharon' ), 'url', $url, '', '' ),
+				'nolasharon_footer_line' => array( __( 'Footer line under the logo', 'nolasharon' ), 'text', $text, __( 'Fashion for women and men. Shop online or visit us in Lagos.', 'nolasharon' ), __( 'Draft: client to approve. Empty hides it.', 'nolasharon' ) ),
 			),
 		),
 		'nolasharon_store'        => array(
@@ -84,7 +87,7 @@ function nolasharon_settings_schema() {
 				'nolasharon_fulfilment_statuses' => array( __( 'Use "Dispatched" and "Ready for pickup" order statuses', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', false, __( 'Adds two order statuses staff can set, and a matching step on the customer\'s order tracker. Only switch on once the client confirms the fulfilment process.', 'nolasharon' ) ),
 				'nolasharon_price_ranges'   => array( __( 'Shop price filter bands', 'nolasharon' ), 'textarea', $textarea, "0-30000\n30000-50000\n50000-", __( 'One band per line as min-max in naira, e.g. 0-30000, 30000-50000, 50000- (an empty end means no limit). Adjust to suit the real prices.', 'nolasharon' ) ),
 				'nolasharon_new_days'       => array( __( '"New" badge: product age in days', 'nolasharon' ), 'number', 'absint', 30, '' ),
-				'nolasharon_video'          => array( __( 'Homepage video (YouTube URL, optional)', 'nolasharon' ), 'url', $url, '', __( 'Empty hides the video section.', 'nolasharon' ) ),
+				'nolasharon_video'          => array( __( 'Homepage video (YouTube URL, optional)', 'nolasharon' ), 'url', $url, '', __( 'Shown inside the brand introduction when set. Client-supplied videos only.', 'nolasharon' ) ),
 				'nolasharon_video_title'    => array( __( 'Video section heading', 'nolasharon' ), 'text', $text, '', '' ),
 			),
 		),
