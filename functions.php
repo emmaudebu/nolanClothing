@@ -25,6 +25,7 @@ require get_template_directory() . '/inc/order-tracking.php';
 require get_template_directory() . '/inc/content.php';
 require get_template_directory() . '/inc/policies.php';
 require get_template_directory() . '/inc/faq.php';
+require get_template_directory() . '/inc/contact.php';
 
 /**
  * Theme supports and menus.
