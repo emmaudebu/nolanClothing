@@ -56,6 +56,12 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 - **Refunds:** open the order → **Refund** → enter the amount → refund via the payment gateway (Paystack) or manually.
 - **"Dispatched" and "Ready for pickup" (optional):** once you've agreed how orders are fulfilled, tick **Use "Dispatched" and "Ready for pickup" order statuses** in **Appearance → Customize → NolaSharon Settings → Shop, delivery & pickup**. Staff can then set those statuses on an order, and the customer's order tracker in My Account shows the extra step. Leave it off until the process is confirmed.
 
+### Order tracking
+
+- Customers can follow an order on the **Track your order** page (linked in the footer, My Account and order emails) with their order number (e.g. **NS-1042**) and the email used at checkout.
+- **Courier details:** on an order, fill in **Shipment tracking (optional)** under the delivery address (courier name, tracking number, tracking link). They show on the tracking page once filled in.
+- **Notes to the customer:** when you add an order note, choose **Note to customer** to show it in the tracking timeline (the customer is emailed too). **Private notes** are never shown to customers.
+
 ### Customer accounts
 
 - Customers can check out as guests or create an account from **My Account** (name, email, optional phone, password). In their account they see their orders with a progress tracker, can pay for unpaid orders, re-order completed ones, and edit their delivery address and details.
@@ -94,7 +100,13 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 
 To upload your logo, go to **Appearance → Customize → Site Identity → Logo**.
 
-**Pages** (About Us, FAQs, policies): **Pages → All Pages** → click the page → edit → **Update**. Yellow "To confirm" notes are only visible to logged-in staff. Replace them with the real wording; customers never see them.
+**Pages:** **Pages → All Pages** → click the page → edit → **Update**. Yellow "To confirm" notes are only visible to logged-in staff. Replace them with the real wording; customers never see them. Anything still waiting for wording is hidden from customers.
+
+- **About Us** is built from blocks you can edit directly: click any heading, paragraph, button or photo to change it. To add a section back, click **+** → **Patterns** → **NolaSharon** (hero, our story, what we offer, our values, shopping steps, call to action). Replace the placeholder illustrations with your own photos (click the image → **Replace**). The "Come and see us in Lagos" store cards come from **Branches** automatically. A section such as "Our story" stays hidden until its wording is filled in.
+- **FAQs:** **FAQs** in the left menu. The title is the question and the text box is the answer. Pick a **Topic** on the right. **Order** (Page Attributes) sets the display order within its topic. The optional **Link under the answer** box adds a link such as "Track your order →". A question whose answer still contains a "To confirm" note stays hidden from customers. Topics (**FAQs → Topics**) each have an icon and dot colour.
+- **Policies** (Delivery & Shipping, Returns & Exchange, Privacy, Terms): write each section under its heading (Heading 2). The page builds the tabs, numbered "On this page" list and print view by itself. Fill in **Policy: effective date** (right-hand side) to show "Last updated". Which page is which is set in **Customize → NolaSharon Settings → Policy pages**. Please have the wording checked by a professional before launch.
+- **Contact Us:** the contact cards, hours and social links come from **Contact & social** in the Customizer and only show when filled in. The form is **Fluent Forms → Contact**: you can change labels or add fields there. Messages are emailed to the business email from the Customizer (or the site admin email if that's empty) and saved under **Fluent Forms → Entries**. Spam protection: a hidden honeypot field is on. For stronger protection, create free Cloudflare Turnstile keys and add them in Fluent Forms’ **Global Settings** (Turnstile), then add the Turnstile field to the form.
+- **Page not found (404):** the photo inside the "0" is set in **Customize → NolaSharon Settings → Page not found (404)**; otherwise your newest product photo is used.
 
 ## 6. Delivery and store pickup
 
@@ -119,7 +131,7 @@ To upload your logo, go to **Appearance → Customize → Site Identity → Logo
 
 ## 9. Reviews
 
-Customer reviews are held for approval. Go to **Products → Reviews** and approve or trash each one. Never post reviews that customers didn't write.
+Reviews are switched off for now. If you turn them on later, they are held for approval under **Products → Reviews**; approve or trash each one. Never post reviews that customers didn't write.
 
 ## 10. Backups, updates and renewals
 
@@ -131,4 +143,4 @@ Customer reviews are held for approval. Go to **Products → Reviews** and appro
 
 ## Still to send us
 
-Logo · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · delivery areas, fees and timelines · delivery, returns, exchange, refund, privacy and terms wording · any launch offer · domain and hosting choice · whether you want a contact form plugin, newsletter or coupons.
+Logo · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · delivery areas, fees and timelines · delivery, returns, exchange, refund, privacy and terms wording · any launch offer · domain and hosting choice · whether you want a newsletter or coupons · Cloudflare Turnstile keys for the contact form (optional).

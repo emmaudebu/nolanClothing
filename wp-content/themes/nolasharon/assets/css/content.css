@@ -778,8 +778,10 @@
 }
 
 .faq-item__link {
-	display: inline-block;
-	margin: 12px 0 0 44px;
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	margin: 2px 0 0 44px;
 	color: #8c6448;
 	font-weight: 600;
 	text-decoration: none;
@@ -792,7 +794,7 @@
 .faq-item__a > div::after {
 	content: "";
 	display: block;
-	height: 22px;
+	height: 14px;
 }
 
 .faq-hit {
