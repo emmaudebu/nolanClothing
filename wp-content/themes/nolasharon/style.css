@@ -1628,7 +1628,7 @@ html.drawer-open {
 .site-footer__cols {
 	flex: 3 1 560px;
 	display: grid;
-	grid-template-columns: repeat(4, minmax(0, 1fr));
+	grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
 	gap: 20px 32px;
 	font-size: 14px;
 }
@@ -1684,10 +1684,6 @@ html.drawer-open {
 
 	.site-footer__top {
 		gap: 28px;
-	}
-
-	.site-footer .logo__img--crest {
-		height: 104px;
 	}
 
 	.site-footer__cols {
@@ -1807,51 +1803,51 @@ html.drawer-open {
 	max-height: 48px;
 }
 
-/* Bundled logo: the "NS" + wordmark lockup, the wordmark alone on small screens, and the
-   full crest on dark backgrounds. */
-.logo__img--lockup,
-.logo__img--word {
+/* Logo sizes come from Customizer → NolaSharon Settings → Header logo / Footer, as CSS
+   variables (auto = keep the shape). With both set, the logo fits inside the box.
+   Bundled logo: the "NS" + wordmark lockup, the wordmark alone below 1240px, and the full
+   crest in the footer. */
+.logo .logo__img {
+	width: var(--ns-logo-w, auto);
+	height: var(--ns-logo-h, 46px);
 	max-width: none;
+	max-height: none;
+	object-fit: contain;
+	object-position: left center;
 }
 
-.logo__img--lockup {
-	height: 46px;
-}
-
-.logo__img--word {
+.logo .logo__img--word {
 	display: none;
-	height: 40px;
 }
 
 @media (max-width: 1240px) {
-	.logo__img--lockup {
+	.logo .logo__img--lockup {
 		display: none;
 	}
 
-	.logo__img--word {
+	.logo .logo__img--word {
 		display: block;
 	}
-}
 
-@media (max-width: 1080px) {
-	.logo__img--word {
-		height: 34px;
+	.logo .logo__img--word,
+	.logo .logo__img:only-child {
+		width: var(--ns-logo-w-m, auto);
+		height: var(--ns-logo-h-m, 36px);
 	}
 }
 
 @media (max-width: 374px) {
-	.logo__img--word {
-		height: 30px;
+	.logo .logo__img--word,
+	.logo .logo__img:only-child {
+		height: calc(var(--ns-logo-h-m, 36px) * 0.86);
 	}
 }
 
-.site-footer .logo__img {
-	max-height: 64px;
-}
-
-.site-footer .logo__img--crest {
-	height: 124px;
-	max-height: none;
+.site-footer .logo .logo__img {
+	display: block;
+	width: var(--ns-flogo-w, auto);
+	height: var(--ns-flogo-h, 124px);
+	object-position: center;
 }
 
 .btn--sm {
@@ -3553,6 +3549,106 @@ mark.confirm {
 	margin: 0;
 	padding: 0;
 	list-style: none;
+}
+
+/* Footer layout and alignment (Customizer → NolaSharon Settings → Footer). */
+
+.site-footer--side-reverse .site-footer__top {
+	flex-direction: row-reverse;
+}
+
+.site-footer--stacked .site-footer__top {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.site-footer--stacked .site-footer__brand,
+.site-footer--stacked .site-footer__cols {
+	flex: none;
+	width: 100%;
+}
+
+.site-footer--align-center .site-footer__brand,
+.site-footer--align-center .site-footer__cols {
+	text-align: center;
+}
+
+.site-footer--align-right .site-footer__brand,
+.site-footer--align-right .site-footer__cols {
+	text-align: right;
+}
+
+.site-footer--align-center .site-footer__brand .logo,
+.site-footer--align-center .site-footer__cols ul {
+	align-items: center;
+}
+
+.site-footer--align-right .site-footer__brand .logo,
+.site-footer--align-right .site-footer__cols ul {
+	align-items: flex-end;
+}
+
+.site-footer--align-center .site-footer__brand .logo {
+	display: flex;
+}
+
+.site-footer--align-right .site-footer__brand .logo {
+	display: flex;
+}
+
+.site-footer--align-center .site-footer__line {
+	margin-inline: auto;
+}
+
+.site-footer--align-right .site-footer__line {
+	margin-left: auto;
+}
+
+.site-footer--align-center .logo .logo__img {
+	object-position: center;
+}
+
+.site-footer--align-left .logo .logo__img {
+	object-position: left center;
+}
+
+.site-footer--align-right .logo .logo__img {
+	object-position: right center;
+}
+
+.site-footer--stacked .site-footer__line {
+	max-width: 520px;
+}
+
+.site-footer--bottom-left .site-footer__bottom {
+	justify-content: flex-start;
+	gap: 8px 24px;
+}
+
+.site-footer--bottom-center .site-footer__bottom {
+	justify-content: center;
+	gap: 8px 24px;
+	text-align: center;
+}
+
+.site-footer--bottom-right .site-footer__bottom {
+	justify-content: flex-end;
+	gap: 8px 24px;
+	text-align: right;
+}
+
+@media (max-width: 760px) {
+	.site-footer--side-reverse .site-footer__top {
+		flex-direction: column;
+	}
+
+	.site-footer--bottom-center .site-footer__bottom {
+		align-items: center;
+	}
+
+	.site-footer--bottom-right .site-footer__bottom {
+		align-items: flex-end;
+	}
 }
 
 /* ==========================================================================
