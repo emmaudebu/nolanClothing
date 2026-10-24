@@ -53,6 +53,10 @@ function nolasharon_filter_placeholders( $content ) {
 	if ( false === strpos( $content, '[[CONFIRM' ) || is_admin() ) {
 		return $content;
 	}
+	// Pattern pages are filtered block by block instead (inc/patterns.php).
+	if ( ! nolasharon_sees_placeholders() && is_page_template( 'page-templates/about.php' ) ) {
+		return nolasharon_strip_placeholders( $content );
+	}
 	if ( nolasharon_sees_placeholders() ) {
 		return preg_replace_callback(
 			'~\[\[CONFIRM:\s*([^\]]*)\]\]~',

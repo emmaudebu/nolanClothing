@@ -24,31 +24,11 @@ $page = function ( $slug, $title, $content, $old_slug = '' ) {
 $p = function ( $text ) {
 	return "<!-- wp:paragraph -->\n<p>{$text}</p>\n<!-- /wp:paragraph -->\n\n";
 };
-$h = function ( $text ) {
-	return "<!-- wp:heading -->\n<h2 class=\"wp-block-heading\">{$text}</h2>\n<!-- /wp:heading -->\n\n";
-};
-$draft = "<!-- DRAFT: client to approve -->\n";
-$sections = function ( $list ) use ( $h, $p ) {
-	$out = '';
-	foreach ( $list as $heading => $confirm ) {
-		$out .= $h( $heading ) . $p( '[[CONFIRM: ' . $confirm . ']]' );
-	}
-	return $out;
-};
-// About Us (brief §5.6). Only the "Our stores" section is drafted; the rest is client copy.
-$page(
-	'about-us',
-	'About Us',
-	$sections(
-		array(
-			'Our story'                 => 'brand story',
-			'What we offer'             => 'what the business offers (product range)',
-			'Our values'                => 'brand values',
-			'The shopping experience'   => 'what customers can expect when shopping with NolaSharon Clothing',
-		)
-	) . $h( 'Our stores' ) . $draft . $p( 'Shop with us online or visit us in Lagos. Our Ikeja stores remain open, and Ogudu is our newest branch. <a href="/store-locations/">See our store locations</a>.' ),
-	'our-story'
-);
+
+// About Us (brief §5.6, CONTENT-PAGES.md §1): built from the theme's block patterns on the
+// About template (inc/patterns.php).
+$page( 'about-us', 'About Us', '', 'our-story' );
+nolasharon_seed_about_page( true );
 
 $page( 'store-locations', 'Store Locations', '' );
 
