@@ -236,7 +236,7 @@ add_action( 'init', 'nolasharon_page_excerpts' );
  * set, so correcting a typo doesn't change it.
  */
 function nolasharon_policy_meta_box() {
-	add_meta_box( 'ns-policy-date', __( 'Policy: effective date', 'nolasharon' ), 'nolasharon_policy_meta_box_html', 'page', 'side' );
+	add_meta_box( 'ns-policy-date', __( 'Policy', 'nolasharon' ), 'nolasharon_policy_meta_box_html', 'page', 'side' );
 }
 add_action( 'add_meta_boxes_page', 'nolasharon_policy_meta_box' );
 
@@ -253,6 +253,22 @@ function nolasharon_policy_meta_box_html( $post ) {
 		esc_attr( get_post_meta( $post->ID, 'ns_effective_date', true ) ),
 		esc_html__( 'Only for pages on the Policy template. Hidden until set. Change it only when the policy itself changes.', 'nolasharon' )
 	);
+	printf(
+		'<p><label><input type="checkbox" name="ns_policy_approved" value="1" %1$s> %2$s</label></p><p class="description">%3$s</p>',
+		checked( nolasharon_policy_is_approved( $post->ID ), true, false ),
+		esc_html__( 'Wording approved by NolaSharon Clothing', 'nolasharon' ),
+		esc_html__( 'Until this is ticked, customers see a short "being updated" note instead of the policy. Logged-in staff always see the full draft.', 'nolasharon' )
+	);
+}
+
+/**
+ * Whether the client has approved a policy page's wording for customers.
+ *
+ * @param int $post_id Page ID.
+ * @return bool
+ */
+function nolasharon_policy_is_approved( $post_id ) {
+	return '1' === get_post_meta( $post_id, 'ns_policy_approved', true );
 }
 
 /**
@@ -266,6 +282,7 @@ function nolasharon_policy_date_save( $post_id ) {
 	}
 	$date = isset( $_POST['ns_effective_date'] ) ? sanitize_text_field( wp_unslash( $_POST['ns_effective_date'] ) ) : '';
 	update_post_meta( $post_id, 'ns_effective_date', preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ? $date : '' );
+	update_post_meta( $post_id, 'ns_policy_approved', empty( $_POST['ns_policy_approved'] ) ? '' : '1' );
 }
 add_action( 'save_post_page', 'nolasharon_policy_date_save' );
 
