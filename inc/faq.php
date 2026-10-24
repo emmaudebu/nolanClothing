@@ -3,7 +3,7 @@
  * FAQs (CONTENT-PAGES.md §3): the ns_faq post type (question = title, answer = content,
  * menu order = display order), ns_faq_topic topics with an icon and colour dot, an optional
  * link per question, the seed, and FAQPage schema. A question stays hidden from visitors
- * until its answer no longer contains [[CONFIRM.
+ * until its answer no longer contains a client placeholder.
  *
  * @package NolaSharon
  */
@@ -152,7 +152,7 @@ add_action( 'save_post_ns_faq', 'nolasharon_faq_link_save' );
 /**
  * Seed topics and questions once (CLAUDE.md §5.9 plus account, tracking and returns
  * questions). Only procedural answers are drafted; everything that depends on policy is a
- * [[CONFIRM: …]] line, so those questions stay hidden until the client answers them. Also
+ * client placeholder, so those questions stay hidden until the client answers them. Also
  * puts the FAQs page on the FAQ template.
  */
 function nolasharon_seed_faqs() {
