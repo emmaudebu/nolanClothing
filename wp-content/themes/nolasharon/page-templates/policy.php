@@ -22,6 +22,16 @@ while ( have_posts() ) :
 	$nolasharon_date     = get_post_meta( get_the_ID(), 'ns_effective_date', true );
 	$nolasharon_count    = count( $nolasharon_sections['toc'] );
 	$nolasharon_pending  = false !== strpos( $nolasharon_raw, '[[CONFIRM' );
+	$nolasharon_approved = nolasharon_policy_is_approved( get_the_ID() );
+	// Until the client approves the wording, customers only get the "being updated" note.
+	if ( ! $nolasharon_approved && ! nolasharon_sees_placeholders() ) {
+		$nolasharon_sections = array(
+			'html' => '<p class="page-pending">' . esc_html__( 'This page is being updated. For help in the meantime, please contact us.', 'nolasharon' ) . ' <a href="' . esc_url( nolasharon_page_url( 'contact' ) ) . '">' . esc_html__( 'Contact Us', 'nolasharon' ) . '</a></p>',
+			'toc'  => array(),
+		);
+		$nolasharon_date     = '';
+		$nolasharon_count    = 0;
+	}
 	?>
 	<div class="pol">
 		<section class="pol-hero">
@@ -85,10 +95,17 @@ while ( have_posts() ) :
 					</div>
 				<?php endif; ?>
 
+				<?php if ( ! $nolasharon_approved && ! $nolasharon_pending && nolasharon_sees_placeholders() ) : ?>
+					<div class="pol-notice" role="note">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+						<span><?php esc_html_e( 'Draft for review: customers can’t see this policy yet. Once NolaSharon Clothing has approved the wording, tick “Wording approved” in the Policy box when editing this page. (Only editors see this notice.)', 'nolasharon' ); ?></span>
+					</div>
+				<?php endif; ?>
+
 				<?php if ( $nolasharon_pending && nolasharon_sees_placeholders() ) : ?>
 					<div class="pol-notice" role="note">
 						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
-						<span><?php esc_html_e( 'This page shows the structure only. The policy wording must be supplied or approved by NolaSharon Clothing before launch. (Only editors see this notice.)', 'nolasharon' ); ?></span>
+						<span><?php esc_html_e( 'This policy still has details to confirm (highlighted below), and customers can’t see it until the wording is approved. Fill them in, have the wording reviewed, then tick “Wording approved” in the Policy box. (Only editors see this notice.)', 'nolasharon' ); ?></span>
 					</div>
 				<?php endif; ?>
 

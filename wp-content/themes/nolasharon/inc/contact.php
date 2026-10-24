@@ -309,10 +309,12 @@ function nolasharon_seed_contact_form() {
 		);
 	}
 
-	// Honeypot is a global Fluent Forms setting.
-	$global                         = (array) get_option( '_fluentform_global_form_settings', array() );
-	$global['misc']                 = isset( $global['misc'] ) ? (array) $global['misc'] : array();
-	$global['misc']['honeypotStatus'] = 'yes';
+	// Global Fluent Forms settings: honeypot on, and no IP addresses stored with entries
+	// (only what's needed to reply; the Privacy Policy relies on this).
+	$global                               = (array) get_option( '_fluentform_global_form_settings', array() );
+	$global['misc']                       = isset( $global['misc'] ) ? (array) $global['misc'] : array();
+	$global['misc']['honeypotStatus']     = 'yes';
+	$global['misc']['isIpLogingDisabled'] = true;
 	update_option( '_fluentform_global_form_settings', $global );
 
 	update_option( 'nolasharon_contact_form', $id );
