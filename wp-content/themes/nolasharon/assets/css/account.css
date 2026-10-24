@@ -1,0 +1,1603 @@
+/**
+ * Accounts (STORE-PAGES.md §2–§3). Loaded only on My Account.
+ *
+ * Sign-in screens: a split layout (brand panel | form). Without JavaScript both the sign-in
+ * and create-account forms show, one under the other; html.ns-js turns on the tabs.
+ */
+
+/* Sign-in layout ------------------------------------------------------------ */
+
+.content-area--auth {
+	max-width: none;
+	padding: 0;
+}
+
+.content-area--auth .entry,
+.content-area--auth .woocommerce {
+	margin: 0;
+}
+
+.content-area--auth .woocommerce {
+	margin: 0;
+}
+
+.ns-auth {
+	display: flex;
+	flex-wrap: wrap;
+	min-height: 100vh;
+	min-height: 100dvh;
+	background: var(--ui-card);
+	color: var(--ui-text);
+	font-size: 15px;
+	line-height: 1.55;
+}
+
+.ns-auth__brand {
+	position: relative;
+	display: flex;
+	flex: 1 1 520px;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 32px;
+	min-height: 100vh;
+	min-height: 100dvh;
+	padding: 40px 56px;
+	overflow: hidden;
+	background: #2b1b12;
+	color: #ffffff;
+}
+
+.ns-auth__circle,
+.ns-auth__ring {
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+}
+
+.ns-auth__circle {
+	top: 120px;
+	right: -260px;
+	width: 620px;
+	height: 620px;
+	background: #8c6448;
+	opacity: 0.35;
+}
+
+.ns-auth__ring {
+	top: 220px;
+	right: -160px;
+	width: 420px;
+	height: 420px;
+	border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.ns-auth__logo {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-self: flex-start;
+	color: #ffffff;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.ns-auth__logo:hover {
+	color: #ffffff;
+}
+
+.ns-auth__logo img {
+	display: block;
+	width: auto;
+	max-width: 200px;
+	max-height: 56px;
+}
+
+.ns-auth__logo-name {
+	font-family: var(--serif);
+	font-size: 24px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+}
+
+.ns-auth__logo-sub {
+	margin-top: 5px;
+	color: #d9bfa6;
+	font-size: 9px;
+	font-weight: 600;
+	letter-spacing: 0.42em;
+	text-transform: uppercase;
+}
+
+.ns-auth__big {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 28px;
+}
+
+.ns-auth__photo {
+	width: 250px;
+	height: 300px;
+	overflow: hidden;
+	border: 6px solid #f7f1eb;
+	border-radius: 20px;
+	background: #f7f1eb;
+	box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+	animation: ns-auth-float 6s ease-in-out infinite;
+}
+
+.ns-auth__photo img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+@keyframes ns-auth-float {
+	0%,
+	100% {
+		transform: translateY(0) rotate(-3deg);
+	}
+
+	50% {
+		transform: translateY(-10px) rotate(-1deg);
+	}
+}
+
+.ns-auth__line {
+	max-width: 420px;
+	margin: 0;
+	font-family: var(--serif);
+	font-size: 40px;
+	font-weight: 500;
+	line-height: 1.1;
+}
+
+.ns-auth__benefits {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin: 0;
+	padding: 0;
+	color: #eadfd5;
+	list-style: none;
+}
+
+.ns-auth__benefits li {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.ns-auth__benefit-icon {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.1);
+	color: #ffffff;
+}
+
+.ns-auth__copy {
+	position: relative;
+	margin: 0;
+	color: #c9b8a8;
+	font-size: 12px;
+}
+
+.ns-auth__main {
+	display: flex;
+	flex: 1 1 520px;
+	flex-direction: column;
+	min-width: 0;
+	padding: 40px 56px;
+}
+
+.ns-auth__top {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.ns-auth__back {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 44px;
+	color: var(--ui-dark);
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: underline;
+	text-decoration-color: transparent;
+	text-underline-offset: 3px;
+}
+
+.ns-auth__back:hover {
+	color: var(--ui-brand);
+	text-decoration-color: currentColor;
+}
+
+.ns-auth__back--in {
+	margin-bottom: 18px;
+}
+
+.ns-auth__center {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	padding: 24px 0;
+}
+
+.ns-auth__col {
+	width: 100%;
+	max-width: 420px;
+}
+
+/* Tabs and panels */
+
+.ns-auth__tabs {
+	margin-bottom: 30px;
+}
+
+.ns-js .ns-auth__tabs[hidden] {
+	display: block;
+}
+
+/* Without JavaScript the tabs stay hidden and both forms show in turn. */
+.ns-auth__panel + .ns-auth__panel {
+	margin-top: 56px;
+	padding-top: 40px;
+	border-top: 1px solid var(--ui-line);
+}
+
+.ns-js .ns-auth__panels {
+	display: grid;
+}
+
+.ns-js .ns-auth__panel {
+	grid-area: 1 / 1;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	transition: opacity 0.45s ease 0.1s, transform 0.55s var(--ui-ease) 0.05s, visibility 0s;
+}
+
+.ns-js .ns-auth__panel:not(.is-active) {
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transform: translateX(var(--from, 28px));
+	transition: opacity 0.3s ease, transform 0.45s var(--ui-ease), visibility 0s linear 0.45s;
+}
+
+.ns-auth .ns-auth__title {
+	margin: 0 0 6px;
+	font-family: var(--serif);
+	font-size: 36px;
+	font-weight: 500;
+	line-height: 1.1;
+}
+
+.ns-auth .ns-auth__title--sm {
+	font-size: 34px;
+}
+
+.ns-auth__lead {
+	margin: 0 0 26px;
+	color: var(--ui-text-3);
+}
+
+.ns-auth__lead--dark {
+	margin-bottom: 8px;
+	color: var(--ui-text-2);
+}
+
+.ns-auth__small {
+	margin: 0 0 26px;
+	color: var(--ui-text-3);
+	font-size: 14px;
+}
+
+.woocommerce .ns-auth form.ns-auth__form,
+.ns-auth__form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.ns-auth__row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+
+.ns-auth__row > .ns-field {
+	flex: 1 1 160px;
+}
+
+.ns-auth__between {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0 12px;
+	font-size: 14px;
+}
+
+.ns-auth__between .ns-textlink {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+}
+
+.ns-auth__or {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin: 4px 0;
+	color: var(--ui-muted);
+	font-size: 13px;
+}
+
+.ns-auth__or::before,
+.ns-auth__or::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: var(--ui-line);
+}
+
+.ns-auth__switch {
+	margin: 6px 0 0;
+	color: var(--ui-text-3);
+	font-size: 14px;
+	text-align: center;
+}
+
+.ns-auth__note,
+.ns-auth .woocommerce-privacy-policy-text p {
+	margin: 0;
+	color: var(--ui-text-3);
+	font-size: 12px;
+}
+
+.ns-auth .woocommerce-privacy-policy-text a {
+	color: var(--ui-dark);
+}
+
+/* Error card from WooCommerce sits above the form. */
+.ns-auth .woocommerce-error {
+	margin-bottom: 22px;
+}
+
+/* "Password updated" card after a reset. */
+.ns-auth__done {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	margin-bottom: 26px;
+	padding: 14px 16px;
+	border: 1px solid #cfe5d2;
+	border-radius: 16px;
+	background: var(--ui-success-bg);
+	color: var(--ui-text);
+	font-size: 14px;
+}
+
+.ns-auth__done p {
+	margin: 0;
+}
+
+.ns-success--sm {
+	flex: none;
+	width: 48px;
+	height: 48px;
+	margin: 0;
+}
+
+/* Check your email */
+
+.ns-auth__mail {
+	position: relative;
+	width: 96px;
+	height: 96px;
+	margin-bottom: 22px;
+}
+
+.ns-auth__mail-icon {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 28px;
+	background: var(--ui-tile);
+	color: var(--ui-brand);
+	animation: ns-auth-bob 3s ease-in-out infinite;
+}
+
+.ns-auth__mail-badge {
+	position: absolute;
+	top: -6px;
+	right: -6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: 3px solid var(--ui-card);
+	border-radius: 50%;
+	background: #2e7d32;
+	color: #ffffff;
+	animation: ns-auth-pop 0.5s cubic-bezier(0.2, 0.9, 0.25, 1.3) 0.5s both;
+}
+
+@keyframes ns-auth-bob {
+	50% {
+		transform: translateY(-6px);
+	}
+}
+
+@keyframes ns-auth-pop {
+	0% {
+		transform: scale(0);
+	}
+
+	70% {
+		transform: scale(1.15);
+	}
+}
+
+.ns-auth__resend {
+	margin: 12px 0 0;
+}
+
+/* Reset: requirement checklist and match line */
+
+.ns-rules {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	color: var(--ui-text-2);
+	font-size: 13px;
+	list-style: none;
+}
+
+.ns-rules li {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.ns-rules__dot {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: var(--ui-track);
+	color: #ffffff;
+	transform: scale(0.85);
+	transition: background-color 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.25, 1.4);
+}
+
+.ns-rules li.is-met .ns-rules__dot {
+	background: #2e7d32;
+	transform: scale(1);
+}
+
+.ns-match {
+	min-height: 18px;
+	font-weight: 500;
+}
+
+.ns-match.is-match {
+	color: var(--ui-success);
+}
+
+/* Phones: only the logo bar of the brand panel stays. */
+@media (max-width: 860px) {
+	.ns-auth__brand {
+		flex-basis: 100%;
+		min-height: 0;
+		padding: 20px;
+	}
+
+	.ns-auth__big,
+	.ns-auth__copy {
+		display: none;
+	}
+
+	.ns-auth__circle {
+		top: -160px;
+		right: -200px;
+		width: 360px;
+		height: 360px;
+	}
+
+	.ns-auth__ring {
+		display: none;
+	}
+
+	.ns-auth__main {
+		flex-basis: 100%;
+		padding: 12px 18px 48px;
+	}
+
+	.ns-auth__center {
+		align-items: flex-start;
+		padding-top: 12px;
+	}
+
+	.ns-auth .ns-auth__title {
+		font-size: 32px;
+	}
+
+	.ns-auth .ns-auth__title--sm {
+		font-size: 30px;
+	}
+}
+
+/* My Account area ------------------------------------------------------------ */
+
+.content-area--account {
+	max-width: none;
+	padding: 0;
+	background: var(--ui-page);
+}
+
+.content-area--account .entry,
+.content-area--account .woocommerce {
+	margin: 0;
+}
+
+.ns-acct {
+	color: var(--ui-text);
+	font-size: 15px;
+	line-height: 1.55;
+}
+
+.ns-acct__inner {
+	max-width: 1240px;
+	margin: 0 auto;
+	padding: 0 var(--gutter);
+}
+
+.ns-acct__band {
+	position: relative;
+	overflow: hidden;
+	background: #2b1b12;
+	color: #ffffff;
+}
+
+.ns-acct__circle {
+	position: absolute;
+	top: -160px;
+	right: -120px;
+	width: 420px;
+	height: 420px;
+	border-radius: 50%;
+	background: #8c6448;
+	opacity: 0.35;
+	pointer-events: none;
+}
+
+.ns-acct__band-inner {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+	padding-top: 40px;
+	padding-bottom: 84px;
+}
+
+.ns-acct__hello {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+
+.ns-acct__avatar {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 64px;
+	height: 64px;
+	border-radius: 50%;
+	background: #f7f1eb;
+	color: #2b1b12;
+	font-family: var(--serif);
+	font-size: 24px;
+	font-weight: 600;
+}
+
+.ns-acct__eyebrow {
+	color: #d9bfa6;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+}
+
+.ns-acct .ns-acct__title {
+	margin: 2px 0 0;
+	font-family: var(--serif);
+	font-size: 40px;
+	font-weight: 500;
+	line-height: 1.1;
+}
+
+.ns-acct__intro {
+	max-width: 380px;
+	margin: 0;
+	color: #e9dfd6;
+}
+
+.ns-acct__body {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 24px;
+	margin-top: -52px;
+	padding-bottom: 72px;
+}
+
+/* Sidebar */
+
+.ns-acct__side {
+	position: sticky;
+	top: calc(var(--header-h) + 16px);
+	flex: 1 1 250px;
+	min-width: 0;
+}
+
+.woocommerce-account .ns-acct__nav {
+	float: none;
+	width: auto;
+	padding: 10px;
+	border: 1px solid var(--ui-line);
+	border-radius: 20px;
+	background: var(--ui-card);
+	box-shadow: var(--ui-shadow-card);
+}
+
+.ns-acct__nav ul {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ns-acct__link {
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 48px;
+	padding: 0 14px;
+	overflow: hidden;
+	border-radius: 14px;
+	color: var(--ui-dark);
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+.ns-acct__link:hover {
+	background: var(--ui-tint);
+	color: var(--ui-dark);
+}
+
+.ns-acct__link[aria-current="page"] {
+	background: var(--ui-dark);
+	color: var(--ui-on-dark);
+	font-weight: 600;
+}
+
+.ns-acct__link--out {
+	color: var(--ui-amber);
+}
+
+.ns-acct__link:focus-visible {
+	outline: 2px solid var(--ui-focus);
+	outline-offset: 2px;
+}
+
+.ns-acct__bar {
+	position: absolute;
+	top: 12px;
+	bottom: 12px;
+	left: 0;
+	width: 3px;
+	border-radius: 0 3px 3px 0;
+	background: #d9bfa6;
+	transform: scaleY(0);
+	transition: transform 0.35s var(--ui-ease);
+}
+
+.ns-acct__link[aria-current="page"] .ns-acct__bar {
+	transform: scaleY(1);
+}
+
+.ns-acct__badge {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 22px;
+	height: 22px;
+	margin-left: auto;
+	padding: 0 6px;
+	border-radius: 999px;
+	background: #8c6448;
+	color: #ffffff;
+	font-size: 11px;
+	font-weight: 600;
+}
+
+.ns-acct__help {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin-top: 16px;
+	padding: 18px;
+	border: 1px solid var(--ui-line);
+	border-radius: 20px;
+	background: var(--ui-card);
+}
+
+.ns-acct__help span {
+	color: var(--ui-text-3);
+	font-size: 13px;
+}
+
+.ns-acct__help a {
+	color: var(--ui-dark);
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* Content */
+
+.woocommerce-account .ns-acct__content {
+	display: flex;
+	flex: 999 1 620px;
+	flex-direction: column;
+	gap: 20px;
+	float: none;
+	width: auto;
+	min-width: 0;
+}
+
+.ns-acct__content .woocommerce-notices-wrapper:empty {
+	display: none;
+}
+
+.ns-acct__content h2 {
+	margin: 0;
+	font-family: var(--serif);
+	font-weight: 500;
+}
+
+/* Dashboard */
+
+.ns-dash {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+.ns-paybox {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	padding: 16px 20px;
+	border: 1px solid var(--ui-amber-line);
+	border-radius: 18px;
+	background: var(--ui-amber-bg);
+	color: var(--ui-text);
+}
+
+.ns-paybox--sm {
+	padding: 14px 16px;
+	border-radius: 14px;
+}
+
+.ns-paybox__icon {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
+	background: #fdebd0;
+	color: #8a4b0f;
+}
+
+.ns-paybox__text {
+	display: flex;
+	flex: 1 1 240px;
+	flex-direction: column;
+	margin: 0;
+	font-size: 14px;
+}
+
+.ns-paybox__text strong {
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.ns-paybox__text span {
+	color: var(--ui-text-3);
+	font-size: 13px;
+}
+
+.ns-latest__head,
+.ns-order__head,
+.ns-orders__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ns-latest__head {
+	margin-bottom: 22px;
+}
+
+.ns-acct .ns-latest__title {
+	margin: 4px 0 2px;
+	font-size: 26px;
+}
+
+.ns-latest__meta,
+.ns-order__date {
+	margin: 0;
+	color: var(--ui-text-3);
+	font-size: 13px;
+}
+
+.ns-tracker-note {
+	margin: 0;
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: var(--ui-soft);
+	color: var(--ui-text-3);
+	font-size: 14px;
+}
+
+.ns-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 12px;
+}
+
+.ns-empty--flat {
+	padding: 8px 0;
+}
+
+.ns-acct .ns-empty__title {
+	margin: 0;
+	font-family: var(--serif);
+	font-size: 22px;
+	font-weight: 500;
+}
+
+.ns-tiles {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+	gap: 14px;
+}
+
+.ns-tile {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	padding: 20px;
+	border: 1px solid var(--ui-line);
+	border-radius: 18px;
+	background: var(--ui-card);
+	color: var(--ui-text);
+	text-decoration: none;
+	transition: transform 0.35s var(--ui-ease), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.ns-tile:hover {
+	border-color: var(--ui-hover);
+	color: var(--ui-text);
+	box-shadow: 0 16px 34px rgba(43, 27, 18, 0.1);
+	transform: translateY(-3px);
+}
+
+.ns-tile:focus-visible {
+	outline: 2px solid var(--ui-focus);
+	outline-offset: 2px;
+}
+
+.ns-tile__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 14px;
+	background: var(--ui-tile);
+	color: var(--ui-brand);
+}
+
+.ns-tile__title {
+	font-weight: 600;
+}
+
+.ns-tile__text {
+	color: var(--ui-text-3);
+	font-size: 13px;
+}
+
+/* Orders list */
+
+.ns-orders__head {
+	align-items: center;
+	margin-bottom: 18px;
+}
+
+.ns-acct .ns-orders__title {
+	font-size: 28px;
+}
+
+.ns-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+}
+
+.ns-chip {
+	min-height: 40px;
+	padding: 0 16px;
+	border: 1.5px solid var(--ui-track);
+	border-radius: 999px;
+	background: var(--ui-card);
+	color: var(--ui-dark);
+	font: inherit;
+	font-size: 13px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.ns-chip:hover {
+	border-color: var(--ui-dark);
+}
+
+.ns-chip[aria-pressed="true"] {
+	border-color: var(--ui-dark);
+	background: var(--ui-dark);
+	color: var(--ui-on-dark);
+}
+
+.ns-chip:focus-visible {
+	outline: 2px solid var(--ui-focus);
+	outline-offset: 2px;
+}
+
+/* 44px target on touch screens. */
+@media (pointer: coarse) {
+	.ns-chip {
+		min-height: 44px;
+	}
+}
+
+.ns-orders__list {
+	display: flex;
+	flex-direction: column;
+	transition: opacity 0.25s ease;
+}
+
+.ns-orders__list.is-busy {
+	opacity: 0.5;
+}
+
+.ns-orow-wrap {
+	transition: grid-template-rows 0.45s var(--ui-ease), opacity 0.3s ease, margin 0.45s var(--ui-ease);
+}
+
+.ns-orow-wrap.is-open {
+	margin-bottom: 12px;
+}
+
+.ns-orow {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 16px;
+	padding: 16px 18px;
+	border: 1px solid var(--ui-line);
+	border-radius: 16px;
+	transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ns-orow:hover {
+	border-color: var(--ui-hover);
+	box-shadow: 0 10px 26px rgba(43, 27, 18, 0.07);
+}
+
+.ns-thumbs {
+	display: flex;
+	flex: none;
+}
+
+.ns-thumbs img,
+.ns-thumbs__blank {
+	display: block;
+	width: 44px;
+	height: 54px;
+	border: 2px solid var(--ui-card);
+	border-radius: 8px;
+	background: var(--ui-tint);
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	object-fit: cover;
+}
+
+.ns-thumbs > * + * {
+	margin-left: -14px;
+}
+
+.ns-orow__main {
+	display: flex;
+	flex: 1 1 180px;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.ns-acct .ns-orow__no {
+	margin: 0;
+	font-family: var(--sans);
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.ns-orow__meta {
+	color: var(--ui-text-3);
+	font-size: 13px;
+}
+
+.ns-orow__total {
+	min-width: 90px;
+	font-weight: 600;
+	text-align: right;
+}
+
+.ns-orow__actions {
+	display: flex;
+	gap: 8px;
+}
+
+.ns-pager {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 8px;
+}
+
+.ns-pager__info {
+	color: var(--ui-text-3);
+	font-size: 13px;
+}
+
+/* Order detail */
+
+.ns-order {
+	display: flex;
+	flex-direction: column;
+	gap: 22px;
+}
+
+.ns-order__back {
+	align-self: flex-start;
+	margin: -8px 0 -10px;
+}
+
+.ns-acct .ns-order__title {
+	margin: 0 0 4px;
+	font-size: 30px;
+}
+
+.ns-items {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ns-items__row {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.ns-items__img img {
+	display: block;
+	flex: none;
+	width: 64px;
+	height: 80px;
+	border-radius: 10px;
+	object-fit: cover;
+}
+
+.ns-items__main {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.ns-items__name {
+	color: var(--ui-text);
+	font-family: var(--serif);
+	font-size: 16px;
+	text-decoration: none;
+}
+
+a.ns-items__name:hover {
+	text-decoration: underline;
+}
+
+.ns-items__meta {
+	color: var(--ui-text-3);
+	font-size: 13px;
+}
+
+.ns-items__price {
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ns-order__boxes {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+	gap: 14px;
+}
+
+.ns-order__box {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 16px;
+	border-radius: 14px;
+	background: var(--ui-soft);
+	color: var(--ui-text-2);
+	font-size: 14px;
+}
+
+.ns-order__box strong {
+	color: var(--ui-text);
+}
+
+.ns-order__box address {
+	font-style: normal;
+}
+
+.ns-order__label {
+	color: var(--ui-brand);
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+}
+
+.ns-order__totals {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+}
+
+.ns-order__totals div {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.ns-order__totals dt {
+	color: var(--ui-text-3);
+}
+
+.ns-order__totals dd {
+	margin: 0;
+	text-align: right;
+}
+
+.ns-order__totals .ns-order__total {
+	padding-top: 8px;
+	border-top: 1px solid var(--ui-line-2);
+	color: var(--ui-text);
+	font-weight: 600;
+}
+
+.ns-order__total dt {
+	color: var(--ui-text);
+}
+
+.ns-order__pay {
+	margin-top: 4px;
+	color: var(--ui-text-3);
+	font-size: 12px;
+}
+
+.ns-order__updates h3 {
+	margin: 0 0 10px;
+	font-size: 15px;
+}
+
+.ns-order__updates ol {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ns-order__updates li {
+	padding: 12px 14px;
+	border-left: 3px solid var(--ui-track);
+	background: var(--ui-soft);
+	font-size: 14px;
+}
+
+.ns-order__updates time {
+	color: var(--ui-text-3);
+	font-size: 12px;
+}
+
+.ns-order__updates p {
+	margin: 4px 0 0;
+}
+
+.ns-order__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+/* Phones and small tablets: the menu becomes a scrolling row of pills. */
+@media (max-width: 860px) {
+	.ns-acct .ns-acct__title {
+		font-size: 32px;
+	}
+
+	.ns-acct__band-inner {
+		padding-top: 28px;
+	}
+
+	.ns-acct__side {
+		position: static;
+		flex-basis: 100%;
+	}
+
+	.woocommerce-account .ns-acct__nav {
+		padding: 6px;
+	}
+
+	.ns-acct__nav ul {
+		flex-direction: row;
+		overflow-x: auto;
+		scrollbar-width: none;
+	}
+
+	.ns-acct__nav ul::-webkit-scrollbar {
+		display: none;
+	}
+
+	.ns-acct__nav li {
+		flex: none;
+	}
+
+	.ns-acct__link {
+		white-space: nowrap;
+		border-radius: 999px;
+	}
+
+	.ns-acct__help {
+		display: none;
+	}
+
+	.ns-card {
+		padding: 20px 16px;
+	}
+
+	.ns-orow {
+		gap: 10px 14px;
+	}
+
+	.ns-orow__total {
+		min-width: 0;
+		margin-left: auto;
+	}
+
+	.ns-orow__actions {
+		flex-basis: 100%;
+	}
+
+	.ns-orow__actions .ns-btn {
+		flex: 1;
+	}
+
+	.ns-tracker__label {
+		font-size: 12px;
+	}
+
+	.ns-tiles {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 12px;
+	}
+
+	.ns-tile {
+		padding: 16px;
+	}
+}
+
+/* Address and account forms (STORE-PAGES.md §3.5–§3.6) */
+
+.ns-af {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 20px;
+	margin: 0;
+}
+
+.ns-af__fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+	width: 100%;
+}
+
+.ns-af__fields > * {
+	flex: 1 1 100%;
+	min-width: 0;
+	margin: 0;
+}
+
+.ns-af__fields > .ns-af--half {
+	flex: 1 1 220px;
+}
+
+/* WooCommerce's form rows, restyled to match the UI kit fields. */
+.woocommerce .ns-af .form-row {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 0;
+}
+
+.woocommerce .ns-af .form-row label {
+	color: var(--ui-text-2);
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.5;
+}
+
+.woocommerce .ns-af .form-row .required {
+	color: var(--ui-error);
+	text-decoration: none;
+}
+
+.woocommerce .ns-af .form-row input.input-text,
+.woocommerce .ns-af .form-row select {
+	width: 100%;
+	height: 48px;
+	min-height: 48px;
+	padding: 0 14px;
+	border: 1px solid var(--ui-field);
+	border-radius: 10px;
+	background: var(--ui-card);
+	color: var(--ui-text);
+	font: inherit;
+	font-size: 15px;
+	outline: none;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.woocommerce .ns-af .form-row input.input-text:focus,
+.woocommerce .ns-af .form-row select:focus {
+	border-color: var(--ui-brand);
+	box-shadow: 0 0 0 3px rgba(140, 100, 72, 0.18);
+	outline: none;
+}
+
+.woocommerce .ns-af .form-row input[aria-invalid="true"] {
+	border-color: var(--ui-error);
+}
+
+.ns-af .ns-row-hidden {
+	display: none !important;
+}
+
+.ns-af .ns-phone-row .woocommerce-input-wrapper {
+	display: flex;
+	gap: 8px;
+}
+
+.ns-af .ns-phone-prefix {
+	display: flex;
+	flex: none;
+	align-items: center;
+	height: 48px;
+	padding: 0 12px;
+	border: 1px solid var(--ui-field);
+	border-radius: 10px;
+	background: var(--ui-soft);
+	color: var(--ui-text);
+	font-size: 15px;
+}
+
+/* Addresses */
+
+.ns-acct .ns-addr__title,
+.ns-acct .ns-details__title {
+	margin: 0 0 4px;
+	font-size: 28px;
+}
+
+.ns-acct .ns-details__title {
+	margin-bottom: 20px;
+}
+
+.ns-addr__lead {
+	margin: 0 0 20px;
+	color: var(--ui-text-3);
+	font-size: 14px;
+}
+
+.ns-addr__card {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 14px;
+	padding: 18px 20px;
+	border: 2px solid var(--ui-brand);
+	border-radius: 16px;
+	background: #fffcf9;
+}
+
+.ns-addr__card.is-empty {
+	border-style: dashed;
+	border-color: var(--ui-track);
+	background: var(--ui-soft);
+}
+
+.ns-addr__icon {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 14px;
+	background: #2b1b12;
+	color: #ffffff;
+}
+
+.ns-addr__text {
+	display: flex;
+	flex: 1 1 200px;
+	flex-direction: column;
+	gap: 2px;
+	color: var(--ui-text-2);
+	font-size: 14px;
+}
+
+.ns-addr__text strong {
+	color: var(--ui-text);
+	font-size: 15px;
+}
+
+.ns-addr__form > div > .ns-af {
+	padding-top: 20px;
+}
+
+.ns-addr > .ns-af {
+	margin-top: 8px;
+}
+
+/* Account details */
+
+.ns-details__toggle {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	min-height: 52px;
+	margin-top: 4px;
+	padding: 14px 0 0;
+	border: 0;
+	border-top: 1px solid var(--ui-line);
+	background: transparent;
+	color: var(--ui-dark);
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ns-details__toggle > span {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.ns-details__toggle > span svg {
+	color: var(--ui-brand);
+}
+
+.ns-details__toggle .icon {
+	transition: transform 0.35s var(--ui-ease);
+}
+
+.ns-details__toggle[aria-expanded="true"] .icon {
+	transform: rotate(180deg);
+}
+
+.ns-details__toggle:focus-visible {
+	outline: 2px solid var(--ui-focus);
+	outline-offset: 2px;
+}
+
+.ns-af > .ns-collapse {
+	width: 100%;
+}
+
+.ns-details__pw {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.ns-details__legend {
+	margin-bottom: 14px;
+	padding: 0;
+	font-weight: 600;
+}
+
+/* With JavaScript the toggle button names the section. */
+.ns-collapse.is-js .ns-details__legend {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+}
+
+.ns-collapse.is-js .ns-details__pw {
+	padding-top: 14px;
+}
