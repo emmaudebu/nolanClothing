@@ -64,6 +64,12 @@ function nolasharon_settings_schema() {
 				'nolasharon_auth_image' => array( __( 'Campaign photo beside the sign-in form', 'nolasharon' ), 'image', 'absint', 0, __( 'Client-approved photo. Falls back to the placeholder illustration.', 'nolasharon' ) ),
 			),
 		),
+		'nolasharon_404'          => array(
+			'title'  => __( 'Page not found (404)', 'nolasharon' ),
+			'fields' => array(
+				'nolasharon_404_image' => array( __( 'Image inside the "0"', 'nolasharon' ), 'image', 'absint', 0, __( 'Empty uses the newest product photo.', 'nolasharon' ) ),
+			),
+		),
 		'nolasharon_contact'      => array(
 			'title'  => __( 'Contact & social', 'nolasharon' ),
 			'fields' => array(

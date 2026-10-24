@@ -105,3 +105,27 @@ function nolasharon_placeholder_admin_bar( $bar ) {
 	}
 }
 add_action( 'admin_bar_menu', 'nolasharon_placeholder_admin_bar', 90 );
+
+/**
+ * 404 page: content styles, and keep it out of search results.
+ */
+function nolasharon_404_assets() {
+	if ( is_404() ) {
+		wp_enqueue_style( 'nolasharon-content', get_template_directory_uri() . '/assets/css/content.css', array( 'nolasharon' ), NOLASHARON_VERSION );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'nolasharon_404_assets', 20 );
+
+/**
+ * Noindex the 404 page.
+ *
+ * @param array $robots Robots directives.
+ * @return array
+ */
+function nolasharon_404_noindex( $robots ) {
+	if ( is_404() ) {
+		$robots['noindex'] = true;
+	}
+	return $robots;
+}
+add_filter( 'wp_robots', 'nolasharon_404_noindex' );
