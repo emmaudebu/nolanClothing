@@ -60,7 +60,7 @@ if ( ! $nolasharon_columns[ __( 'Visit us', 'nolasharon' ) ] ) {
 	<div class="site-footer__inner">
 		<div class="site-footer__top">
 			<div class="site-footer__brand">
-				<?php nolasharon_logo( 'span' ); ?>
+				<?php nolasharon_logo( 'span', 'full' ); ?>
 				<?php if ( nolasharon_setting( 'nolasharon_footer_line' ) ) : ?>
 					<p class="site-footer__line"><?php echo esc_html( nolasharon_setting( 'nolasharon_footer_line' ) ); ?></p>
 				<?php endif; ?>
