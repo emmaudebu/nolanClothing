@@ -64,6 +64,7 @@ If this file and an instruction in chat conflict, ask.
 | Product card (2026-10-23, SHOP-PRODUCT.md) | Card restyled to SHOP-PRODUCT.md §2.4 (18px radius, badges, colour dots, hover image swap) but **Quick View stays** as the hover button. |
 | Header (2026-10-23, SHOP-PRODUCT.md) | **Light/dark theme toggle and dark mode removed.** Wishlist heart stays (wishlist is on). |
 | Reviews (2026-10-23) | **Off** until the client asks for them. |
+| Bags and shoes (2026-10-25) | The client **sells bags and shoes**. Top-level categories **Bags** and **Shoes** (shoes may also sit in Women/Men). Shoes use a separate global attribute **Shoe size** (`pa_shoe-size`, demo EU 36–45 until the client confirms the range) with size buttons, size guide and shop filter; bags vary by **Colour** only. Extra Details fields: **Dimensions** and **Features**. `[[CONFIRM: shoe size range, Shoes size chart, bag/shoe product details]]` |
 
 ---
 

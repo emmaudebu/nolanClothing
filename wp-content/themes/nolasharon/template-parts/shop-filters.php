@@ -90,7 +90,7 @@ $nolasharon_end = function () {
 					<?php continue; ?>
 				<?php endif; ?>
 				<?php $nolasharon_colour = 'pa_colour' === $nolasharon_tax; ?>
-				<?php $nolasharon_section( $nolasharon_key, $nolasharon_colour ? __( 'Colour', 'nolasharon' ) : __( 'Size', 'nolasharon' ) ); ?>
+				<?php $nolasharon_section( $nolasharon_key, wc_attribute_label( $nolasharon_tax ) ); ?>
 				<div class="<?php echo $nolasharon_colour ? 'fcolours' : 'fsizes'; ?>">
 					<?php foreach ( $nolasharon_terms as $nolasharon_row ) : ?>
 						<?php $nolasharon_t = $nolasharon_row['term']; ?>

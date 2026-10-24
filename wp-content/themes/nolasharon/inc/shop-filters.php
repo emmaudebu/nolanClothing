@@ -35,8 +35,9 @@ add_action( 'wp_enqueue_scripts', 'nolasharon_shop_assets', 20 );
  */
 function nolasharon_attribute_filters() {
 	return array(
-		'filter_size'   => 'pa_size',
-		'filter_colour' => 'pa_colour',
+		'filter_size'      => 'pa_size',
+		'filter_shoe-size' => 'pa_shoe-size',
+		'filter_colour'    => 'pa_colour',
 	);
 }
 
@@ -279,7 +280,7 @@ function nolasharon_active_filters() {
 			$without         = $current;
 			$without[ $key ] = array_values( array_diff( $current[ $key ], array( $slug ) ) );
 			$chips[]         = array(
-				'label'  => ( 'pa_size' === $taxonomy ? __( 'Size', 'nolasharon' ) . ' ' : '' ) . $term->name,
+				'label'  => ( in_array( $taxonomy, nolasharon_size_taxonomies(), true ) ? __( 'Size', 'nolasharon' ) . ' ' : '' ) . $term->name,
 				'remove' => nolasharon_filter_url( $without ),
 			);
 		}

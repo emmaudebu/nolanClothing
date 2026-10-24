@@ -34,6 +34,14 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 
 **Size guides:** go to **Products → Categories → Edit** and fill in **Size chart** with your own measurements in inches: the first line is the column names (e.g. `Size, Bust, Waist, Hips`), then one line per size (e.g. `S, 34, 28, 37`). Every product in that category then shows a **Size guide** link, with an inches/centimetres switch. A product that fits differently can have its own chart (Product data → **Inventory** tab). With no chart, the link is hidden.
 
+**Bags and shoes:**
+- Put bags in the **Bags** category and shoes in **Shoes** (you can also tick **Women** or **Men** for shoes so they show there too).
+- **Shoes** use the **Shoe size** attribute (not Size): in the Attributes tab add **Colour** and **Shoe size**, tick **Used for variations**, then generate variations as usual. Customers pick a shoe size from buttons, and the shop has a **Shoe size** filter.
+- **Bags** usually only need **Colour** (one variation per colour, each with its own stock).
+- Fill in **Dimensions** (e.g. width × height × depth, strap drop) for bags and **Features** (e.g. strap, closure, compartments, heel height, sole) in the General tab; they show under "Details" when filled.
+- **Shoe size guide:** add a size chart to the **Shoes** category (Products → Categories → Shoes → Size chart), e.g. `EU size, UK, Foot length` then one line per size. Without a chart the Size guide link is hidden.
+- The shoe sizes set up so far (EU 36–45) are a starting point: add or remove them in **Products → Attributes → Shoe size → Configure terms** to match what you stock.
+
 **Sizes and colours:**
 - To add a new size or colour, go to **Products → Attributes → Configure terms**.
 - Each colour has a **Swatch colour** picker. This is the colour circle customers tap.
@@ -145,4 +153,4 @@ Reviews are switched off for now. If you turn them on later, they are held for a
 
 ## Still to send us
 
-High-resolution logo (SVG, or PNG 1200px+) · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · delivery areas, fees and timelines · delivery, returns, exchange, refund, privacy and terms wording · any launch offer · domain and hosting choice · whether you want a newsletter or coupons · Cloudflare Turnstile keys for the contact form (optional).
+High-resolution logo (SVG, or PNG 1200px+) · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · your shoe size range and shoe size chart · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · delivery areas, fees and timelines · delivery, returns, exchange, refund, privacy and terms wording · any launch offer · domain and hosting choice · whether you want a newsletter or coupons · Cloudflare Turnstile keys for the contact form (optional).

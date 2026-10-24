@@ -1,7 +1,8 @@
 <?php
 /**
- * Products (brief §6): Size and Colour attributes with per-variation stock, colour swatches,
- * the Details fields (fabric, fit, care) and the data the buy form uses to disable sold-out options.
+ * Products (brief §6): Size, Shoe size and Colour attributes with per-variation stock, colour
+ * swatches, the Details fields (material, fit, dimensions, features, care) and the data the buy
+ * form uses to disable sold-out options.
  *
  * @package NolaSharon
  */
@@ -13,14 +14,30 @@ if ( ! class_exists( 'WooCommerce' ) ) {
 }
 
 /**
- * Create the global Size (pa_size) and Colour (pa_colour) attributes once.
+ * Size attributes: clothing sizes (S–XL) and shoe sizes are kept apart so each category only
+ * offers its own sizes. Both get size buttons, the size guide link and a shop filter.
+ *
+ * @return string[] Attribute taxonomies.
+ */
+function nolasharon_size_taxonomies() {
+	return array( 'pa_size', 'pa_shoe-size' );
+}
+
+/**
+ * Create the global Size (pa_size), Shoe size (pa_shoe-size) and Colour (pa_colour)
+ * attributes once.
  */
 function nolasharon_ensure_attributes() {
-	if ( get_option( 'nolasharon_attributes_ready' ) || ! function_exists( 'wc_create_attribute' ) ) {
+	if ( 2 <= (int) get_option( 'nolasharon_attributes_ready' ) || ! function_exists( 'wc_create_attribute' ) ) {
 		return;
 	}
 	$existing = wp_list_pluck( wc_get_attribute_taxonomies(), 'attribute_name' );
-	foreach ( array( 'size' => __( 'Size', 'nolasharon' ), 'colour' => __( 'Colour', 'nolasharon' ) ) as $slug => $name ) {
+	$wanted   = array(
+		'size'      => __( 'Size', 'nolasharon' ),
+		'shoe-size' => __( 'Shoe size', 'nolasharon' ),
+		'colour'    => __( 'Colour', 'nolasharon' ),
+	);
+	foreach ( $wanted as $slug => $name ) {
 		if ( ! in_array( $slug, $existing, true ) ) {
 			wc_create_attribute(
 				array(
@@ -33,7 +50,7 @@ function nolasharon_ensure_attributes() {
 			);
 		}
 	}
-	update_option( 'nolasharon_attributes_ready', 1 );
+	update_option( 'nolasharon_attributes_ready', 2 );
 }
 add_action( 'admin_init', 'nolasharon_ensure_attributes' );
 add_action( 'after_switch_theme', 'nolasharon_ensure_attributes' );
@@ -78,9 +95,11 @@ add_action( 'edited_pa_colour', 'nolasharon_colour_hex_save' );
  */
 function nolasharon_detail_fields() {
 	return array(
-		'_nolasharon_fabric' => __( 'Fabric / material', 'nolasharon' ),
-		'_nolasharon_fit'    => __( 'Fit', 'nolasharon' ),
-		'_nolasharon_care'   => __( 'Care instructions', 'nolasharon' ),
+		'_nolasharon_fabric'     => __( 'Fabric / material', 'nolasharon' ),
+		'_nolasharon_fit'        => __( 'Fit', 'nolasharon' ),
+		'_nolasharon_dimensions' => __( 'Dimensions', 'nolasharon' ),
+		'_nolasharon_features'   => __( 'Features', 'nolasharon' ),
+		'_nolasharon_care'       => __( 'Care instructions', 'nolasharon' ),
 	);
 }
 
@@ -88,6 +107,10 @@ function nolasharon_detail_fields() {
  * Details fields on the product edit screen (General tab).
  */
 function nolasharon_detail_fields_html() {
+	$hints = array(
+		'_nolasharon_dimensions' => __( 'Mainly for bags, e.g. "Width 30 cm × Height 22 cm × Depth 12 cm; strap drop 55 cm".', 'nolasharon' ),
+		'_nolasharon_features'   => __( 'e.g. bags: "Adjustable strap, zip closure, inner pocket"; shoes: "Heel height 7 cm, cushioned insole, non-slip sole".', 'nolasharon' ),
+	);
 	echo '<div class="options_group">';
 	foreach ( nolasharon_detail_fields() as $key => $label ) {
 		woocommerce_wp_textarea_input(
@@ -96,7 +119,7 @@ function nolasharon_detail_fields_html() {
 				'label'       => $label,
 				'rows'        => 3,
 				'desc_tip'    => true,
-				'description' => __( 'Shown under "Details" on the product page. Leave empty to hide. Accurate information only.', 'nolasharon' ),
+				'description' => ( isset( $hints[ $key ] ) ? $hints[ $key ] . ' ' : '' ) . __( 'Shown under "Details" on the product page. Leave empty to hide. Accurate information only.', 'nolasharon' ),
 			)
 		);
 	}
@@ -185,7 +208,7 @@ function nolasharon_buy_attributes( $product ) {
 			'name'      => 'attribute_' . sanitize_title( $name ),
 			'label'     => wc_attribute_label( $name, $product ),
 			'is_colour' => 'pa_colour' === $name,
-			'is_size'   => 'pa_size' === $name,
+			'is_size'   => in_array( $name, nolasharon_size_taxonomies(), true ),
 			'options'   => $options,
 		);
 	}
