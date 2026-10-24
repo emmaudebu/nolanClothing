@@ -3237,55 +3237,6 @@ mark.confirm {
 
 /* Contact, 404 and content pages ----------------------------------------- */
 
-.contact__grid {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-	gap: 56px;
-}
-
-.contact-list {
-	display: flex;
-	flex-direction: column;
-	gap: 18px;
-	margin: 20px 0 0;
-	padding: 0;
-	list-style: none;
-}
-
-.contact-list li {
-	display: flex;
-	gap: 14px;
-}
-
-.contact-list .icon {
-	color: var(--accent);
-}
-
-.contact-list strong {
-	display: block;
-	font-size: 13px;
-}
-
-.contact__social {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 16px;
-	margin: 24px 0 0;
-}
-
-.contact__sub {
-	margin: 36px 0 10px;
-	font-family: var(--serif);
-	font-weight: 500;
-	font-size: 20px;
-}
-
-.contact__branches {
-	display: grid;
-	gap: 12px;
-	margin: 0 0 16px;
-}
-
 .not-found__search {
 	display: flex;
 	gap: 10px;
@@ -3350,13 +3301,6 @@ mark.confirm {
 .entry-content .wp-block-details p {
 	margin: 0 0 18px;
 	color: var(--text-2);
-}
-
-@media (max-width: 760px) {
-	.contact__grid {
-		grid-template-columns: 1fr;
-		gap: 32px;
-	}
 }
 
 /* Cart panel (bag only) -------------------------------------------------- */

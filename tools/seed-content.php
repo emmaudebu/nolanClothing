@@ -52,11 +52,10 @@ $page(
 
 $page( 'store-locations', 'Store Locations', '' );
 
-$page(
-	'contact',
-	'Contact Us',
-	$p( '[[CONFIRM: contact form. Install WPForms Lite or Fluent Forms (with spam protection) and paste the form shortcode here]]' )
-);
+// Contact (CONTENT-PAGES.md §2): the Contact template; the form is the Fluent Forms "Contact"
+// form the theme creates (inc/contact.php).
+update_post_meta( $page( 'contact', 'Contact Us', '' ), '_wp_page_template', 'page-templates/contact.php' );
+nolasharon_seed_contact_form();
 
 // FAQs (brief §5.9, CONTENT-PAGES.md §3): the questions are FAQ posts seeded by the theme
 // (inc/faq.php); the page itself only carries the FAQ template.
