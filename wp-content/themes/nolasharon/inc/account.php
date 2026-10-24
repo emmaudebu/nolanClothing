@@ -146,7 +146,7 @@ function nolasharon_auth_open() {
 				<?php if ( $logo_id ) : ?>
 					<?php echo wp_get_attachment_image( $logo_id, 'medium', false, array( 'alt' => '' ) ); ?>
 				<?php else : ?>
-					<span class="ns-auth__logo-name">NolaSharon</span><span class="ns-auth__logo-sub"><?php esc_html_e( 'Clothing', 'nolasharon' ); ?></span>
+					<img class="ns-auth__crest" src="<?php echo esc_url( nolasharon_logo_url( 'logo-full.webp' ) ); ?>" alt="" width="291" height="260">
 				<?php endif; ?>
 			</a>
 			<div class="ns-auth__big">

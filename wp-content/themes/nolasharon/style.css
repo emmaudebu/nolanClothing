@@ -157,6 +157,7 @@ h3 {
 
 .logo {
 	display: inline-flex;
+	flex: none;
 	flex-direction: column;
 	line-height: 1;
 	color: var(--text);
@@ -165,22 +166,6 @@ h3 {
 
 .logo:hover {
 	color: var(--text);
-}
-
-.logo__name {
-	font-family: var(--serif);
-	font-weight: 600;
-	font-size: 24px;
-	letter-spacing: 0.04em;
-}
-
-.logo__sub {
-	margin-top: 4px;
-	font-size: 10px;
-	font-weight: 600;
-	letter-spacing: 0.42em;
-	text-transform: uppercase;
-	color: var(--accent);
 }
 
 /* ==========================================================================
@@ -454,15 +439,6 @@ h3 {
 	.site-header__inner {
 		padding-inline: 16px 8px;
 		gap: 8px;
-	}
-
-	.logo__name {
-		font-size: 20px;
-	}
-
-	.logo__sub {
-		margin-top: 3px;
-		font-size: 8px;
 	}
 
 	.site-header__tools {
@@ -1641,16 +1617,6 @@ html.drawer-open {
 	color: var(--footer-text);
 }
 
-.site-footer .logo__name {
-	font-size: 28px;
-}
-
-.site-footer .logo__sub {
-	margin-top: 6px;
-	font-size: 11px;
-	color: #c9a98c;
-}
-
 .site-footer__top {
 	display: flex;
 	flex-wrap: wrap;
@@ -1720,13 +1686,8 @@ html.drawer-open {
 		gap: 28px;
 	}
 
-	.site-footer .logo__name {
-		font-size: 24px;
-	}
-
-	.site-footer .logo__sub {
-		margin-top: 5px;
-		font-size: 10px;
+	.site-footer .logo__img--crest {
+		height: 104px;
 	}
 
 	.site-footer__cols {
@@ -1846,8 +1807,51 @@ html.drawer-open {
 	max-height: 48px;
 }
 
+/* Bundled logo: the "NS" + wordmark lockup, the wordmark alone on small screens, and the
+   full crest on dark backgrounds. */
+.logo__img--lockup,
+.logo__img--word {
+	max-width: none;
+}
+
+.logo__img--lockup {
+	height: 46px;
+}
+
+.logo__img--word {
+	display: none;
+	height: 40px;
+}
+
+@media (max-width: 1240px) {
+	.logo__img--lockup {
+		display: none;
+	}
+
+	.logo__img--word {
+		display: block;
+	}
+}
+
+@media (max-width: 1080px) {
+	.logo__img--word {
+		height: 34px;
+	}
+}
+
+@media (max-width: 374px) {
+	.logo__img--word {
+		height: 30px;
+	}
+}
+
 .site-footer .logo__img {
 	max-height: 64px;
+}
+
+.site-footer .logo__img--crest {
+	height: 124px;
+	max-height: none;
 }
 
 .btn--sm {

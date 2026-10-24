@@ -98,7 +98,7 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 
 **"Shop Our Collection" on the homepage** shows up to four product categories. Go to **Products → Categories → Edit** on a category: tick **Show in "Shop Our Collection"**, set **Homepage order** (1 is the big tile), pick a **Tile colour**, add an optional short **Tile subtitle**, and set the category **Thumbnail** (the tilted photo). If no category is ticked, the main categories show.
 
-To upload your logo, go to **Appearance → Customize → Site Identity → Logo**.
+**Logo:** the NolaSharon logo is built into the theme: the "NS" monogram with the Nolasharon wordmark in the header (the wordmark alone on phones and tablets), the full crest in the footer, on the sign-in page and in order emails, and the monogram as the browser-tab icon. To use a different file, upload it in **Appearance → Customize → Site Identity → Logo** (and **Site Icon** for the tab icon). For emails, set **WooCommerce → Settings → Emails → Header image**. The logo file we received is small (339 × 293 pixels); please send a high-resolution version, ideally SVG or a PNG at least 1200 pixels wide, so it stays sharp on large and high-resolution screens.
 
 **Pages:** **Pages → All Pages** → click the page → edit → **Update**. Yellow "To confirm" notes are only visible to logged-in staff. Replace them with the real wording; customers never see them. Anything still waiting for wording is hidden from customers.
 
@@ -143,4 +143,4 @@ Reviews are switched off for now. If you turn them on later, they are held for a
 
 ## Still to send us
 
-Logo · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · delivery areas, fees and timelines · delivery, returns, exchange, refund, privacy and terms wording · any launch offer · domain and hosting choice · whether you want a newsletter or coupons · Cloudflare Turnstile keys for the contact form (optional).
+High-resolution logo (SVG, or PNG 1200px+) · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · delivery areas, fees and timelines · delivery, returns, exchange, refund, privacy and terms wording · any launch offer · domain and hosting choice · whether you want a newsletter or coupons · Cloudflare Turnstile keys for the contact form (optional).

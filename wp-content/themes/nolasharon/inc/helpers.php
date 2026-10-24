@@ -58,23 +58,72 @@ function nolasharon_img( $name ) {
 }
 
 /**
- * Print the logo: the uploaded custom logo when set, otherwise the text logo ("NolaSharon" over "CLOTHING").
+ * URL of a bundled logo file (assets/img/logo/).
  *
- * @param string $tag Wrapper element: "a" links to home, anything else renders a span.
+ * @param string $file File name.
+ * @return string
  */
-function nolasharon_logo( $tag = 'a' ) {
+function nolasharon_logo_url( $file ) {
+	return get_template_directory_uri() . '/assets/img/logo/' . $file;
+}
+
+/**
+ * Print the logo. A logo uploaded in Customizer → Site Identity wins; otherwise the bundled
+ * NolaSharon logo: the "NS" + wordmark lockup in the header (wordmark only on small screens)
+ * and the full crest in the footer.
+ *
+ * @param string $tag     Wrapper element: "a" links to home, anything else renders a span.
+ * @param string $variant "header" or "full" (the crest, for dark backgrounds such as the footer).
+ */
+function nolasharon_logo( $tag = 'a', $variant = 'header' ) {
 	$logo_id = (int) get_theme_mod( 'custom_logo' );
+	$alt     = 'a' === $tag ? '' : __( 'NolaSharon Clothing', 'nolasharon' );
 	if ( $logo_id ) {
-		$inner = wp_get_attachment_image( $logo_id, 'medium', false, array( 'class' => 'logo__img', 'alt' => '' ) );
+		$inner = wp_get_attachment_image( $logo_id, 'medium', false, array( 'class' => 'logo__img', 'alt' => $alt ) );
+	} elseif ( 'full' === $variant ) {
+		$inner = sprintf( '<img class="logo__img logo__img--crest" src="%1$s" alt="%2$s" width="291" height="260" loading="lazy" decoding="async">', esc_url( nolasharon_logo_url( 'logo-full.webp' ) ), esc_attr( $alt ) );
 	} else {
-		$inner = '<span class="logo__name">NolaSharon</span><span class="logo__sub">Clothing</span>';
+		$inner = sprintf(
+			'<img class="logo__img logo__img--lockup" src="%1$s" alt="%3$s" width="373" height="73" decoding="async"><img class="logo__img logo__img--word" src="%2$s" alt="" width="290" height="73" decoding="async">',
+			esc_url( nolasharon_logo_url( 'logo-lockup.webp' ) ),
+			esc_url( nolasharon_logo_url( 'logo-wordmark.webp' ) ),
+			esc_attr( $alt )
+		);
 	}
 	if ( 'a' === $tag ) {
-		printf( '<a class="logo" href="%1$s" rel="home" aria-label="%2$s">%3$s</a>', esc_url( home_url( '/' ) ), esc_attr__( 'NolaSharon Clothing, home', 'nolasharon' ), $inner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
+		printf( '<a class="logo" href="%1$s" rel="home" aria-label="%2$s">%3$s</a>', esc_url( home_url( '/' ) ), esc_attr__( 'NolaSharon Clothing, home', 'nolasharon' ), $inner ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
 	} else {
-		echo '<span class="logo">' . $inner . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static markup.
+		echo '<span class="logo">' . $inner . '</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
 	}
 }
+
+/**
+ * Browser tab and home-screen icons from the bundled "NS" mark, until a Site Icon is set
+ * in Customizer → Site Identity.
+ */
+function nolasharon_site_icons() {
+	if ( has_site_icon() ) {
+		return;
+	}
+	printf( '<link rel="icon" href="%s" sizes="32x32">' . "\n", esc_url( nolasharon_logo_url( 'icon-32.png' ) ) );
+	printf( '<link rel="icon" href="%s" sizes="192x192">' . "\n", esc_url( nolasharon_logo_url( 'icon-192.png' ) ) );
+	printf( '<link rel="apple-touch-icon" href="%s">' . "\n", esc_url( nolasharon_logo_url( 'icon-180.png' ) ) );
+}
+add_action( 'wp_head', 'nolasharon_site_icons', 5 );
+add_action( 'login_head', 'nolasharon_site_icons' );
+add_action( 'admin_head', 'nolasharon_site_icons' );
+
+/**
+ * WooCommerce emails: the crest in the email header until an image is set under
+ * WooCommerce → Settings → Emails (PNG, as many email apps don't show WebP).
+ *
+ * @param string $url Header image URL setting.
+ * @return string
+ */
+function nolasharon_email_header_image( $url ) {
+	return $url ? $url : nolasharon_logo_url( 'logo-full.png' );
+}
+add_filter( 'option_woocommerce_email_header_image', 'nolasharon_email_header_image' );
 
 /**
  * Inline stroke icon.

@@ -92,20 +92,9 @@
 	max-height: 56px;
 }
 
-.ns-auth__logo-name {
-	font-family: var(--serif);
-	font-size: 24px;
-	font-weight: 600;
-	letter-spacing: 0.04em;
-}
-
-.ns-auth__logo-sub {
-	margin-top: 5px;
-	color: #d9bfa6;
-	font-size: 9px;
-	font-weight: 600;
-	letter-spacing: 0.42em;
-	text-transform: uppercase;
+.ns-auth__logo .ns-auth__crest {
+	height: 112px;
+	max-height: none;
 }
 
 .ns-auth__big {
