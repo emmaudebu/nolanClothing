@@ -3551,6 +3551,12 @@ mark.confirm {
 	list-style: none;
 }
 
+.site-footer__credit a {
+	color: var(--footer-text);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
 /* Footer layout and alignment (Customizer → NolaSharon Settings → Footer). */
 
 .site-footer--side-reverse .site-footer__top {
@@ -3638,6 +3644,14 @@ mark.confirm {
 }
 
 @media (max-width: 760px) {
+	.site-footer__copy > span[aria-hidden] {
+		display: none;
+	}
+
+	.site-footer__credit {
+		flex-basis: 100%;
+	}
+
 	.site-footer--side-reverse .site-footer__top {
 		flex-direction: column;
 	}

@@ -70,6 +70,9 @@ $nolasharon_footer_class = sprintf(
 );
 $nolasharon_copyright    = str_replace( '{year}', wp_date( 'Y' ), (string) nolasharon_setting( 'nolasharon_copyright' ) );
 $nolasharon_policies     = (bool) nolasharon_setting( 'nolasharon_footer_policies' );
+$nolasharon_credit       = nolasharon_setting( 'nolasharon_credit_text' );
+$nolasharon_credit_name  = nolasharon_setting( 'nolasharon_credit_name' );
+$nolasharon_credit_url   = nolasharon_setting( 'nolasharon_credit_url' );
 ?>
 </main>
 
@@ -103,10 +106,27 @@ $nolasharon_policies     = (bool) nolasharon_setting( 'nolasharon_footer_policie
 				<?php endforeach; ?>
 			</nav>
 		</div>
-		<?php if ( $nolasharon_copyright || $nolasharon_policies ) : ?>
+		<?php if ( $nolasharon_copyright || $nolasharon_credit || $nolasharon_policies ) : ?>
 			<div class="site-footer__bottom">
-				<?php if ( $nolasharon_copyright ) : ?>
-					<p class="site-footer__copy"><?php echo esc_html( $nolasharon_copyright ); ?></p>
+				<?php if ( $nolasharon_copyright || $nolasharon_credit ) : ?>
+					<p class="site-footer__copy">
+						<?php if ( $nolasharon_copyright ) : ?>
+							<span><?php echo esc_html( $nolasharon_copyright ); ?></span>
+						<?php endif; ?>
+						<?php if ( $nolasharon_copyright && $nolasharon_credit ) : ?>
+							<span aria-hidden="true">·</span>
+						<?php endif; ?>
+						<?php if ( $nolasharon_credit ) : ?>
+							<span class="site-footer__credit">
+								<?php echo esc_html( $nolasharon_credit ); ?>
+								<?php if ( $nolasharon_credit_name && $nolasharon_credit_url ) : ?>
+									<a href="<?php echo esc_url( $nolasharon_credit_url ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $nolasharon_credit_name ); ?><span class="screen-reader-text"> <?php esc_html_e( '(opens in a new tab)', 'nolasharon' ); ?></span></a>
+								<?php elseif ( $nolasharon_credit_name ) : ?>
+									<?php echo esc_html( $nolasharon_credit_name ); ?>
+								<?php endif; ?>
+							</span>
+						<?php endif; ?>
+					</p>
 				<?php endif; ?>
 				<?php if ( $nolasharon_policies ) : ?>
 					<p class="site-footer__legal">
