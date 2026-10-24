@@ -79,74 +79,9 @@ $page(
 	. $faq( 'How do I contact customer support?', 'Visit our <a href="/contact/">Contact Us</a> page for our phone number, WhatsApp, email and customer service hours.' )
 );
 
-// Policy pages (brief §5.10): structure only.
-$page(
-	'delivery-policy',
-	'Delivery & Shipping Policy',
-	$sections(
-		array(
-			'Delivery locations'         => 'delivery locations',
-			'Delivery charges'           => 'delivery charges',
-			'Estimated delivery times'   => 'estimated delivery timelines',
-			'Order processing time'      => 'order processing time',
-			'Dispatch'                   => 'dispatch procedure and logistics provider',
-			'Order updates'              => 'how customers receive order updates',
-			'Failed delivery attempts'   => 'what happens if a delivery attempt fails',
-			'Store pickup'               => 'whether pickup is available and from which branches',
-		)
-	)
-);
-$page(
-	'returns-policy',
-	'Returns & Exchange Policy',
-	$sections(
-		array(
-			'Returns'                  => 'whether returns are accepted',
-			'Exchanges'                => 'whether exchanges are permitted',
-			'Timeframe'                => 'timeframe for requesting a return or exchange',
-			'Product condition'        => 'required product condition',
-			'Exclusions'               => 'items that cannot be returned or exchanged',
-			'How to make a request'    => 'process for submitting a request',
-			'Return delivery charges'  => 'who pays for return delivery',
-			'Refunds'                  => 'how refunds are handled',
-		)
-	)
-);
-$page(
-	'terms-and-conditions',
-	'Terms & Conditions',
-	$sections(
-		array(
-			'Orders'                   => 'order terms',
-			'Pricing'                  => 'pricing terms',
-			'Product availability'     => 'availability terms',
-			'Payment'                  => 'payment terms',
-			'Delivery'                 => 'delivery terms',
-			'Cancellations'            => 'cancellation policy',
-			'Returns and exchanges'    => 'link to and summary of the returns policy',
-			'Customer responsibilities' => 'customer responsibilities',
-			'Other terms'              => 'other relevant business terms (client to take professional advice)',
-		)
-	)
-);
-$privacy_id = $page(
-	'privacy-policy',
-	'Privacy Policy',
-	$p( '[[CONFIRM: client to review this policy. It must match the plugins, payment gateway and analytics actually in use]]' )
-	. $sections(
-		array(
-			'What we collect'                 => 'data collected (order details: name, email, phone, delivery address; contact form messages)',
-			'How we use your information'     => 'purposes (processing orders, delivery, customer support, marketing if any)',
-			'Payments'                        => 'payment processor (e.g. Paystack) and that card details are handled by the processor, not stored on this site',
-			'Cookies and analytics'           => 'cookies and analytics tools in use',
-			'Marketing'                       => 'marketing communications, if any',
-			'How we store and protect data'   => 'storage, security and retention',
-			'Your rights'                     => 'customer rights under the NDPA',
-			'Contact'                         => 'privacy contact details',
-		)
-	)
-);
-update_option( 'wp_page_for_privacy_policy', $privacy_id );
+// Policy pages (brief §5.10, CONTENT-PAGES.md §4): structure only, from the theme's
+// definitions (inc/policies.php), on the Policy template.
+nolasharon_seed_policy_pages( true );
 
 $page(
 	'size-guide',
@@ -155,7 +90,7 @@ $page(
 );
 
 // Pages from the earlier sitemap that the new brief does not include.
-foreach ( array( 'our-policies', 'track-order' ) as $slug ) {
+foreach ( array( 'our-policies' ) as $slug ) {
 	$old = get_page_by_path( $slug );
 	if ( $old ) {
 		wp_trash_post( $old->ID );

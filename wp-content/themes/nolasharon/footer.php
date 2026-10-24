@@ -26,8 +26,8 @@ $nolasharon_columns = array(
 	__( 'Shop', 'nolasharon' )     => $nolasharon_shop_links,
 	__( 'Help', 'nolasharon' )     => array(
 		__( 'FAQs', 'nolasharon' )               => nolasharon_page_url( 'faqs' ),
-		__( 'Delivery policy', 'nolasharon' )    => nolasharon_page_url( 'delivery-policy' ),
-		__( 'Returns & exchange', 'nolasharon' ) => nolasharon_page_url( 'returns-policy' ),
+		__( 'Delivery policy', 'nolasharon' )    => nolasharon_policy_url( 'delivery' ),
+		__( 'Returns & exchange', 'nolasharon' ) => nolasharon_policy_url( 'returns' ),
 		__( 'Track your order', 'nolasharon' )   => nolasharon_page_url( 'track-order' ),
 	),
 	__( 'Visit us', 'nolasharon' ) => array(),
@@ -90,9 +90,9 @@ if ( ! $nolasharon_columns[ __( 'Visit us', 'nolasharon' ) ] ) {
 				&copy; <?php echo esc_html( wp_date( 'Y' ) ); ?> <?php esc_html_e( 'NolaSharon Clothing', 'nolasharon' ); ?>
 			</p>
 			<p>
-				<a href="<?php echo esc_url( get_privacy_policy_url() ? get_privacy_policy_url() : nolasharon_page_url( 'privacy-policy' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'nolasharon' ); ?></a>
+				<a href="<?php echo esc_url( nolasharon_policy_url( 'privacy' ) ); ?>"><?php esc_html_e( 'Privacy Policy', 'nolasharon' ); ?></a>
 				<span aria-hidden="true">|</span>
-				<a href="<?php echo esc_url( nolasharon_page_url( 'terms-and-conditions' ) ); ?>"><?php esc_html_e( 'Terms & Conditions', 'nolasharon' ); ?></a>
+				<a href="<?php echo esc_url( nolasharon_policy_url( 'terms' ) ); ?>"><?php esc_html_e( 'Terms & Conditions', 'nolasharon' ); ?></a>
 			</p>
 		</div>
 	</div>
