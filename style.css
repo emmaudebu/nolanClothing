@@ -1577,6 +1577,55 @@ html.drawer-open {
 	}
 }
 
+/* Ripple: two rings pulse out from the button, one after the other. */
+.whatsapp-float {
+	isolation: isolate;
+}
+
+.whatsapp-float::before,
+.whatsapp-float::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	border-radius: 50%;
+	background: var(--whatsapp);
+	opacity: 0.55;
+	pointer-events: none;
+	animation: wa-ripple 2.4s cubic-bezier(0.25, 0.6, 0.3, 1) infinite;
+}
+
+.whatsapp-float::after {
+	animation-delay: 1.2s;
+}
+
+.whatsapp-float:hover::before,
+.whatsapp-float:hover::after,
+.whatsapp-float:focus-visible::before,
+.whatsapp-float:focus-visible::after {
+	animation-play-state: paused;
+	opacity: 0;
+}
+
+@keyframes wa-ripple {
+	0% {
+		opacity: 0.55;
+		transform: scale(1);
+	}
+
+	100% {
+		opacity: 0;
+		transform: scale(1.9);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.whatsapp-float::before,
+	.whatsapp-float::after {
+		display: none;
+	}
+}
+
 /* ==========================================================================
    Client brief additions (2026-10): announcement bar, branches, homepage
    sections, shop filters, variations, cart, checkout and content pages
