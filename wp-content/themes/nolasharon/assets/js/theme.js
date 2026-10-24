@@ -552,11 +552,16 @@
 
 		var title = drawer.querySelector( '[data-drawer-title]' );
 		var check = drawer.querySelector( '[data-drawer-check]' );
+		var countEl = drawer.querySelector( '[data-drawer-count]' );
 
 		var render = function ( data ) {
 			drawerBody.innerHTML = data.body;
 			title.textContent = title.getAttribute( data.added ? 'data-added' : 'data-bag' );
 			check.hidden = ! data.added;
+			if ( countEl ) {
+				countEl.hidden = ! data.count;
+				countEl.textContent = 1 === data.count ? countEl.getAttribute( 'data-one' ) : countEl.getAttribute( 'data-many' ).replace( '%d', data.count );
+			}
 			setCount( data.count );
 			if ( data.message ) {
 				showMessage( data.message );
@@ -599,11 +604,14 @@
 				send( 'remove', { key: remove.getAttribute( 'data-bag-remove' ) } );
 				return;
 			}
-			var step = e.target.closest( '.qty__btn' );
+			var step = e.target.closest( '.dqty__btn' );
 			if ( step ) {
 				var input = step.parentElement.querySelector( '[data-bag-qty]' );
 				var max = parseInt( input.max, 10 ) || Infinity;
 				input.value = Math.min( max, Math.max( 1, ( parseInt( input.value, 10 ) || 1 ) + parseInt( step.getAttribute( 'data-step' ), 10 ) ) );
+				step.parentElement.querySelectorAll( '.dqty__btn' ).forEach( function ( btn ) {
+					btn.disabled = '-1' === btn.getAttribute( 'data-step' ) ? +input.value <= 1 : +input.value >= max;
+				} );
 				clearTimeout( qtyTimer );
 				qtyTimer = setTimeout( function () {
 					send( 'qty', { key: input.getAttribute( 'data-bag-qty' ), qty: input.value } );
