@@ -3235,30 +3235,7 @@ mark.confirm {
 	}
 }
 
-/* Contact, 404 and content pages ----------------------------------------- */
-
-.not-found__search {
-	display: flex;
-	gap: 10px;
-	max-width: 480px;
-	margin: 24px 0;
-}
-
-.not-found__search input {
-	flex: 1;
-	min-height: 44px;
-	padding: 0 14px;
-	border: 1px solid #d4d4d4;
-	background: var(--bg);
-	color: var(--text);
-	font: inherit;
-}
-
-.not-found__actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 12px;
-}
+/* Content pages ---------------------------------------------------------- */
 
 .entry-content h2 {
 	margin: 36px 0 10px;
