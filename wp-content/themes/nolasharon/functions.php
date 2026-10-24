@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'NOLASHARON_VERSION', '0.11.0' );
+define( 'NOLASHARON_VERSION', '0.12.0' );
 
 require get_template_directory() . '/inc/helpers.php';
 require get_template_directory() . '/inc/customizer.php';
@@ -23,6 +23,10 @@ require get_template_directory() . '/inc/account.php';
 require get_template_directory() . '/inc/cart.php';
 require get_template_directory() . '/inc/order-tracking.php';
 require get_template_directory() . '/inc/content.php';
+require get_template_directory() . '/inc/policies.php';
+require get_template_directory() . '/inc/faq.php';
+require get_template_directory() . '/inc/contact.php';
+require get_template_directory() . '/inc/patterns.php';
 
 /**
  * Theme supports and menus.
@@ -66,7 +70,7 @@ add_action( 'after_setup_theme', 'nolasharon_setup' );
 function nolasharon_assets() {
 	wp_enqueue_style(
 		'nolasharon-fonts',
-		'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Poppins:wght@400;500;600;700&display=swap',
+		'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,500&family=Poppins:wght@400;500;600;700&display=swap',
 		array(),
 		null
 	);

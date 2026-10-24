@@ -1,9 +1,9 @@
 <?php
 /**
- * Placeholder handling and FAQ schema for page content (brief rules 1–2, §5.9, §5.10).
+ * Placeholder handling for page content (brief rules 1–2, §5.9, §5.10).
  *
  * Pages may contain "[[CONFIRM: what is needed]]" until the client supplies the facts.
- * Editors see them highlighted; visitors never do. A section (H2 + its content) or an FAQ
+ * Editors see them highlighted; visitors never do. A section (H2 + its content)
  * that has nothing confirmed in it is left out for visitors.
  *
  * @package NolaSharon
@@ -53,6 +53,10 @@ function nolasharon_filter_placeholders( $content ) {
 	if ( false === strpos( $content, '[[CONFIRM' ) || is_admin() ) {
 		return $content;
 	}
+	// Pattern pages are filtered block by block instead (inc/patterns.php).
+	if ( ! nolasharon_sees_placeholders() && is_page_template( 'page-templates/about.php' ) ) {
+		return nolasharon_strip_placeholders( $content );
+	}
 	if ( nolasharon_sees_placeholders() ) {
 		return preg_replace_callback(
 			'~\[\[CONFIRM:\s*([^\]]*)\]\]~',
@@ -80,63 +84,6 @@ function nolasharon_filter_placeholders( $content ) {
 add_filter( 'the_content', 'nolasharon_filter_placeholders', 20 );
 
 /**
- * FAQ items (core Details blocks) whose answer is still a placeholder are hidden from visitors.
- *
- * @param string $html  Rendered block.
- * @param array  $block Block.
- * @return string
- */
-function nolasharon_filter_faq_block( $html, $block ) {
-	if ( 'core/details' !== $block['blockName'] || nolasharon_sees_placeholders() || false === strpos( $html, '[[CONFIRM' ) ) {
-		return $html;
-	}
-	$answer = preg_replace( '~<summary[^>]*>.*?</summary>~is', '', $html );
-	return nolasharon_has_text( nolasharon_strip_placeholders( $answer ) ) ? $html : '';
-}
-add_filter( 'render_block', 'nolasharon_filter_faq_block', 10, 2 );
-
-/**
- * FAQPage JSON-LD on the FAQs page, from its Details blocks with confirmed answers only.
- */
-function nolasharon_faq_schema() {
-	if ( ! is_page( 'faqs' ) ) {
-		return;
-	}
-	$entities = array();
-	foreach ( parse_blocks( get_post_field( 'post_content', get_queried_object_id() ) ) as $block ) {
-		if ( 'core/details' !== $block['blockName'] ) {
-			continue;
-		}
-		$html = render_block( $block );
-		if ( ! preg_match( '~<summary[^>]*>(.*?)</summary>~is', $html, $m ) ) {
-			continue;
-		}
-		$answer = preg_replace( '~<summary[^>]*>.*?</summary>~is', '', $html );
-		if ( false !== strpos( $answer, '[[CONFIRM' ) || ! nolasharon_has_text( $answer ) ) {
-			continue;
-		}
-		$entities[] = array(
-			'@type'          => 'Question',
-			'name'           => wp_strip_all_tags( $m[1] ),
-			'acceptedAnswer' => array(
-				'@type' => 'Answer',
-				'text'  => trim( wp_strip_all_tags( $answer ) ),
-			),
-		);
-	}
-	if ( $entities ) {
-		echo '<script type="application/ld+json">' . wp_json_encode(
-			array(
-				'@context'   => 'https://schema.org',
-				'@type'      => 'FAQPage',
-				'mainEntity' => $entities,
-			)
-		) . "</script>\n";
-	}
-}
-add_action( 'wp_head', 'nolasharon_faq_schema' );
-
-/**
  * Admin bar reminder of how many placeholders are left on the page being viewed.
  *
  * @param WP_Admin_Bar $bar Admin bar.
@@ -158,3 +105,27 @@ function nolasharon_placeholder_admin_bar( $bar ) {
 	}
 }
 add_action( 'admin_bar_menu', 'nolasharon_placeholder_admin_bar', 90 );
+
+/**
+ * 404 page: content styles, and keep it out of search results.
+ */
+function nolasharon_404_assets() {
+	if ( is_404() ) {
+		wp_enqueue_style( 'nolasharon-content', get_template_directory_uri() . '/assets/css/content.css', array( 'nolasharon' ), NOLASHARON_VERSION );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'nolasharon_404_assets', 20 );
+
+/**
+ * Noindex the 404 page.
+ *
+ * @param array $robots Robots directives.
+ * @return array
+ */
+function nolasharon_404_noindex( $robots ) {
+	if ( is_404() ) {
+		$robots['noindex'] = true;
+	}
+	return $robots;
+}
+add_filter( 'wp_robots', 'nolasharon_404_noindex' );

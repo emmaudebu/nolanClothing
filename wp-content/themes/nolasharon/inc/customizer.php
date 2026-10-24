@@ -11,7 +11,8 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Setting definitions, grouped by section.
  *
- * Each field: id => array( label, type, sanitize callback, default, description ).
+ * Each field: id => array( label, type, sanitize callback, default, description, extra ), where
+ * the optional extra holds control args (choices, input_attrs) and the setting transport.
  *
  * @return array
  */
@@ -19,6 +20,21 @@ function nolasharon_settings_schema() {
 	$text     = 'sanitize_text_field';
 	$textarea = 'sanitize_textarea_field';
 	$url      = 'esc_url_raw';
+	$px       = function ( $min, $max ) {
+		return array(
+			'input_attrs' => array(
+				'min'  => $min,
+				'max'  => $max,
+				'step' => 1,
+			),
+			'transport'   => 'postMessage',
+		);
+	};
+	$align    = array(
+		'left'   => __( 'Left', 'nolasharon' ),
+		'center' => __( 'Centre', 'nolasharon' ),
+		'right'  => __( 'Right', 'nolasharon' ),
+	);
 
 	return array(
 		'nolasharon_announcement' => array(
@@ -64,6 +80,76 @@ function nolasharon_settings_schema() {
 				'nolasharon_auth_image' => array( __( 'Campaign photo beside the sign-in form', 'nolasharon' ), 'image', 'absint', 0, __( 'Client-approved photo. Falls back to the placeholder illustration.', 'nolasharon' ) ),
 			),
 		),
+		'nolasharon_404'          => array(
+			'title'  => __( 'Page not found (404)', 'nolasharon' ),
+			'fields' => array(
+				'nolasharon_404_image' => array( __( 'Image inside the "0"', 'nolasharon' ), 'image', 'absint', 0, __( 'Empty uses the newest product photo.', 'nolasharon' ) ),
+			),
+		),
+		'nolasharon_header_logo'  => array(
+			'title'       => __( 'Header logo', 'nolasharon' ),
+			'description' => __( 'Sizes in pixels. Width 0 = automatic (keeps the logo’s shape). If you set both, the logo fits inside that box without stretching. To change the logo file itself, use Site Identity.', 'nolasharon' ),
+			'fields'      => array(
+				'nolasharon_logo_h'   => array( __( 'Height on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 46, '', $px( 20, 120 ) ),
+				'nolasharon_logo_w'   => array( __( 'Width on computers (0 = automatic)', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 0, '', $px( 0, 480 ) ),
+				'nolasharon_logo_h_m' => array( __( 'Height on tablets and phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 36, __( 'Below 1240px wide, where the header shows the wordmark only. Very small phones show it slightly smaller.', 'nolasharon' ), $px( 20, 70 ) ),
+				'nolasharon_logo_w_m' => array( __( 'Width on tablets and phones (0 = automatic)', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 0, __( 'Keep it under about 180px so the menu and cart icons still fit on phones.', 'nolasharon' ), $px( 0, 240 ) ),
+			),
+		),
+		'nolasharon_footer'       => array(
+			'title'  => __( 'Footer', 'nolasharon' ),
+			'fields' => array(
+				'nolasharon_footer_logo_h'   => array( __( 'Logo height (px)', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 124, '', $px( 30, 300 ) ),
+				'nolasharon_footer_logo_w'   => array( __( 'Logo width (px, 0 = automatic)', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 0, '', $px( 0, 400 ) ),
+				'nolasharon_footer_line'     => array( __( 'Line under the logo', 'nolasharon' ), 'textarea', $textarea, __( 'Fashion for women and men. Shop online or visit us in Lagos.', 'nolasharon' ), __( 'Draft: client to approve. Empty hides it.', 'nolasharon' ) ),
+				'nolasharon_footer_layout'   => array(
+					__( 'Layout', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'side',
+					'',
+					array(
+						'choices'   => array(
+							'side'         => __( 'Logo on the left, links on the right', 'nolasharon' ),
+							'side-reverse' => __( 'Links on the left, logo on the right', 'nolasharon' ),
+							'stacked'      => __( 'Logo above the links', 'nolasharon' ),
+						),
+						'transport' => 'postMessage',
+					),
+				),
+				'nolasharon_footer_align'    => array(
+					__( 'Alignment of the logo, line and links', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'left',
+					'',
+					array(
+						'choices'   => $align,
+						'transport' => 'postMessage',
+					),
+				),
+				'nolasharon_footer_h_shop'    => array( __( 'Column heading: shop links', 'nolasharon' ), 'text', $text, __( 'Shop', 'nolasharon' ), __( 'Empty hides the column.', 'nolasharon' ) ),
+				'nolasharon_footer_h_help'    => array( __( 'Column heading: help links', 'nolasharon' ), 'text', $text, __( 'Help', 'nolasharon' ), __( 'Empty hides the column.', 'nolasharon' ) ),
+				'nolasharon_footer_h_visit'   => array( __( 'Column heading: stores', 'nolasharon' ), 'text', $text, __( 'Visit us', 'nolasharon' ), __( 'Empty hides the column.', 'nolasharon' ) ),
+				'nolasharon_footer_h_contact' => array( __( 'Column heading: contact', 'nolasharon' ), 'text', $text, __( 'Contact', 'nolasharon' ), __( 'Empty hides the column.', 'nolasharon' ) ),
+				'nolasharon_copyright'       => array( __( 'Copyright text', 'nolasharon' ), 'text', $text, __( '© {year} NolaSharon Clothing', 'nolasharon' ), __( '{year} is replaced with the current year. Empty hides it.', 'nolasharon' ) ),
+				'nolasharon_credit_text'     => array( __( 'Credit: text before the name', 'nolasharon' ), 'text', $text, __( 'Developed with love by', 'nolasharon' ), __( 'Shown after the copyright. Empty hides the whole credit.', 'nolasharon' ) ),
+				'nolasharon_credit_name'     => array( __( 'Credit: name', 'nolasharon' ), 'text', $text, 'Ample Agency', '' ),
+				'nolasharon_credit_url'      => array( __( 'Credit: link', 'nolasharon' ), 'url', $url, 'https://amplegency.com', __( 'Empty shows the name without a link.', 'nolasharon' ) ),
+				'nolasharon_footer_policies' => array( __( 'Show Privacy Policy and Terms & Conditions links', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '' ),
+				'nolasharon_footer_bottom_align' => array(
+					__( 'Alignment of the copyright bar', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'spread',
+					'',
+					array(
+						'choices'   => array_merge( array( 'spread' => __( 'Copyright left, links right', 'nolasharon' ) ), $align ),
+						'transport' => 'postMessage',
+					),
+				),
+			),
+		),
 		'nolasharon_contact'      => array(
 			'title'  => __( 'Contact & social', 'nolasharon' ),
 			'fields' => array(
@@ -75,7 +161,6 @@ function nolasharon_settings_schema() {
 				'nolasharon_instagram'  => array( __( 'Instagram URL', 'nolasharon' ), 'url', $url, '', '' ),
 				'nolasharon_facebook'   => array( __( 'Facebook URL', 'nolasharon' ), 'url', $url, '', '' ),
 				'nolasharon_tiktok'     => array( __( 'TikTok URL', 'nolasharon' ), 'url', $url, '', '' ),
-				'nolasharon_footer_line' => array( __( 'Footer line under the logo', 'nolasharon' ), 'text', $text, __( 'Fashion for women and men. Shop online or visit us in Lagos.', 'nolasharon' ), __( 'Draft: client to approve. Empty hides it.', 'nolasharon' ) ),
 			),
 		),
 		'nolasharon_store'        => array(
@@ -102,6 +187,29 @@ function nolasharon_settings_schema() {
  */
 function nolasharon_sanitize_checkbox( $value ) {
 	return (bool) $value;
+}
+
+/**
+ * Sanitize a pixel size (0 allowed, capped at 600).
+ *
+ * @param mixed $value Raw value.
+ * @return int
+ */
+function nolasharon_sanitize_px( $value ) {
+	return min( 600, absint( $value ) );
+}
+
+/**
+ * Sanitize a select value against its control's choices.
+ *
+ * @param string               $value   Raw value.
+ * @param WP_Customize_Setting $setting Setting.
+ * @return string
+ */
+function nolasharon_sanitize_choice( $value, $setting ) {
+	$control = $setting->manager->get_control( $setting->id );
+	$choices = $control ? $control->choices : array();
+	return isset( $choices[ $value ] ) ? $value : $setting->default;
 }
 
 /**
@@ -142,23 +250,30 @@ function nolasharon_customize_register( $wp_customize ) {
 		$wp_customize->add_section(
 			$section_id,
 			array(
-				'title' => $section['title'],
-				'panel' => 'nolasharon',
+				'title'       => $section['title'],
+				'description' => isset( $section['description'] ) ? $section['description'] : '',
+				'panel'       => 'nolasharon',
 			)
 		);
 		foreach ( $section['fields'] as $id => $field ) {
 			list( $label, $type, $sanitize, $default, $description ) = $field;
+			$extra = isset( $field[5] ) ? $field[5] : array();
 			$wp_customize->add_setting(
 				$id,
 				array(
 					'default'           => $default,
 					'sanitize_callback' => $sanitize,
+					'transport'         => isset( $extra['transport'] ) ? $extra['transport'] : 'refresh',
 				)
 			);
-			$args = array(
-				'label'       => $label,
-				'description' => $description,
-				'section'     => $section_id,
+			unset( $extra['transport'] );
+			$args = array_merge(
+				array(
+					'label'       => $label,
+					'description' => $description,
+					'section'     => $section_id,
+				),
+				$extra
 			);
 			if ( 'image' === $type ) {
 				$wp_customize->add_control(
@@ -175,3 +290,35 @@ function nolasharon_customize_register( $wp_customize ) {
 	}
 }
 add_action( 'customize_register', 'nolasharon_customize_register' );
+
+/**
+ * Logo sizes from the Customizer, as CSS variables (0 = automatic).
+ */
+function nolasharon_logo_size_css() {
+	$px   = function ( $id ) {
+		$v = (int) nolasharon_setting( $id );
+		return $v ? $v . 'px' : 'auto';
+	};
+	$vars = array(
+		'--ns-logo-h'   => $px( 'nolasharon_logo_h' ),
+		'--ns-logo-w'   => $px( 'nolasharon_logo_w' ),
+		'--ns-logo-h-m' => $px( 'nolasharon_logo_h_m' ),
+		'--ns-logo-w-m' => $px( 'nolasharon_logo_w_m' ),
+		'--ns-flogo-h'  => $px( 'nolasharon_footer_logo_h' ),
+		'--ns-flogo-w'  => $px( 'nolasharon_footer_logo_w' ),
+	);
+	$css  = '';
+	foreach ( $vars as $name => $value ) {
+		$css .= $name . ':' . $value . ';';
+	}
+	echo '<style id="nolasharon-logo-sizes">:root{' . esc_html( $css ) . "}</style>\n";
+}
+add_action( 'wp_head', 'nolasharon_logo_size_css', 20 );
+
+/**
+ * Live preview for logo sizes and footer alignment.
+ */
+function nolasharon_customize_preview_js() {
+	wp_enqueue_script( 'nolasharon-customize-preview', get_template_directory_uri() . '/assets/js/customize-preview.js', array( 'customize-preview' ), NOLASHARON_VERSION, true );
+}
+add_action( 'customize_preview_init', 'nolasharon_customize_preview_js' );

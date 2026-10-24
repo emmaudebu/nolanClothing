@@ -24,129 +24,27 @@ $page = function ( $slug, $title, $content, $old_slug = '' ) {
 $p = function ( $text ) {
 	return "<!-- wp:paragraph -->\n<p>{$text}</p>\n<!-- /wp:paragraph -->\n\n";
 };
-$h = function ( $text ) {
-	return "<!-- wp:heading -->\n<h2 class=\"wp-block-heading\">{$text}</h2>\n<!-- /wp:heading -->\n\n";
-};
-$draft = "<!-- DRAFT: client to approve -->\n";
-$sections = function ( $list ) use ( $h, $p ) {
-	$out = '';
-	foreach ( $list as $heading => $confirm ) {
-		$out .= $h( $heading ) . $p( '[[CONFIRM: ' . $confirm . ']]' );
-	}
-	return $out;
-};
-$faq = function ( $q, $a ) {
-	return "<!-- wp:details -->\n<details class=\"wp-block-details\"><summary>{$q}</summary><!-- wp:paragraph -->\n<p>{$a}</p>\n<!-- /wp:paragraph --></details>\n<!-- /wp:details -->\n\n";
-};
 
-// About Us (brief §5.6). Only the "Our stores" section is drafted; the rest is client copy.
-$page(
-	'about-us',
-	'About Us',
-	$sections(
-		array(
-			'Our story'                 => 'brand story',
-			'What we offer'             => 'what the business offers (product range)',
-			'Our values'                => 'brand values',
-			'The shopping experience'   => 'what customers can expect when shopping with NolaSharon Clothing',
-		)
-	) . $h( 'Our stores' ) . $draft . $p( 'Shop with us online or visit us in Lagos. Our Ikeja stores remain open, and Ogudu is our newest branch. <a href="/store-locations/">See our store locations</a>.' ),
-	'our-story'
-);
+// About Us (brief §5.6, CONTENT-PAGES.md §1): built from the theme's block patterns on the
+// About template (inc/patterns.php).
+$page( 'about-us', 'About Us', '', 'our-story' );
+nolasharon_seed_about_page( true );
 
 $page( 'store-locations', 'Store Locations', '' );
 
-$page(
-	'contact',
-	'Contact Us',
-	$p( '[[CONFIRM: contact form. Install WPForms Lite or Fluent Forms (with spam protection) and paste the form shortcode here]]' )
-);
+// Contact (CONTENT-PAGES.md §2): the Contact template; the form is the Fluent Forms "Contact"
+// form the theme creates (inc/contact.php).
+update_post_meta( $page( 'contact', 'Contact Us', '' ), '_wp_page_template', 'page-templates/contact.php' );
+nolasharon_seed_contact_form();
 
-// FAQs (brief §5.9). Procedural answers are drafted; policy answers wait for the client.
-$page(
-	'faqs',
-	'FAQs',
-	$draft
-	. $faq( 'How do I place an order?', 'Browse the shop, choose your colour and size on the product page, then tap <strong>Add to Cart</strong>. When you are ready, open your cart, tap <strong>Proceed to Checkout</strong>, enter your details and choose how you would like to pay.' )
-	. $faq( 'What payment methods do you accept?', '[[CONFIRM: payment methods]]' )
-	. $faq( 'Where do you deliver?', '[[CONFIRM: delivery areas]]' )
-	. $faq( 'How much does delivery cost?', '[[CONFIRM: delivery fees]]' )
-	. $faq( 'How long does delivery take?', '[[CONFIRM: delivery timelines]]' )
-	. $faq( 'Can I collect my order from a store?', '[[CONFIRM: store pickup availability and which branches offer it]]' )
-	. $faq( 'How do I choose my size?', 'Tap <strong>Size guide</strong> on any product page to see our size chart. [[CONFIRM: size charts]]' )
-	. $faq( 'Can I exchange a product?', '[[CONFIRM: exchange policy]]' )
-	. $faq( 'What happens if a product is out of stock?', '[[CONFIRM: out-of-stock and backorder process]]' )
-	. $faq( 'How do I contact customer support?', 'Visit our <a href="/contact/">Contact Us</a> page for our phone number, WhatsApp, email and customer service hours.' )
-);
+// FAQs (brief §5.9, CONTENT-PAGES.md §3): the questions are FAQ posts seeded by the theme
+// (inc/faq.php); the page itself only carries the FAQ template.
+update_post_meta( $page( 'faqs', 'FAQs', '' ), '_wp_page_template', 'page-templates/faq.php' );
+nolasharon_seed_faqs();
 
-// Policy pages (brief §5.10): structure only.
-$page(
-	'delivery-policy',
-	'Delivery & Shipping Policy',
-	$sections(
-		array(
-			'Delivery locations'         => 'delivery locations',
-			'Delivery charges'           => 'delivery charges',
-			'Estimated delivery times'   => 'estimated delivery timelines',
-			'Order processing time'      => 'order processing time',
-			'Dispatch'                   => 'dispatch procedure and logistics provider',
-			'Order updates'              => 'how customers receive order updates',
-			'Failed delivery attempts'   => 'what happens if a delivery attempt fails',
-			'Store pickup'               => 'whether pickup is available and from which branches',
-		)
-	)
-);
-$page(
-	'returns-policy',
-	'Returns & Exchange Policy',
-	$sections(
-		array(
-			'Returns'                  => 'whether returns are accepted',
-			'Exchanges'                => 'whether exchanges are permitted',
-			'Timeframe'                => 'timeframe for requesting a return or exchange',
-			'Product condition'        => 'required product condition',
-			'Exclusions'               => 'items that cannot be returned or exchanged',
-			'How to make a request'    => 'process for submitting a request',
-			'Return delivery charges'  => 'who pays for return delivery',
-			'Refunds'                  => 'how refunds are handled',
-		)
-	)
-);
-$page(
-	'terms-and-conditions',
-	'Terms & Conditions',
-	$sections(
-		array(
-			'Orders'                   => 'order terms',
-			'Pricing'                  => 'pricing terms',
-			'Product availability'     => 'availability terms',
-			'Payment'                  => 'payment terms',
-			'Delivery'                 => 'delivery terms',
-			'Cancellations'            => 'cancellation policy',
-			'Returns and exchanges'    => 'link to and summary of the returns policy',
-			'Customer responsibilities' => 'customer responsibilities',
-			'Other terms'              => 'other relevant business terms (client to take professional advice)',
-		)
-	)
-);
-$privacy_id = $page(
-	'privacy-policy',
-	'Privacy Policy',
-	$p( '[[CONFIRM: client to review this policy. It must match the plugins, payment gateway and analytics actually in use]]' )
-	. $sections(
-		array(
-			'What we collect'                 => 'data collected (order details: name, email, phone, delivery address; contact form messages)',
-			'How we use your information'     => 'purposes (processing orders, delivery, customer support, marketing if any)',
-			'Payments'                        => 'payment processor (e.g. Paystack) and that card details are handled by the processor, not stored on this site',
-			'Cookies and analytics'           => 'cookies and analytics tools in use',
-			'Marketing'                       => 'marketing communications, if any',
-			'How we store and protect data'   => 'storage, security and retention',
-			'Your rights'                     => 'customer rights under the NDPA',
-			'Contact'                         => 'privacy contact details',
-		)
-	)
-);
-update_option( 'wp_page_for_privacy_policy', $privacy_id );
+// Policy pages (brief §5.10, CONTENT-PAGES.md §4): structure only, from the theme's
+// definitions (inc/policies.php), on the Policy template.
+nolasharon_seed_policy_pages( true );
 
 $page(
 	'size-guide',
@@ -155,7 +53,7 @@ $page(
 );
 
 // Pages from the earlier sitemap that the new brief does not include.
-foreach ( array( 'our-policies', 'track-order' ) as $slug ) {
+foreach ( array( 'our-policies' ) as $slug ) {
 	$old = get_page_by_path( $slug );
 	if ( $old ) {
 		wp_trash_post( $old->ID );
