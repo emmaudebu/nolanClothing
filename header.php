@@ -28,15 +28,18 @@ $nolasharon_announce = nolasharon_setting( 'nolasharon_announce_text' );
 if ( ! nolasharon_unconfirmed( $nolasharon_announce ) ) :
 	$nolasharon_announce_link = nolasharon_setting( 'nolasharon_announce_link' );
 	?>
-	<div class="announce" id="announce" data-key="<?php echo esc_attr( md5( $nolasharon_announce ) ); ?>">
-		<p class="announce__text">
-			<?php if ( $nolasharon_announce_link ) : ?>
-				<a href="<?php echo esc_url( $nolasharon_announce_link ); ?>"><?php echo esc_html( $nolasharon_announce ); ?></a>
-			<?php else : ?>
-				<?php echo esc_html( $nolasharon_announce ); ?>
-			<?php endif; ?>
-		</p>
-		<button class="announce__close" type="button" aria-label="<?php esc_attr_e( 'Dismiss announcement', 'nolasharon' ); ?>"><?php echo nolasharon_icon( 'close', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
+	<div class="ns-collapse is-open announce" id="announce" data-key="<?php echo esc_attr( md5( $nolasharon_announce . $nolasharon_announce_link ) ); ?>">
+		<div>
+			<div class="announce__bar">
+				<p class="announce__text">
+					<?php echo esc_html( $nolasharon_announce ); ?>
+					<?php if ( $nolasharon_announce_link ) : ?>
+						<a href="<?php echo esc_url( $nolasharon_announce_link ); ?>"><?php echo esc_html( nolasharon_setting( 'nolasharon_announce_label' ) ); ?> <span aria-hidden="true">→</span></a>
+					<?php endif; ?>
+				</p>
+				<button class="announce__close" type="button" aria-label="<?php esc_attr_e( 'Dismiss announcement', 'nolasharon' ); ?>"><?php echo nolasharon_icon( 'close', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></button>
+			</div>
+		</div>
 	</div>
 	<script>try{var a=document.getElementById('announce');if(localStorage.getItem('ns-announce')===a.getAttribute('data-key'))a.hidden=true;}catch(e){}</script>
 <?php endif; ?>

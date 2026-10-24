@@ -622,11 +622,14 @@
 		}
 	}
 
-	// Announcement bar: dismissed per message, remembered in this browser.
+	// Announcement bar: folds away when dismissed, remembered per message in this browser.
 	var announce = document.getElementById( 'announce' );
 	if ( announce ) {
 		announce.querySelector( '.announce__close' ).addEventListener( 'click', function () {
-			announce.hidden = true;
+			window.nsUI.collapse( announce, false );
+			setTimeout( function () {
+				announce.hidden = true;
+			}, window.nsUI.reduced ? 0 : 400 );
 			try {
 				localStorage.setItem( 'ns-announce', announce.getAttribute( 'data-key' ) );
 			} catch ( e ) {}
