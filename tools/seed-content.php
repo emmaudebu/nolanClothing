@@ -35,10 +35,6 @@ $sections = function ( $list ) use ( $h, $p ) {
 	}
 	return $out;
 };
-$faq = function ( $q, $a ) {
-	return "<!-- wp:details -->\n<details class=\"wp-block-details\"><summary>{$q}</summary><!-- wp:paragraph -->\n<p>{$a}</p>\n<!-- /wp:paragraph --></details>\n<!-- /wp:details -->\n\n";
-};
-
 // About Us (brief §5.6). Only the "Our stores" section is drafted; the rest is client copy.
 $page(
 	'about-us',
@@ -62,22 +58,10 @@ $page(
 	$p( '[[CONFIRM: contact form. Install WPForms Lite or Fluent Forms (with spam protection) and paste the form shortcode here]]' )
 );
 
-// FAQs (brief §5.9). Procedural answers are drafted; policy answers wait for the client.
-$page(
-	'faqs',
-	'FAQs',
-	$draft
-	. $faq( 'How do I place an order?', 'Browse the shop, choose your colour and size on the product page, then tap <strong>Add to Cart</strong>. When you are ready, open your cart, tap <strong>Proceed to Checkout</strong>, enter your details and choose how you would like to pay.' )
-	. $faq( 'What payment methods do you accept?', '[[CONFIRM: payment methods]]' )
-	. $faq( 'Where do you deliver?', '[[CONFIRM: delivery areas]]' )
-	. $faq( 'How much does delivery cost?', '[[CONFIRM: delivery fees]]' )
-	. $faq( 'How long does delivery take?', '[[CONFIRM: delivery timelines]]' )
-	. $faq( 'Can I collect my order from a store?', '[[CONFIRM: store pickup availability and which branches offer it]]' )
-	. $faq( 'How do I choose my size?', 'Tap <strong>Size guide</strong> on any product page to see our size chart. [[CONFIRM: size charts]]' )
-	. $faq( 'Can I exchange a product?', '[[CONFIRM: exchange policy]]' )
-	. $faq( 'What happens if a product is out of stock?', '[[CONFIRM: out-of-stock and backorder process]]' )
-	. $faq( 'How do I contact customer support?', 'Visit our <a href="/contact/">Contact Us</a> page for our phone number, WhatsApp, email and customer service hours.' )
-);
+// FAQs (brief §5.9, CONTENT-PAGES.md §3): the questions are FAQ posts seeded by the theme
+// (inc/faq.php); the page itself only carries the FAQ template.
+update_post_meta( $page( 'faqs', 'FAQs', '' ), '_wp_page_template', 'page-templates/faq.php' );
+nolasharon_seed_faqs();
 
 // Policy pages (brief §5.10, CONTENT-PAGES.md §4): structure only, from the theme's
 // definitions (inc/policies.php), on the Policy template.
