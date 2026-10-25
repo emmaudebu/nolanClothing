@@ -27,6 +27,7 @@ require get_template_directory() . '/inc/policies.php';
 require get_template_directory() . '/inc/faq.php';
 require get_template_directory() . '/inc/contact.php';
 require get_template_directory() . '/inc/patterns.php';
+require get_template_directory() . '/inc/collections.php';
 
 /**
  * Theme supports and menus.
