@@ -65,6 +65,7 @@ If this file and an instruction in chat conflict, ask.
 | Header (2026-10-23, SHOP-PRODUCT.md) | **Light/dark theme toggle and dark mode removed.** Wishlist heart stays (wishlist is on). |
 | Reviews (2026-10-23) | **Off** until the client asks for them. |
 | Bags and shoes (2026-10-25) | The client **sells bags and shoes**. Top-level categories **Bags** and **Shoes** (shoes may also sit in Women/Men). Shoes use a separate global attribute **Shoe size** (`pa_shoe-size`, demo EU 36–45 until the client confirms the range) with size buttons, size guide and shop filter; bags vary by **Colour** only. Extra Details fields: **Dimensions** and **Features**. `[[CONFIRM: shoe size range, Shoes size chart, bag/shoe product details]]` |
+| Delivery & returns policy (2026-10-26) | **Client policy received** and applied (Delivery & Shipping and Returns & Exchange pages, FAQs, snippets; `tools/seed-client-policies.php`). Store pickup is **on** (free, the two Ikeja stores, ready within 24 hrs, bring Order ID). **International delivery** is mentioned and arranged by contacting the store; **online checkout stays Nigeria-only**. Checkout delivery fees stay placeholders until the client gives an exact fee per area: `[[CONFIRM: exact delivery fee per zone]]` |
 
 ---
 

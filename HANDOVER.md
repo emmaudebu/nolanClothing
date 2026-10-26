@@ -122,6 +122,7 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 
 ## 6. Delivery and store pickup
 
+- **Your delivery policy is on the site** (Delivery & Shipping and Returns & Exchange pages, the FAQs, and the delivery/returns notes on product pages). If a fee, timeline or rule changes, update the policy page and the notes in **Customize → NolaSharon Settings → Shop, delivery & pickup** so they match.
 - **Delivery fees:** **WooCommerce → Settings → Shipping**. Click a zone (e.g. *Lagos*) → edit each rate → set the cost and remove "[[CONFIRM: fee]]" from the name.
 - **Area note on the delivery cards:** each flat rate also has a **Checkout note (NolaSharon)** field, shown under its name at checkout (e.g. "Ikeja, Ogudu, Yaba, Surulere…"). Leave it empty to hide it.
 - **Terms checkbox:** checkout asks customers to accept the Terms & Conditions and the Returns & Exchange Policy. The Terms page is set under **WooCommerce → Settings → Advanced → Terms and conditions**.
@@ -155,4 +156,4 @@ Reviews are switched off for now. If you turn them on later, they are held for a
 
 ## Still to send us
 
-High-resolution logo (SVG, or PNG 1200px+) · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · your shoe size range and shoe size chart · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · delivery areas, fees and timelines · delivery, returns, exchange, refund, privacy and terms wording · any launch offer · domain and hosting choice · whether you want a newsletter or coupons · Cloudflare Turnstile keys for the contact form (optional).
+High-resolution logo (SVG, or PNG 1200px+) · brand story and short description · product photos, names, prices, sizes, colours, stock, care details · final categories · your shoe size range and shoe size chart · phone, WhatsApp, email, service hours, social links · each Ikeja branch and the Ogudu branch (address, landmark, hours, phone, map, pickup yes/no, Ogudu opening date) · payment gateway and methods · the exact checkout delivery fee for each area (Lagos Mainland, Island, Outskirts, other states; your policy gives ranges) · how long pickup orders are held · privacy and terms details · any launch offer · domain and hosting choice · whether you want a newsletter or coupons · Cloudflare Turnstile keys for the contact form (optional).
