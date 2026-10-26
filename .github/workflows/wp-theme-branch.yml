@@ -1,0 +1,33 @@
+# Keeps the `wp-theme` branch in step with main: it holds only the theme folder
+# (wp-content/themes/nolasharon) at the top level, which is what WP Pusher and other
+# GitHub-based installers expect (style.css at the root). Install the theme from the
+# `wp-theme` branch; never commit to it directly.
+name: Update wp-theme branch
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'wp-content/themes/nolasharon/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: wp-theme-branch
+  cancel-in-progress: false
+
+jobs:
+  split:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Split the theme folder into its own history
+        run: git subtree split --prefix=wp-content/themes/nolasharon -b wp-theme-split
+
+      - name: Push to the wp-theme branch
+        run: git push --force origin wp-theme-split:wp-theme
