@@ -86,6 +86,19 @@ function nolasharon_settings_schema() {
 				'nolasharon_404_image' => array( __( 'Image inside the "0"', 'nolasharon' ), 'image', 'absint', 0, __( 'Empty uses the newest product photo.', 'nolasharon' ) ),
 			),
 		),
+		'nolasharon_coming_soon'  => array(
+			'title'       => __( 'Coming soon page', 'nolasharon' ),
+			'description' => __( 'Shows a coming soon page to visitors instead of the shop. You and your staff still see the normal site while logged in. You can also switch it on or off from the black admin bar at the top of the dashboard.', 'nolasharon' ),
+			'fields'      => array(
+				'nolasharon_cs_enabled' => array( __( 'Show the coming soon page to visitors', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', false, '' ),
+				'nolasharon_cs_eyebrow' => array( __( 'Small label above the headline', 'nolasharon' ), 'text', $text, __( 'Coming soon', 'nolasharon' ), '' ),
+				'nolasharon_cs_title'   => array( __( 'Headline', 'nolasharon' ), 'text', $text, __( 'Something beautiful is on the way', 'nolasharon' ), '' ),
+				'nolasharon_cs_text'    => array( __( 'Message', 'nolasharon' ), 'textarea', $textarea, __( 'Our online store is almost ready. Soon you’ll be able to shop the NolaSharon Clothing collection online, with delivery across Nigeria or free pickup from our stores.', 'nolasharon' ), __( 'Draft: client to approve.', 'nolasharon' ) ),
+				'nolasharon_cs_date'    => array( __( 'Launch date and time (optional countdown)', 'nolasharon' ), 'date_time', 'nolasharon_sanitize_datetime', '', __( 'Lagos time. Leave empty to hide the countdown. When the time passes, the countdown hides; the page stays on until you switch it off.', 'nolasharon' ) ),
+				'nolasharon_cs_image'   => array( __( 'Background photo (optional)', 'nolasharon' ), 'image', 'absint', 0, __( 'Shown softly behind the page. Leave empty for the plain brand background.', 'nolasharon' ) ),
+				'nolasharon_cs_stores'  => array( __( 'Show "Visit our stores" with the open branches', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '' ),
+			),
+		),
 		'nolasharon_header_logo'  => array(
 			'title'       => __( 'Header logo', 'nolasharon' ),
 			'description' => __( 'Sizes in pixels. Width 0 = automatic (keeps the logo’s shape). If you set both, the logo fits inside that box without stretching. To change the logo file itself, use Site Identity.', 'nolasharon' ),
@@ -213,6 +226,21 @@ function nolasharon_sanitize_choice( $value, $setting ) {
 }
 
 /**
+ * Sanitize a Customizer date/time ("Y-m-d H:i:s"), or empty.
+ *
+ * @param string $value Raw value.
+ * @return string
+ */
+function nolasharon_sanitize_datetime( $value ) {
+	$value = trim( (string) $value );
+	if ( '' === $value ) {
+		return '';
+	}
+	$date = date_create( $value, wp_timezone() );
+	return $date ? $date->format( 'Y-m-d H:i:s' ) : '';
+}
+
+/**
  * Read a theme setting with its schema default.
  *
  * @param string $id Setting ID.
@@ -275,7 +303,22 @@ function nolasharon_customize_register( $wp_customize ) {
 				),
 				$extra
 			);
-			if ( 'image' === $type ) {
+			if ( 'date_time' === $type ) {
+				$wp_customize->add_control(
+					new WP_Customize_Date_Time_Control(
+						$wp_customize,
+						$id,
+						array_merge(
+							$args,
+							array(
+								'include_time'    => true,
+								'allow_past_date' => true,
+								'twelve_hour_format' => true,
+							)
+						)
+					)
+				);
+			} elseif ( 'image' === $type ) {
 				$wp_customize->add_control(
 					new WP_Customize_Media_Control(
 						$wp_customize,

@@ -120,6 +120,15 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 - **Contact Us:** the contact cards, hours and social links come from **Contact & social** in the Customizer and only show when filled in. The form is **Fluent Forms → Contact**: you can change labels or add fields there. Messages are emailed to the business email from the Customizer (or the site admin email if that's empty) and saved under **Fluent Forms → Entries**. Spam protection: a hidden honeypot field is on. For stronger protection, create free Cloudflare Turnstile keys and add them in Fluent Forms’ **Global Settings** (Turnstile), then add the Turnstile field to the form.
 - **Page not found (404):** the photo inside the "0" is set in **Customize → NolaSharon Settings → Page not found (404)**; otherwise your newest product photo is used.
 
+### Coming soon page
+
+Hide the shop behind an animated "coming soon" page (for example before launch, or during a big update):
+
+- **Turn it on or off:** use **Coming soon** in the black admin bar at the top of the screen (it shows **ON** in gold while active), or **Appearance → Customize → NolaSharon Settings → Coming soon page → Show the coming soon page to visitors**.
+- While it's on, **visitors** see only the coming soon page. **You and your staff**, when logged in, still see and use the normal site, and the dashboard shows a reminder. Use **Coming soon → Preview the page** to see what visitors see.
+- **Edit:** the small label, headline, message, an optional **launch date and time** (shows a live countdown in Lagos time), and an optional background photo. Your WhatsApp, phone, email and social links, and your open branches, appear automatically from your other settings.
+- Search engines are told the site is temporarily unavailable, so switching it on doesn't harm your Google ranking. Don't leave it on for weeks once the shop is ready.
+
 ## 6. Delivery and store pickup
 
 - **Your delivery policy is on the site** (Delivery & Shipping and Returns & Exchange pages, the FAQs, and the delivery/returns notes on product pages). If a fee, timeline or rule changes, update the policy page and the notes in **Customize → NolaSharon Settings → Shop, delivery & pickup** so they match.
