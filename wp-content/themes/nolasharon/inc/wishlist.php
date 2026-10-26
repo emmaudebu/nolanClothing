@@ -40,16 +40,64 @@ function nolasharon_wishlist_cookie_ids() {
 }
 
 /**
- * Current visitor's wishlist.
+ * Current visitor's saved list as stored, including products that may since have been
+ * deleted or unpublished.
  *
  * @return int[]
  */
-function nolasharon_wishlist_get() {
+function nolasharon_wishlist_stored() {
 	if ( is_user_logged_in() ) {
 		return nolasharon_wishlist_clean( get_user_meta( get_current_user_id(), 'nolasharon_wishlist', true ) );
 	}
 	return nolasharon_wishlist_cookie_ids();
 }
+
+/**
+ * Keep only products that still exist and are published.
+ *
+ * @param int[] $ids Product IDs.
+ * @return int[]
+ */
+function nolasharon_wishlist_available( $ids ) {
+	if ( ! $ids ) {
+		return array();
+	}
+	_prime_post_caches( $ids, false, false );
+	return array_values(
+		array_filter(
+			$ids,
+			function ( $id ) {
+				return 'product' === get_post_type( $id ) && 'publish' === get_post_status( $id );
+			}
+		)
+	);
+}
+
+/**
+ * Current visitor's wishlist (available products only).
+ *
+ * @return int[]
+ */
+function nolasharon_wishlist_get() {
+	return nolasharon_wishlist_available( nolasharon_wishlist_stored() );
+}
+
+/**
+ * Drop deleted or unpublished products from the saved list, and keep a signed-in
+ * visitor's cookie in step with their account, so the header count (read from the cookie
+ * by theme.js) is always right.
+ */
+function nolasharon_wishlist_prune() {
+	if ( is_admin() || wp_doing_ajax() || headers_sent() ) {
+		return;
+	}
+	$stored = nolasharon_wishlist_stored();
+	$valid  = nolasharon_wishlist_available( $stored );
+	if ( $valid !== $stored || ( is_user_logged_in() && nolasharon_wishlist_cookie_ids() !== $valid ) ) {
+		nolasharon_wishlist_save( $valid );
+	}
+}
+add_action( 'template_redirect', 'nolasharon_wishlist_prune', 5 );
 
 /**
  * Save the wishlist (user meta when logged in) and mirror it to the cookie.

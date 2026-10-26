@@ -3,7 +3,7 @@
  * Homepage "Shop Our Collection" (STORE-PAGES.md §1, brief §4 D): up to four product
  * categories as a bento grid. Categories, order, tile colour and subtitle come from the
  * product category screens (Products → Categories). On phones the first tile is full width
- * and the rest scroll sideways.
+ * and the rest scroll sideways. "Explore Our Collection" goes to the Collections page.
  *
  * Args: categories (WP_Term[], from nolasharon_home_categories()).
  *
@@ -28,7 +28,7 @@ $nolasharon_layouts = array(
 $nolasharon_sizes   = $nolasharon_layouts[ $nolasharon_count ];
 $nolasharon_tones   = array( 'brand', 'dark', 'sand', 'cream' );
 $nolasharon_tilts   = array( -4, 3, -5, 4 );
-$nolasharon_shop    = nolasharon_shop_url();
+$nolasharon_shop    = nolasharon_collections_url();
 ?>
 <section class="section ns-cols ns-cols--<?php echo esc_attr( $nolasharon_count ); ?>" aria-labelledby="collections-title">
 	<div class="container">

@@ -135,7 +135,7 @@ function nolasharon_about_patterns() {
 					. nolasharon_b_p( '[[CONFIRM: brand introduction]]', 'ab-hero__intro' )
 					. nolasharon_b_buttons(
 						array(
-							array( __( 'Explore Our Collection', 'nolasharon' ), home_url( '/shop/' ) ),
+							array( __( 'Explore Our Collection', 'nolasharon' ), home_url( '/collections/' ) ),
 							array( __( 'Visit Our Store', 'nolasharon' ), home_url( '/store-locations/' ), true ),
 						)
 					),
