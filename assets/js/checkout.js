@@ -517,8 +517,10 @@
 		// Server-side errors: open the step holding the first field in error.
 		$body.on( 'checkout_error', function ( e, html ) {
 			setProcessing( false );
-			var holder = document.createElement( 'div' );
-			holder.innerHTML = html || '';
+			// Parse WooCommerce's error markup in an inert template: nothing in it can load or run.
+			var tpl = document.createElement( 'template' );
+			tpl.innerHTML = html || '';
+			var holder = tpl.content;
 			var first = holder.querySelector( '[data-id]' );
 			var id = first ? first.getAttribute( 'data-id' ) : '';
 			var target = id ? document.getElementById( id ) || field( id ) || document.getElementById( id + '_field' ) : null;
