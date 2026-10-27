@@ -1933,6 +1933,45 @@ a.ct-card:hover .ct-card__arrow {
 	color: #ffffff;
 }
 
+.ab-offer__card--soft {
+	background: #f4eee8;
+	color: #2b1b12;
+}
+
+.ab-offer__name a {
+	color: inherit;
+	text-decoration: none;
+}
+
+.ab-offer__name a::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 22px;
+}
+
+.ab-offer__name a:focus-visible {
+	outline: none;
+}
+
+.ab-offer__card:focus-within {
+	outline: 3px solid #1a56db;
+	outline-offset: 3px;
+}
+
+.ab-lead {
+	max-width: 680px;
+	color: #444444;
+	font-size: 17px;
+}
+
+.ab-offer__note {
+	max-width: 680px;
+	margin: 32px 0 0;
+	color: #444444;
+	font-size: 17px;
+}
+
 .ab-offer__card--light {
 	min-height: 0;
 	justify-content: center;
@@ -1971,6 +2010,29 @@ a.ct-card:hover .ct-card__arrow {
 .ab-offer__card p {
 	margin: 0;
 	opacity: 0.9;
+}
+
+/* Commitment (values section) */
+
+.ab-commit__grid.wp-block-columns {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 64px;
+	margin: 0;
+}
+
+.ab-commit__grid .wp-block-column > p:not([class]) {
+	color: #444444;
+	font-size: 17px;
+	line-height: 1.75;
+}
+
+.ab-values .ab-value {
+	padding-bottom: 22px;
+}
+
+.ab-values .ab-value__title {
+	margin: 0;
 }
 
 /* Values */
@@ -2204,6 +2266,12 @@ a.ct-card:hover .ct-card__arrow {
 	font-size: 14px;
 }
 
+.ab-store__line {
+	margin: 0 0 12px;
+	color: #444444;
+	font-size: 15px;
+}
+
 .ab-store__dir {
 	position: relative;
 	z-index: 1;
@@ -2238,6 +2306,28 @@ a.ct-card:hover .ct-card__arrow {
 	justify-content: center;
 }
 
+.ab-cta .ab-cta__contact {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px 24px;
+	margin-top: 14px;
+	font-weight: 500;
+}
+
+.ab-cta__contact a {
+	color: #8c6448;
+	font-weight: 600;
+}
+
+.ab-cta .ab-cta__tagline {
+	margin-top: 28px;
+	color: #555555;
+	font-family: var(--serif);
+	font-size: 18px;
+	font-style: italic;
+}
+
 @media (max-width: 1024px) {
 	.ab-values__grid,
 	.ab-steps__grid {
@@ -2256,6 +2346,7 @@ a.ct-card:hover .ct-card__arrow {
 	}
 
 	.ab-hero__inner.wp-block-columns,
+	.ab-commit__grid.wp-block-columns,
 	.ab-story__grid.wp-block-columns {
 		grid-template-columns: 1fr;
 		gap: 32px;
