@@ -131,8 +131,10 @@ function nolasharon_about_patterns() {
 				array(
 					'ab-hero__copy',
 					nolasharon_b_p( __( 'About NolaSharon Clothing', 'nolasharon' ), 'ab-eyebrow' )
-					. nolasharon_b_heading( 1, __( 'Fashion that helps you feel like <em>you</em>', 'nolasharon' ), 'ab-hero__title' )
-					. nolasharon_b_p( '[[CONFIRM: brand introduction]]', 'ab-hero__intro' )
+					. nolasharon_b_heading( 1, __( 'Fashion That Speaks <em>Your Style</em>', 'nolasharon' ), 'ab-hero__title' )
+					. nolasharon_b_p( __( 'At NolaSharon Clothing, we believe fashion is more than what you wear. It is a way to express your personality, embrace your confidence, and show up as your unique self.', 'nolasharon' ), 'ab-hero__intro' )
+					. nolasharon_b_p( __( 'We are a fashion retail brand offering a variety of fashion products, including clothing, bags, shoes, and more, to help you find pieces that complement your personal style.', 'nolasharon' ), 'ab-hero__intro' )
+					. nolasharon_b_p( __( 'Whether you are refreshing your wardrobe, searching for something special, or looking for everyday fashion essentials, we want to make discovering your next favourite piece an enjoyable experience.', 'nolasharon' ), 'ab-hero__intro' )
 					. nolasharon_b_buttons(
 						array(
 							array( __( 'Explore Our Collection', 'nolasharon' ), home_url( '/collections/' ) ),
@@ -155,59 +157,70 @@ function nolasharon_about_patterns() {
 		nolasharon_b_columns(
 			'ab-story__grid',
 			array(
-				nolasharon_b_p( __( 'Our story', 'nolasharon' ), 'ab-eyebrow' )
-				. nolasharon_b_heading( 2, __( 'How NolaSharon began', 'nolasharon' ), 'ab-h2' )
-				. "<!-- wp:quote {\"className\":\"ab-quote\"} -->\n<blockquote class=\"wp-block-quote ab-quote\">" . nolasharon_b_p( '[[CONFIRM: founder quote]]' ) . "<cite>[[CONFIRM: founder name and role]]</cite></blockquote>\n<!-- /wp:quote -->\n",
-				nolasharon_b_p( '[[CONFIRM: brand story, paragraph 1]]' )
-				. nolasharon_b_p( '[[CONFIRM: brand story, paragraph 2]]' )
-				. nolasharon_b_p( '[[CONFIRM: brand story, paragraph 3 (optional)]]' ),
+				nolasharon_b_p( __( 'NolaSharon Clothing', 'nolasharon' ), 'ab-eyebrow' )
+				. nolasharon_b_heading( 2, __( 'Our Story', 'nolasharon' ), 'ab-h2' )
+				. "<!-- wp:quote {\"className\":\"ab-quote\"} -->\n<blockquote class=\"wp-block-quote ab-quote\">" . nolasharon_b_p( __( 'Our journey is one of growth, style, and a commitment to serving our customers.', 'nolasharon' ) ) . "</blockquote>\n<!-- /wp:quote -->\n",
+				nolasharon_b_p( __( 'NolaSharon Clothing was established with a passion for fashion and a desire to make a variety of fashion products accessible to our customers.', 'nolasharon' ) )
+				. nolasharon_b_p( __( 'Over time, we have continued to build our presence and serve customers through our physical stores. As we grow, we are expanding our reach by bringing the NolaSharon Clothing shopping experience online, making it easier for customers to explore our collections and shop from the comfort of their homes.', 'nolasharon' ) )
+				. nolasharon_b_p( __( 'With our existing stores in Ikeja and our new branch opening in Ogudu, Lagos, we are excited about reaching more fashion lovers and making it more convenient for them to connect with us.', 'nolasharon' ) ),
 			)
 		)
 	);
 
-	$offer_card = function ( $tone, $image ) use ( $img ) {
+	$offer_card = function ( $tone, $image, $name, $url, $line ) use ( $img ) {
 		return nolasharon_b_group(
-			'ab-offer__card ab-offer__card--' . $tone . ' ns-needs-content',
+			'ab-offer__card ab-offer__card--' . $tone,
 			nolasharon_b_image( $img . $image, '', 'ab-offer__img' )
-			. nolasharon_b_heading( 3, '[[CONFIRM: category name]]', 'ab-offer__name' )
-			. nolasharon_b_p( '[[CONFIRM: one line about this category]]' )
+			. nolasharon_b_heading( 3, '<a href="' . esc_url( $url ) . '">' . esc_html( $name ) . '</a>', 'ab-offer__name' )
+			. nolasharon_b_p( $line )
 		);
 	};
 	$offer      = nolasharon_b_group(
 		'ab-section ab-offer',
-		nolasharon_b_p( __( 'What we offer', 'nolasharon' ), 'ab-eyebrow' )
-		. nolasharon_b_heading( 2, __( 'Something for every occasion', 'nolasharon' ), 'ab-h2' )
+		nolasharon_b_p( __( 'Our collection', 'nolasharon' ), 'ab-eyebrow' )
+		. nolasharon_b_heading( 2, __( 'What We Offer', 'nolasharon' ), 'ab-h2' )
+		. nolasharon_b_p( __( 'At NolaSharon Clothing, you can explore a range of fashion products to suit different preferences and occasions. Our collection includes:', 'nolasharon' ), 'ab-lead' )
 		. nolasharon_b_group(
 			'ab-offer__grid',
-			$offer_card( 'brand', 'two-piece.svg' )
-			. $offer_card( 'dark', 'senator-set.svg' )
+			$offer_card( 'brand', 'two-piece.svg', __( 'Clothing', 'nolasharon' ), home_url( '/collections/' ), __( 'Explore fashion pieces that help you express your individual style.', 'nolasharon' ) )
+			. $offer_card( 'dark', 'tote-bag.svg', __( 'Bags', 'nolasharon' ), home_url( '/product-category/bags/' ), __( 'Discover bags to complement your outfits and everyday needs.', 'nolasharon' ) )
+			. $offer_card( 'soft', 'block-heels.svg', __( 'Shoes', 'nolasharon' ), home_url( '/product-category/shoes/' ), __( 'Find footwear to complete your look.', 'nolasharon' ) )
 			. nolasharon_b_group(
 				'ab-offer__card ab-offer__card--light',
-				nolasharon_b_heading( 3, __( 'Shop online or in store', 'nolasharon' ), 'ab-offer__name' )
-						. nolasharon_b_p( __( 'Browse and order online with delivery options shown at checkout, or visit us in Ikeja or Ogudu.', 'nolasharon' ) )
+				nolasharon_b_heading( 3, __( 'More Fashion Finds', 'nolasharon' ), 'ab-offer__name' )
+				. nolasharon_b_p( __( 'Explore additional fashion products as our collection grows.', 'nolasharon' ) )
 				. nolasharon_b_buttons( array( array( __( 'Shop Now', 'nolasharon' ), home_url( '/shop/' ) ) ) )
 			)
 		)
+		. nolasharon_b_p( __( 'We aim to make your shopping experience convenient by bringing different fashion finds together in one place.', 'nolasharon' ), 'ab-offer__note' )
 	);
 
-	$value  = function ( $num, $key, $title, $line ) {
+	// The tiles use the client's own phrases from "Our Commitment to You".
+	$value  = function ( $num, $key, $title ) {
 		return nolasharon_b_group(
 			'ab-value ab-value--' . $key,
 			nolasharon_b_p( $num, 'ab-value__num' )
 			. nolasharon_b_heading( 3, $title, 'ab-value__title' )
-			. nolasharon_b_p( $line )
 		);
 	};
 	$values = nolasharon_b_group(
 		'ab-section ab-values',
-		nolasharon_b_p( __( 'Our values', 'nolasharon' ), 'ab-eyebrow' )
-		. nolasharon_b_heading( 2, __( 'What we care about', 'nolasharon' ), 'ab-h2' )
+		nolasharon_b_columns(
+			'ab-commit__grid',
+			array(
+				nolasharon_b_p( __( 'Our commitment', 'nolasharon' ), 'ab-eyebrow' )
+				. nolasharon_b_heading( 2, __( 'Our Commitment to You', 'nolasharon' ), 'ab-h2' )
+				. nolasharon_b_p( __( 'We understand that shopping is about more than choosing a product. It is also about feeling confident in your decision and enjoying the experience.', 'nolasharon' ), 'ab-lead' ),
+				nolasharon_b_p( __( 'That is why we are committed to providing a welcoming shopping experience, presenting our products clearly, and making it easier for you to discover items you love.', 'nolasharon' ) )
+				. nolasharon_b_p( __( 'As we continue to grow, our goal is to build lasting relationships with our customers through attentive service, convenient shopping, and a continually evolving collection.', 'nolasharon' ) ),
+			)
+		)
 		. nolasharon_b_group(
 			'ab-values__grid',
-			$value( '01', 'style', __( 'Style and confidence', 'nolasharon' ), __( 'Pieces chosen to help you look and feel your best.', 'nolasharon' ) )
-			. $value( '02', 'quality', __( 'Quality presentation', 'nolasharon' ), __( 'Clear photos and full product details, so you know what you’re choosing.', 'nolasharon' ) )
-			. $value( '03', 'convenience', __( 'Convenience', 'nolasharon' ), __( 'Shop online whenever suits you, or visit us in store.', 'nolasharon' ) )
-			. $value( '04', 'trust', __( 'Trust and reliability', 'nolasharon' ), __( 'Clear information at every step, and a team ready to help.', 'nolasharon' ) )
+			$value( '01', 'style', __( 'A welcoming shopping experience', 'nolasharon' ) )
+			. $value( '02', 'quality', __( 'Products presented clearly', 'nolasharon' ) )
+			. $value( '03', 'convenience', __( 'Convenient shopping', 'nolasharon' ) )
+			. $value( '04', 'trust', __( 'Attentive service', 'nolasharon' ) )
 		)
 	);
 
@@ -234,14 +247,17 @@ function nolasharon_about_patterns() {
 
 	$cta = nolasharon_b_group(
 		'ab-cta',
-		nolasharon_b_heading( 2, __( 'Ready to find your next look?', 'nolasharon' ), 'ab-cta__title' )
-		. nolasharon_b_p( __( 'Explore the collection online or get in touch with any questions.', 'nolasharon' ) )
+		nolasharon_b_heading( 2, __( 'Get in Touch', 'nolasharon' ), 'ab-cta__title' )
+		. nolasharon_b_p( __( 'Have questions about our products or need help locating a store? Contact us.', 'nolasharon' ) )
+		// Filled with the phone and email from the Customizer when the page is shown.
+		. nolasharon_b_p( '', 'ab-cta__contact' )
 		. nolasharon_b_buttons(
 			array(
-				array( __( 'Shop Now', 'nolasharon' ), home_url( '/shop/' ) ),
-				array( __( 'Contact Us', 'nolasharon' ), home_url( '/contact/' ), true ),
+				array( __( 'Contact Us', 'nolasharon' ), home_url( '/contact/' ) ),
+				array( __( 'Shop Now', 'nolasharon' ), home_url( '/shop/' ), true ),
 			)
 		)
+		. nolasharon_b_p( __( 'NolaSharon Clothing — Your Style, Your Way', 'nolasharon' ), 'ab-cta__tagline' )
 	);
 
 	return array(
@@ -279,22 +295,50 @@ add_action( 'init', 'nolasharon_register_patterns' );
  * @param bool $force Rebuild even if done before.
  */
 function nolasharon_seed_about_page( $force = false ) {
-	if ( ! $force && get_option( 'nolasharon_about_v1' ) ) {
+	if ( ! $force && get_option( 'nolasharon_about_v2' ) ) {
 		return;
 	}
 	$page = get_page_by_path( 'about-us' );
-	if ( $page && ( $force || ! nolasharon_has_text( nolasharon_strip_placeholders( preg_replace( '~<h2[^>]*>.*?</h2>~is', '', $page->post_content ) ) ) || false !== strpos( $page->post_content, 'Our stores' ) ) ) {
+	// v2 (2026-10-27): the client's About copy replaces the placeholder version, unless the page has been edited since.
+	if ( $page && ( $force || ! nolasharon_has_text( nolasharon_strip_placeholders( preg_replace( '~<h2[^>]*>.*?</h2>~is', '', $page->post_content ) ) ) || false !== strpos( $page->post_content, 'Our stores' ) || false !== strpos( $page->post_content, '[[CONFIRM: brand story, paragraph 1]]' ) ) ) {
 		wp_update_post(
 			array(
 				'ID'           => $page->ID,
-				'post_content' => "<!-- DRAFT: client to approve (headline, offer, values and steps wording) -->\n" . implode( "\n", wp_list_pluck( nolasharon_about_patterns(), 1 ) ),
+				'post_content' => "<!-- About copy from the client (2026-10-27). DRAFT: client to approve the shopping steps wording -->\n" . implode( "\n", wp_list_pluck( nolasharon_about_patterns(), 1 ) ),
 			)
 		);
 	}
 	if ( $page ) {
 		update_post_meta( $page->ID, '_wp_page_template', 'page-templates/about.php' );
 	}
-	update_option( 'nolasharon_about_v1', 1 );
+	nolasharon_seed_about_facts();
+	update_option( 'nolasharon_about_v2', 1 );
+}
+
+/**
+ * Client-supplied facts from the About copy (2026-10-27), filled in only where still empty:
+ * the homepage brand introduction and the Ogudu branch address.
+ */
+function nolasharon_seed_about_facts() {
+	if ( ! get_theme_mod( 'nolasharon_brand_title' ) ) {
+		set_theme_mod( 'nolasharon_brand_title', 'Fashion That Speaks Your Style' );
+	}
+	if ( ! get_theme_mod( 'nolasharon_brand_text' ) ) {
+		set_theme_mod( 'nolasharon_brand_text', "At NolaSharon Clothing, we believe fashion is more than what you wear. It is a way to express your personality, embrace your confidence, and show up as your unique self.\n\nWe are a fashion retail brand offering a variety of fashion products, including clothing, bags, shoes, and more, to help you find pieces that complement your personal style." );
+	}
+	$ogudu = get_posts(
+		array(
+			'post_type'      => 'ns_branch',
+			'post_status'    => 'any',
+			'posts_per_page' => 1,
+			'meta_key'       => 'ns_area', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- one-off, a handful of posts.
+			'meta_value'     => 'Ogudu', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+		)
+	);
+	if ( $ogudu && ! get_post_meta( $ogudu[0]->ID, 'ns_address', true ) ) {
+		update_post_meta( $ogudu[0]->ID, 'ns_address', '134 Ogudu Road, Ogudu, Lagos' );
+		update_post_meta( $ogudu[0]->ID, 'ns_landmark', 'By Ogudu Roundabout' );
+	}
 }
 add_action( 'after_switch_theme', 'nolasharon_seed_about_page', 20 );
 add_action( 'admin_init', 'nolasharon_seed_about_page' );
@@ -346,6 +390,16 @@ function nolasharon_about_render_block( $html, $block ) {
 		if ( 'core/quote' === $block['blockName'] && ! nolasharon_has_text( $html ) ) {
 			return '';
 		}
+	}
+
+	if ( false !== strpos( $class, ' ab-cta__contact ' ) ) {
+		$links = array();
+		foreach ( nolasharon_contact_channels() as $channel ) {
+			if ( 'whatsapp' !== $channel['key'] ) {
+				$links[] = '<span>' . esc_html( 'phone' === $channel['key'] ? __( 'Phone', 'nolasharon' ) : $channel['title'] ) . ': <a href="' . esc_url( $channel['url'], array( 'tel', 'mailto' ) ) . '">' . esc_html( $channel['value'] ) . '</a></span>';
+			}
+		}
+		return $links ? '<p class="ab-cta__contact">' . implode( ' ', $links ) . '</p>' : '';
 	}
 
 	if ( false !== strpos( $class, ' ab-cta ' ) ) {
