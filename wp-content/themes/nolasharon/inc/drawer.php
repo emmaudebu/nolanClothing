@@ -31,15 +31,18 @@ function nolasharon_drawer_part( $part ) {
  */
 function nolasharon_drawer_ajax() {
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- checked below for every change.
-	$op = isset( $_POST['op'] ) ? sanitize_key( $_POST['op'] ) : 'load';
+	$op = sanitize_key( nolasharon_request_text( $_POST, 'op' ) );
+	$op = $op ? $op : 'load';
 
 	if ( 'load' !== $op && ! check_ajax_referer( 'ns-drawer', 'nonce', false ) ) {
 		wp_send_json_error( array( 'message' => __( 'Your session expired. Please refresh the page.', 'nolasharon' ) ), 403 );
 	}
 
-	$key = isset( $_POST['key'] ) ? wc_clean( wp_unslash( $_POST['key'] ) ) : '';
+	$key = nolasharon_request_text( $_POST, 'key' );
 	if ( 'qty' === $op && WC()->cart->get_cart_item( $key ) ) {
-		WC()->cart->set_quantity( $key, isset( $_POST['qty'] ) ? absint( $_POST['qty'] ) : 1 );
+		$qty = isset( $_POST['qty'] ) ? absint( $_POST['qty'] ) : 1;
+		$max = WC()->cart->get_cart_item( $key )['data']->get_max_purchase_quantity();
+		WC()->cart->set_quantity( $key, $max > 0 ? min( $qty, $max ) : $qty );
 	} elseif ( 'remove' === $op && WC()->cart->get_cart_item( $key ) ) {
 		WC()->cart->remove_cart_item( $key );
 	}
@@ -50,7 +53,7 @@ function nolasharon_drawer_ajax() {
 	wc_clear_notices();
 
 	// Straight after an add to cart: the "Added to your cart" view of that line.
-	$added = 'load' === $op && isset( $_POST['added'] ) ? wc_clean( wp_unslash( $_POST['added'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- read-only view.
+	$added = 'load' === $op ? nolasharon_request_text( $_POST, 'added' ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- read-only view.
 	if ( $added && WC()->cart->get_cart_item( $added ) ) {
 		ob_start();
 		get_template_part( 'template-parts/drawer/added', null, array( 'key' => $added ) );

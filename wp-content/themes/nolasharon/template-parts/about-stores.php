@@ -12,12 +12,17 @@ $nolasharon_branches = ns_get_branches( array( 'include_drafts' => true ) );
 if ( ! $nolasharon_branches ) {
 	return;
 }
+// Client lines per area (2026-10-27).
+$nolasharon_area_lines = array(
+	'ogudu' => __( 'Visit our Ogudu location and discover fashion pieces to complement your personal style.', 'nolasharon' ),
+	'ikeja' => __( 'Our Ikeja store continues to serve our valued customers with a variety of fashion finds.', 'nolasharon' ),
+);
 ?>
 <section class="ab-section ab-stores" aria-labelledby="ab-stores-title">
 	<p class="ab-eyebrow"><?php esc_html_e( 'Our stores', 'nolasharon' ); ?></p>
-	<h2 class="ab-h2" id="ab-stores-title"><?php esc_html_e( 'Come and see us in Lagos', 'nolasharon' ); ?></h2>
-	<?php // DRAFT: client to approve. Must keep the "Ikeja remains open" meaning. ?>
-	<p class="ab-stores__intro"><?php esc_html_e( 'Our Ikeja stores remain open, and Ogudu is our newest branch.', 'nolasharon' ); ?></p>
+	<h2 class="ab-h2" id="ab-stores-title"><?php esc_html_e( 'Visit Our Stores', 'nolasharon' ); ?></h2>
+	<?php // Client copy (2026-10-27). The Ikeja line on each Ikeja card says those stores remain open. ?>
+	<p class="ab-stores__intro"><?php esc_html_e( 'We would love to welcome you to NolaSharon Clothing! Visit us at any of our locations in Lagos to explore our fashion collection, including clothing, bags, shoes, and more.', 'nolasharon' ); ?></p>
 	<ul class="ab-stores__grid">
 		<?php foreach ( $nolasharon_branches as $nolasharon_b ) : ?>
 			<?php
@@ -39,6 +44,10 @@ if ( ! $nolasharon_branches ) {
 				<?php endif; ?>
 				<h3 class="ab-store__name"><a href="<?php echo esc_url( ns_branch_url( $nolasharon_b ) ); ?>"><?php echo esc_html( $nolasharon_b['name'] ); ?></a></h3>
 				<p class="ab-store__meta"><?php echo esc_html( implode( ' · ', array_filter( array( $nolasharon_status['label'], $nolasharon_where ) ) ) ); ?></p>
+				<?php $nolasharon_area_key = strtolower( trim( $nolasharon_b['area'] ) ); ?>
+				<?php if ( isset( $nolasharon_area_lines[ $nolasharon_area_key ] ) ) : ?>
+					<p class="ab-store__line"><?php echo esc_html( $nolasharon_area_lines[ $nolasharon_area_key ] ); ?></p>
+				<?php endif; ?>
 				<?php if ( $nolasharon_dir ) : ?>
 					<a class="ab-store__dir" href="<?php echo esc_url( $nolasharon_dir ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get directions', 'nolasharon' ); ?> <span aria-hidden="true">→</span><span class="screen-reader-text"> <?php echo esc_html( sprintf( /* translators: %s: branch name. */ __( 'to %s (opens in a new tab)', 'nolasharon' ), $nolasharon_b['name'] ) ); ?></span></a>
 				<?php endif; ?>

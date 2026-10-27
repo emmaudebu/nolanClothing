@@ -80,7 +80,8 @@ function nolasharon_normalize_filter_query() {
 	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only listing filters.
 	foreach ( array_merge( array_keys( nolasharon_attribute_filters() ), array( 'product_cat' ) ) as $key ) {
 		if ( isset( $_GET[ $key ] ) && is_array( $_GET[ $key ] ) ) {
-			$_GET[ $key ] = implode( ',', array_filter( array_map( 'sanitize_title', wp_unslash( $_GET[ $key ] ) ) ) );
+			// Only plain values: nested lists ("?filter_size[][]=s") are dropped.
+			$_GET[ $key ] = implode( ',', array_filter( array_map( 'sanitize_title', array_filter( wp_unslash( $_GET[ $key ] ), 'is_scalar' ) ) ) );
 			if ( '' === $_GET[ $key ] ) {
 				unset( $_GET[ $key ] );
 			}
@@ -94,7 +95,7 @@ function nolasharon_normalize_filter_query() {
 	if ( ! empty( $_GET['product_cat'] ) ) {
 		$_REQUEST['product_cat'] = $_GET['product_cat']; // WordPress reads query vars from the request.
 	}
-	if ( ! empty( $_GET['price'] ) && preg_match( '/^(\d*)-(\d*)$/', wp_unslash( $_GET['price'] ), $m ) ) {
+	if ( preg_match( '/^(\d*)-(\d*)$/', nolasharon_request_text( $_GET, 'price' ), $m ) && '-' !== $m[0] ) {
 		if ( '' !== $m[1] && (int) $m[1] > 0 ) {
 			$_GET['min_price'] = (int) $m[1];
 		}
@@ -194,10 +195,10 @@ function nolasharon_current_filters() {
 	foreach ( array_keys( nolasharon_attribute_filters() ) as $key ) {
 		$current[ $key ] = isset( $_GET[ $key ] ) && is_string( $_GET[ $key ] ) ? array_values( array_filter( array_map( 'sanitize_title', explode( ',', wp_unslash( $_GET[ $key ] ) ) ) ) ) : array();
 	}
-	$price            = isset( $_GET['price'] ) ? sanitize_text_field( wp_unslash( $_GET['price'] ) ) : '';
+	$price            = nolasharon_request_text( $_GET, 'price' );
 	$current['price'] = isset( nolasharon_price_bands()[ $price ] ) ? $price : '';
 	$current['stock'] = isset( $_GET['stock'] ) && 'instock' === $_GET['stock'] ? 'instock' : '';
-	$orderby          = isset( $_GET['orderby'] ) ? wc_clean( wp_unslash( $_GET['orderby'] ) ) : '';
+	$orderby          = nolasharon_request_text( $_GET, 'orderby' );
 	$current['orderby'] = isset( nolasharon_sort_options()[ $orderby ] ) ? $orderby : '';
 	// phpcs:enable
 	return $current;

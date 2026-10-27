@@ -341,7 +341,7 @@ add_filter( 'woocommerce_local_pickup_methods', 'nolasharon_local_pickup_methods
  */
 function nolasharon_chosen_method() {
 	// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce verifies the checkout nonce.
-	if ( isset( $_POST['shipping_method'] ) && is_array( $_POST['shipping_method'] ) ) {
+	if ( isset( $_POST['shipping_method'] ) && is_array( $_POST['shipping_method'] ) && is_scalar( reset( $_POST['shipping_method'] ) ) ) {
 		return wc_clean( wp_unslash( reset( $_POST['shipping_method'] ) ) );
 	}
 	// phpcs:enable
@@ -817,7 +817,7 @@ add_filter( 'woocommerce_order_button_html', 'nolasharon_order_button_html' );
  */
 function nolasharon_ajax_update_qty() {
 	check_ajax_referer( 'ns-update-qty', 'security' );
-	$key  = isset( $_POST['key'] ) ? wc_clean( wp_unslash( $_POST['key'] ) ) : '';
+	$key  = nolasharon_request_text( $_POST, 'key' );
 	$qty  = isset( $_POST['qty'] ) ? absint( $_POST['qty'] ) : 0;
 	$item = WC()->cart->get_cart_item( $key );
 	if ( ! $item || $qty < 1 ) {

@@ -17,7 +17,7 @@ if ( ! class_exists( 'WooCommerce' ) ) {
  */
 function nolasharon_quick_view_ajax() {
 	$product = wc_get_product( isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only.
-	if ( ! $product || 'publish' !== $product->get_status() || ! $product->is_visible() ) {
+	if ( ! $product || 'publish' !== $product->get_status() || ! $product->is_visible() || post_password_required( $product->get_id() ) ) {
 		wp_send_json_error( array( 'message' => __( 'This product is no longer available.', 'nolasharon' ) ), 404 );
 	}
 
@@ -43,7 +43,7 @@ function nolasharon_ajax_add_to_cart() {
 	$variation_id = isset( $_POST['variation_id'] ) ? absint( $_POST['variation_id'] ) : 0;
 	$attributes   = array();
 	foreach ( $_POST as $key => $value ) {
-		if ( 0 === strpos( (string) $key, 'attribute_' ) ) {
+		if ( 0 === strpos( (string) $key, 'attribute_' ) && is_scalar( $value ) ) {
 			$attributes[ sanitize_title( wp_unslash( $key ) ) ] = wc_clean( wp_unslash( $value ) );
 		}
 	}

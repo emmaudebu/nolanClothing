@@ -17,8 +17,8 @@ global $post;
 
 // phpcs:disable WordPress.Security.NonceVerification.Missing -- refilling the form only.
 $nolasharon_error   = isset( $error ) ? $error : '';
-$nolasharon_orderid = isset( $orderid ) ? $orderid : ( isset( $_POST['orderid'] ) ? sanitize_text_field( wp_unslash( $_POST['orderid'] ) ) : '' );
-$nolasharon_email   = isset( $email ) && $email ? $email : ( isset( $_POST['order_email'] ) ? sanitize_email( wp_unslash( $_POST['order_email'] ) ) : '' );
+$nolasharon_orderid = isset( $orderid ) ? $orderid : nolasharon_request_text( $_POST, 'orderid' );
+$nolasharon_email   = isset( $email ) && $email ? $email : sanitize_email( nolasharon_request_text( $_POST, 'order_email' ) );
 // phpcs:enable
 if ( ! $nolasharon_email && is_user_logged_in() ) {
 	$nolasharon_email = WC()->customer ? WC()->customer->get_billing_email() : wp_get_current_user()->user_email;

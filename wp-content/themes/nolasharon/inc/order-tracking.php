@@ -136,9 +136,9 @@ function nolasharon_track_order_lookup() {
 		return $result;
 	}
 	$result['submitted'] = true;
-	$result['orderid']   = sanitize_text_field( wp_unslash( $_POST['orderid'] ) );
-	$result['email']     = isset( $_POST['order_email'] ) ? sanitize_email( wp_unslash( $_POST['order_email'] ) ) : '';
-	$nonce               = isset( $_POST['woocommerce-order-tracking-nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['woocommerce-order-tracking-nonce'] ) ) : '';
+	$result['orderid']   = nolasharon_request_text( $_POST, 'orderid' );
+	$result['email']     = sanitize_email( nolasharon_request_text( $_POST, 'order_email' ) );
+	$nonce               = nolasharon_request_text( $_POST, 'woocommerce-order-tracking-nonce' );
 	// phpcs:enable
 
 	$generic = __( 'We couldn’t find an order with those details. Check the order number and the email address you used at checkout, then try again.', 'nolasharon' );

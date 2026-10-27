@@ -245,3 +245,19 @@ function nolasharon_ng_phone( $phone ) {
 	}
 	return '';
 }
+
+/**
+ * A single text value from a request array ($_GET, $_POST…), unslashed and cleaned, or ''
+ * when it is missing or not plain text. Crafted requests such as "?price[]=1" send lists
+ * where text is expected, which would otherwise crash string functions on PHP 8.
+ *
+ * @param array  $source Request array.
+ * @param string $key    Field name.
+ * @return string
+ */
+function nolasharon_request_text( $source, $key ) {
+	if ( ! isset( $source[ $key ] ) || ! is_scalar( $source[ $key ] ) ) {
+		return '';
+	}
+	return sanitize_text_field( wp_unslash( (string) $source[ $key ] ) );
+}
