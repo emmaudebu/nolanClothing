@@ -148,7 +148,7 @@ function nolasharon_settings_schema() {
 				'nolasharon_copyright'       => array( __( 'Copyright text', 'nolasharon' ), 'text', $text, __( '© {year} NolaSharon Clothing', 'nolasharon' ), __( '{year} is replaced with the current year. Empty hides it.', 'nolasharon' ) ),
 				'nolasharon_credit_text'     => array( __( 'Credit: text before the name', 'nolasharon' ), 'text', $text, __( 'Developed with love by', 'nolasharon' ), __( 'Shown after the copyright. Empty hides the whole credit.', 'nolasharon' ) ),
 				'nolasharon_credit_name'     => array( __( 'Credit: name', 'nolasharon' ), 'text', $text, 'Ample Agency', '' ),
-				'nolasharon_credit_url'      => array( __( 'Credit: link', 'nolasharon' ), 'url', $url, 'https://amplegency.com', __( 'Empty shows the name without a link.', 'nolasharon' ) ),
+				'nolasharon_credit_url'      => array( __( 'Credit: link', 'nolasharon' ), 'url', $url, 'https://amplecr8tive.com/', __( 'Empty shows the name without a link.', 'nolasharon' ) ),
 				'nolasharon_footer_policies' => array( __( 'Show Privacy Policy and Terms & Conditions links', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '' ),
 				'nolasharon_footer_bottom_align' => array(
 					__( 'Alignment of the copyright bar', 'nolasharon' ),
@@ -365,3 +365,18 @@ function nolasharon_customize_preview_js() {
 	wp_enqueue_script( 'nolasharon-customize-preview', get_template_directory_uri() . '/assets/js/customize-preview.js', array( 'customize-preview' ), NOLASHARON_VERSION, true );
 }
 add_action( 'customize_preview_init', 'nolasharon_customize_preview_js' );
+
+/**
+ * The agency's site moved to amplecr8tive.com (2026-10-28): update a saved footer credit link
+ * that still points at the old address. Runs once.
+ */
+function nolasharon_update_credit_url() {
+	if ( get_option( 'nolasharon_credit_url_v2' ) ) {
+		return;
+	}
+	if ( preg_match( '~^https?://(www\.)?ample(a)?gency\.com/?$~i', (string) get_theme_mod( 'nolasharon_credit_url' ) ) ) {
+		set_theme_mod( 'nolasharon_credit_url', 'https://amplecr8tive.com/' );
+	}
+	update_option( 'nolasharon_credit_url_v2', 1 );
+}
+add_action( 'init', 'nolasharon_update_credit_url' );
