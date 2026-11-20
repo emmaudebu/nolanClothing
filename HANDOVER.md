@@ -95,7 +95,7 @@ This guide is for the NolaSharon Clothing team. It explains the everyday jobs yo
 **Appearance → Customize → NolaSharon Settings**:
 
 - **Announcement bar:** the thin strip at the very top, e.g. the Ogudu opening or a confirmed offer. Leave it empty to hide it.
-- **Homepage hero:** main image, headline, text and the two buttons.
+- **Homepage hero:** headline, text, the two buttons and the pictures beside them. Under **Pictures to show** choose **Newest products**, **Featured products** (the star in Products), **Products I choose** (tick them in the order they should play) or **Images I upload** (drag the thumbnails to reorder), or one campaign image. Then pick the **transition effect** (or Random), the seconds on each slide (0 = no autoplay), the transition length, whether arrows, dots and the product name and price show, and the picture's height and width on computers, height on phones, corner rounding, fit and position. Effect, size and position changes show instantly in the preview.
 - **Brand introduction:** your short "about us" paragraph and photo.
 - **Customer trust strip:** a line each for payment and delivery, once confirmed.
 - **Header logo:** the logo's height and width on computers, and separately on tablets and phones (in pixels; width 0 keeps the logo's shape automatically). Keep the phone width under about 180px so the icons still fit.
