@@ -142,6 +142,9 @@ $nolasharon_print_fields = function ( $fields ) use ( $checkout ) {
 										<div class="form-row ns-areas" id="shipping_method_field">
 											<?php nolasharon_checkout_shipping_options(); ?>
 										</div>
+										<?php if ( nolasharon_setting( 'nolasharon_checkout_delivery_note' ) ) : ?>
+											<p class="ns-help ns-areas__note"><?php echo esc_html( nolasharon_setting( 'nolasharon_checkout_delivery_note' ) ); ?></p>
+										<?php endif; ?>
 
 										<?php do_action( 'woocommerce_before_order_notes', $checkout ); ?>
 										<?php if ( apply_filters( 'woocommerce_enable_order_notes_field', 'yes' === get_option( 'woocommerce_enable_order_comments', 'yes' ) ) ) : ?>

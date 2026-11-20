@@ -1001,7 +1001,8 @@
 	margin-top: 10px;
 }
 
-.ns-co-js .ns-option--pickup-rate {
+.ns-co-js .ns-option--pickup-rate,
+.ns-co-js .ns-co form .form-row .ns-option--pickup-rate {
 	display: none;
 }
 
@@ -1866,4 +1867,8 @@
 		animation: none !important;
 		transition: none !important;
 	}
+}
+
+.ns-areas__note {
+	margin: 12px 0 4px;
 }
