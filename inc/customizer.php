@@ -46,9 +46,103 @@ function nolasharon_settings_schema() {
 			),
 		),
 		'nolasharon_hero'         => array(
-			'title'  => __( 'Homepage hero', 'nolasharon' ),
-			'fields' => array(
-				'nolasharon_hero_image'       => array( __( 'Campaign image', 'nolasharon' ), 'image', 'absint', 0, __( 'Falls back to the placeholder illustration.', 'nolasharon' ) ),
+			'title'       => __( 'Homepage hero', 'nolasharon' ),
+			'description' => __( 'The pictures beside the headline play as a slideshow when there is more than one. Sizes are in pixels.', 'nolasharon' ),
+			'fields'      => array(
+				'nolasharon_hero_source'      => array(
+					__( 'Pictures to show', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'recent',
+					__( 'Product slides link to the product. Sold-out products are skipped for newest and featured.', 'nolasharon' ),
+					array(
+						'choices' => array(
+							'recent'   => __( 'Newest products', 'nolasharon' ),
+							'featured' => __( 'Featured products (the star in Products)', 'nolasharon' ),
+							'selected' => __( 'Products I choose', 'nolasharon' ),
+							'gallery'  => __( 'Images I upload', 'nolasharon' ),
+							'image'    => __( 'One campaign image (no slideshow)', 'nolasharon' ),
+						),
+					),
+				),
+				'nolasharon_hero_products'    => array( __( 'Products to show', 'nolasharon' ), 'products', 'nolasharon_sanitize_ids', '', __( 'Tick products in the order you want them to play.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_source_is( 'selected' ) ) ),
+				'nolasharon_hero_gallery'     => array( __( 'Slideshow images', 'nolasharon' ), 'gallery', 'nolasharon_sanitize_ids', '', __( 'Drag the thumbnails to change the order. Portrait photos work best.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_source_is( 'gallery' ) ) ),
+				'nolasharon_hero_count'       => array(
+					__( 'Number of products', 'nolasharon' ),
+					'number',
+					'absint',
+					5,
+					'',
+					array(
+						'input_attrs'     => array(
+							'min'  => 1,
+							'max'  => 12,
+							'step' => 1,
+						),
+						'active_callback' => nolasharon_hero_source_is( 'recent', 'featured' ),
+					),
+				),
+				'nolasharon_hero_image'       => array( __( 'Campaign image', 'nolasharon' ), 'image', 'absint', 0, __( 'Also shown when the slideshow has nothing to play. Falls back to the placeholder illustration.', 'nolasharon' ) ),
+				'nolasharon_hero_effect'      => array(
+					__( 'Transition effect', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'fade',
+					__( 'Visitors who ask their device for less motion get a gentle fade and no autoplay.', 'nolasharon' ),
+					array(
+						'choices'   => nolasharon_hero_effects() + array( 'random' => __( 'Random (a different effect each time)', 'nolasharon' ) ),
+						'transport' => 'postMessage',
+					),
+				),
+				'nolasharon_hero_speed'       => array( __( 'Transition length (milliseconds)', 'nolasharon' ), 'number', 'nolasharon_sanitize_speed', 900, __( '1000 = one second.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 200, 'max' => 3000, 'step' => 100 ), 'transport' => 'postMessage' ) ),
+				'nolasharon_hero_interval'    => array( __( 'Seconds on each slide', 'nolasharon' ), 'number', 'nolasharon_sanitize_interval', 5, __( '0 turns off autoplay; visitors use the arrows and dots.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 0, 'max' => 30, 'step' => 1 ), 'transport' => 'postMessage' ) ),
+				'nolasharon_hero_arrows'      => array( __( 'Show arrows', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage' ) ),
+				'nolasharon_hero_dots'        => array( __( 'Show dots', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage' ) ),
+				'nolasharon_hero_captions'    => array( __( 'Show the product name and price on product slides', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage' ) ),
+				'nolasharon_hero_media_h'     => array( __( 'Picture height on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 520, __( 'The hero is about 660px tall, so up to about 580 leaves space above and below.', 'nolasharon' ), $px( 200, 600 ) ),
+				'nolasharon_hero_media_w'     => array( __( 'Picture width on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 420, __( 'Narrows to fit smaller screens.', 'nolasharon' ), $px( 200, 600 ) ),
+				'nolasharon_hero_media_h_m'   => array( __( 'Picture height on phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 380, __( 'Below 760px wide, where the picture sits under the headline at full width.', 'nolasharon' ), $px( 160, 600 ) ),
+				'nolasharon_hero_radius'      => array( __( 'Corner rounding', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 10, __( '0 = square corners.', 'nolasharon' ), $px( 0, 60 ) ),
+				'nolasharon_hero_fit'         => array(
+					__( 'Picture fit', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'cover',
+					'',
+					array(
+						'choices'   => array(
+							'cover'   => __( 'Fill the frame (edges may be cropped)', 'nolasharon' ),
+							'contain' => __( 'Show the whole picture', 'nolasharon' ),
+						),
+						'transport' => 'postMessage',
+					),
+				),
+				'nolasharon_hero_valign'      => array(
+					__( 'Vertical position', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'center',
+					'',
+					array(
+						'choices'   => array(
+							'top'    => __( 'Top', 'nolasharon' ),
+							'center' => __( 'Middle', 'nolasharon' ),
+							'bottom' => __( 'Bottom', 'nolasharon' ),
+						),
+						'transport' => 'postMessage',
+					),
+				),
+				'nolasharon_hero_halign'      => array(
+					__( 'Horizontal position (computers)', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'center',
+					'',
+					array(
+						'choices'   => $align,
+						'transport' => 'postMessage',
+					),
+				),
 				'nolasharon_hero_eyebrow'     => array( __( 'Eyebrow (small outlined label above the headline; empty hides it)', 'nolasharon' ), 'text', $text, __( 'NolaSharon Clothing · Lagos', 'nolasharon' ), '' ),
 				'nolasharon_hero_title'       => array( __( 'Headline', 'nolasharon' ), 'text', $text, __( 'Your Style, Your Way.', 'nolasharon' ), '' ),
 				'nolasharon_hero_text'        => array( __( 'Supporting text', 'nolasharon' ), 'textarea', $textarea, __( 'Discover fashion pieces to complement your style and shop the NolaSharon Clothing collection.', 'nolasharon' ), '' ),
@@ -213,6 +307,38 @@ function nolasharon_sanitize_px( $value ) {
 }
 
 /**
+ * Sanitize a list of post or attachment IDs, kept in order, as "12,7,30".
+ *
+ * @param mixed $value Raw value.
+ * @return string
+ */
+function nolasharon_sanitize_ids( $value ) {
+	$ids = is_array( $value ) ? $value : explode( ',', (string) $value );
+	return implode( ',', array_values( array_unique( array_filter( array_map( 'absint', $ids ) ) ) ) );
+}
+
+/**
+ * Sanitize a transition length in milliseconds (200–3000).
+ *
+ * @param mixed $value Raw value.
+ * @return int
+ */
+function nolasharon_sanitize_speed( $value ) {
+	return max( 200, min( 3000, absint( $value ) ) );
+}
+
+/**
+ * Sanitize the seconds each slide stays up (0 = no autoplay, else 2–30).
+ *
+ * @param mixed $value Raw value.
+ * @return int
+ */
+function nolasharon_sanitize_interval( $value ) {
+	$value = absint( $value );
+	return $value ? max( 2, min( 30, $value ) ) : 0;
+}
+
+/**
  * Sanitize a select value against its control's choices.
  *
  * @param string               $value   Raw value.
@@ -266,6 +392,8 @@ function nolasharon_setting( $id ) {
  * @param WP_Customize_Manager $wp_customize Customizer manager.
  */
 function nolasharon_customize_register( $wp_customize ) {
+	require_once get_template_directory() . '/inc/customize-controls.php';
+
 	$wp_customize->add_panel(
 		'nolasharon',
 		array(
@@ -326,6 +454,10 @@ function nolasharon_customize_register( $wp_customize ) {
 						array_merge( $args, array( 'mime_type' => 'image' ) )
 					)
 				);
+			} elseif ( 'gallery' === $type ) {
+				$wp_customize->add_control( new NolaSharon_Gallery_Control( $wp_customize, $id, $args ) );
+			} elseif ( 'products' === $type ) {
+				$wp_customize->add_control( new NolaSharon_Products_Control( $wp_customize, $id, $args ) );
 			} else {
 				$wp_customize->add_control( $id, array_merge( $args, array( 'type' => $type ) ) );
 			}
@@ -359,12 +491,22 @@ function nolasharon_logo_size_css() {
 add_action( 'wp_head', 'nolasharon_logo_size_css', 20 );
 
 /**
- * Live preview for logo sizes and footer alignment.
+ * Live preview for logo sizes, the hero slideshow and footer alignment.
  */
 function nolasharon_customize_preview_js() {
 	wp_enqueue_script( 'nolasharon-customize-preview', get_template_directory_uri() . '/assets/js/customize-preview.js', array( 'customize-preview' ), NOLASHARON_VERSION, true );
 }
 add_action( 'customize_preview_init', 'nolasharon_customize_preview_js' );
+
+/**
+ * Hero slideshow controls: the image gallery and the product picker.
+ */
+function nolasharon_customize_controls_assets() {
+	wp_enqueue_media();
+	wp_enqueue_style( 'nolasharon-customize-controls', get_template_directory_uri() . '/assets/css/customize-controls.css', array( 'customize-controls' ), NOLASHARON_VERSION );
+	wp_enqueue_script( 'nolasharon-customize-controls', get_template_directory_uri() . '/assets/js/customize-controls.js', array( 'customize-controls' ), NOLASHARON_VERSION, true );
+}
+add_action( 'customize_controls_enqueue_scripts', 'nolasharon_customize_controls_assets' );
 
 /**
  * The agency's site moved to amplecr8tive.com (2026-10-28): update a saved footer credit link
