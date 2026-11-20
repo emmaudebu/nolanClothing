@@ -10,7 +10,8 @@ studio wp eval-file ns-tmp/seed-products.php      # needs the placeholder images
 cp -R tools/sample-images ns-tmp/
 studio wp eval-file ns-tmp/seed-bags-shoes.php    # Bags/Shoes categories, Shoe size terms, 8 [SAMPLE] bags and shoes (safe to re-run)
 studio wp eval-file ns-tmp/seed-client-policies.php  # client's delivery & returns policy, FAQs, snippets, pickup on
+studio wp eval-file ns-tmp/seed-delivery-fees.php    # checkout delivery fees by Lagos area and region (safe to re-run)
 rm -rf ns-tmp
 ```
 
-Never run the content/product seeds on the live site. `seed-client-policies.php` and `seed-policy-drafts.php` are written so they can be run there too (`wp eval-file`). Delete every `[SAMPLE]` product and the "Sample" category before launch.
+Never run the content/product seeds on the live site. `seed-client-policies.php`, `seed-policy-drafts.php` and `seed-delivery-fees.php` are written so they can be run there too (`wp eval-file`). Delete every `[SAMPLE]` product and the "Sample" category before launch.
