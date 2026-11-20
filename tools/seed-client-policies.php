@@ -30,47 +30,18 @@ $a = function ( $url, $text ) {
 	return '<a href="' . esc_url( $url ) . '">' . $text . '</a>';
 };
 $contact  = $a( nolasharon_page_url( 'contact' ), 'contact us' );
-$stores   = $a( nolasharon_page_url( 'store-locations' ), 'our two Ikeja stores' );
 $returns  = $a( nolasharon_policy_url( 'returns' ), 'Returns &amp; Exchange Policy' );
 $delivery = $a( nolasharon_policy_url( 'delivery' ), 'Delivery &amp; Shipping Policy' );
 
+if ( ! function_exists( 'nolasharon_delivery_policy_content' ) ) {
+	WP_CLI::error( 'Activate the NolaSharon theme (version 0.15.3 or later) first.' );
+}
+
 /* Delivery & Shipping ------------------------------------------------------------------ */
 
-$delivery_page = $h( 'Delivery locations' )
-	. $p( 'We deliver to all areas within Lagos and nationwide to all 36 states in Nigeria.' )
-	. $p( 'We also deliver internationally. To order for delivery outside Nigeria, please ' . $contact . ' first so we can confirm the delivery fee for your destination.' )
-
-	. $h( 'Delivery charges' )
-	. $ul(
-		array(
-			'<strong>Within Lagos:</strong> ₦2,500 – ₦5,000',
-			'<strong>Outside Lagos (Nigeria):</strong> ₦3,500 – ₦7,500',
-			'<strong>International:</strong> calculated by weight and destination',
-		)
-	)
-	. $p( 'Charges depend on your location and on the weight of your items. The exact fee is shown at checkout before you pay.' )
-
-	. $h( 'Estimated delivery timelines' )
-	. $ul(
-		array(
-			'<strong>Lagos:</strong> 24–48 hours',
-			'<strong>Interstate:</strong> 2–5 working days',
-			'<strong>International:</strong> 5–10 working days',
-		)
-	)
-	. $p( 'Delivery timelines start once your order has been processed, after payment is confirmed.' )
-
-	. $h( 'Order processing time' )
-	. $p( 'Orders are processed within 12–24 hours of payment confirmation. Orders placed after 4pm, at weekends or on public holidays are processed on the next working day.' )
-
-	. $h( 'Dispatch and updates' )
-	. $p( 'Once your order is shipped, you will receive a dispatch notification by WhatsApp or SMS with the rider or tracking details. To check on your order, ' . $contact . ' or use our ' . $a( nolasharon_page_url( 'track-order' ), 'Track your order' ) . ' page.' )
-
-	. $h( 'Failed delivery attempts' )
-	. $p( 'We attempt delivery 2 times. If delivery fails because of a wrong address, or because your phone is switched off or unreachable, a re-delivery fee applies. If the failure is caused by our courier, re-delivery is free.' )
-
-	. $h( 'Store pickup' )
-	. $p( 'You can collect your order for free from either of ' . $stores . '. Select “Pickup” at checkout and choose the store closest to you. Your order will be ready within 24 hours and we will send you a notification when it is. Please bring your Order ID when you come to collect.' );
+// Since theme 0.15.3 the page lists the exact checkout fees and lives in the theme (inc/delivery-fees.php).
+$delivery_page = nolasharon_delivery_policy_content();
+$copy          = nolasharon_delivery_copy();
 
 /* Returns & Exchange ------------------------------------------------------------------- */
 
@@ -141,7 +112,7 @@ $faqs = array(
 		nolasharon_policy_url( 'delivery' ),
 	),
 	'How much does delivery cost?'          => array(
-		$p( 'Within Lagos, delivery costs ₦2,500 – ₦5,000, and outside Lagos (within Nigeria) ₦3,500 – ₦7,500, depending on your location and the weight of your items. International delivery is calculated by weight and destination. The exact fee is shown at checkout before you pay, and store pickup is free.' ),
+		$copy['faq'] . "\n\n",
 		'Delivery policy',
 		nolasharon_policy_url( 'delivery' ),
 	),
@@ -198,7 +169,7 @@ $set_if_empty = function ( $mod, $value ) {
 		WP_CLI::log( "Kept existing {$mod}" );
 	}
 };
-$set_if_empty( 'nolasharon_delivery_info', "Lagos: 24–48 hours · Other states: 2–5 working days · International: 5–10 working days, after your order is processed (12–24 hours after payment).\nWithin Lagos ₦2,500 – ₦5,000, outside Lagos ₦3,500 – ₦7,500; the exact fee is shown at checkout. Free pickup from our Ikeja stores." );
+$set_if_empty( 'nolasharon_delivery_info', $copy['snippet'] );
 $set_if_empty( 'nolasharon_returns_info', "Exchanges within 48 hours of delivery for damaged, defective or wrong items, with photo or video proof (unboxing video required for delivery complaints). Items must be unworn with tags attached. Sale items are final sale." );
 $set_if_empty( 'nolasharon_trust_delivery', 'Delivery across Lagos and all 36 states' );
 
