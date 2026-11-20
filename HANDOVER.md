@@ -143,13 +143,13 @@ Hide the shop behind an animated "coming soon" page (for example before launch, 
   | All other states | ₦7,500 | 2–5 working days |
   | Store pickup | Free | |
 
-  These are filled in automatically the first time you open wp-admin after the theme update (a green "Checkout delivery fees" message confirms it); any fee you had already set yourself is kept.
+  These are filled in automatically the first time you open wp-admin after the theme update, together with the same fees on the **Delivery & Shipping Policy** page ("Delivery charges"), the FAQ "How much does delivery cost?" and the delivery note on product pages. A green "Delivery fees and policy" message confirms it. Any fee, page or answer you had already changed yourself is kept.
 
   The customer's **State** decides which options they see. International orders are arranged by contacting you; online checkout is Nigeria only.
 - **To change a fee, name or note:** **WooCommerce → Settings → Shipping** → click the zone (*Lagos*, *South-West states* or *Other Nigerian states*) → hover the delivery option → **Edit**. Change **Method title** (the name customers see), **Cost** (numbers only, e.g. `4000`) and **Checkout note (NolaSharon)** (the small line under the name; empty hides it) → **Save**. Check it by adding something to the bag and opening Checkout.
 - **To add a delivery option** (e.g. a separate fee for Abuja): in the zone, **Add shipping method** → **Flat rate**, then edit it as above. To give some states their own fee, **Add zone**, name it, pick the states under **Zone regions**, add a Flat rate, and drag the zone above *Other Nigerian states* (zones are matched from the top down).
 - **The line under the delivery options** ("Delivery times start once your payment is confirmed…") is in **Customize → NolaSharon Settings → Shop, delivery & pickup → Checkout: note under the delivery options**. Empty hides it.
-- If fees or times change, also update the Delivery & Shipping policy page and the delivery note in the Customizer so everything matches.
+- If fees or times change, also update the Delivery & Shipping policy page ("Delivery charges"), the FAQ "How much does delivery cost?" (**FAQs** in the dashboard menu) and the delivery note in the Customizer so everything matches.
 - **Terms checkbox:** checkout asks customers to accept the Terms & Conditions and the Returns & Exchange Policy. The Terms page is set under **WooCommerce → Settings → Advanced → Terms and conditions**.
 - **Store pickup** stays off until you're ready. To turn it on:
   1. Tick **Pickup available at this branch** on each branch that offers it, and add **Pickup instructions**.
