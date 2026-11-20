@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'NOLASHARON_VERSION', '0.15.2' );
+define( 'NOLASHARON_VERSION', '0.15.3' );
 
 require get_template_directory() . '/inc/helpers.php';
 require get_template_directory() . '/inc/customizer.php';
