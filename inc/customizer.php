@@ -35,6 +35,8 @@ function nolasharon_settings_schema() {
 		'center' => __( 'Centre', 'nolasharon' ),
 		'right'  => __( 'Right', 'nolasharon' ),
 	);
+	$classic   = nolasharon_hero_when( array( 'nolasharon_hero_layout' => array( 'classic' ) ) );
+	$editorial = nolasharon_hero_when( array( 'nolasharon_hero_layout' => array( 'editorial' ) ) );
 
 	return array(
 		'nolasharon_announcement' => array(
@@ -47,8 +49,28 @@ function nolasharon_settings_schema() {
 		),
 		'nolasharon_hero'         => array(
 			'title'       => __( 'Homepage hero', 'nolasharon' ),
-			'description' => __( 'The pictures beside the headline play as a slideshow when there is more than one. Sizes are in pixels.', 'nolasharon' ),
+			'description' => __( 'Choose a design first: the options below change to match it. The pictures play as a slideshow when there is more than one. Sizes are in pixels.', 'nolasharon' ),
 			'fields'      => array(
+				'nolasharon_hero_layout'      => array(
+					__( 'Hero design', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'editorial',
+					'',
+					array(
+						'choices' => array(
+							'editorial' => __( 'Editorial: light background, large picture on the right, product card', 'nolasharon' ),
+							'classic'   => __( 'Classic: brown banner, framed picture', 'nolasharon' ),
+						),
+					),
+				),
+				'nolasharon_hero_eyebrow'     => array( __( 'Eyebrow (small label above the headline; empty hides it)', 'nolasharon' ), 'text', $text, __( 'NolaSharon Clothing · Lagos', 'nolasharon' ), '' ),
+				'nolasharon_hero_title'       => array( __( 'Headline', 'nolasharon' ), 'text', $text, __( 'Your Style, Your Way.', 'nolasharon' ), '' ),
+				'nolasharon_hero_text'        => array( __( 'Supporting text', 'nolasharon' ), 'textarea', $textarea, __( 'Discover fashion pieces to complement your style and shop the NolaSharon Clothing collection.', 'nolasharon' ), '' ),
+				'nolasharon_hero_btn1_label'  => array( __( 'Main button label', 'nolasharon' ), 'text', $text, __( 'Shop Now', 'nolasharon' ), '' ),
+				'nolasharon_hero_btn1_link'   => array( __( 'Main button link (empty = Shop)', 'nolasharon' ), 'url', $url, '', '' ),
+				'nolasharon_hero_btn2_label'  => array( __( 'Second button label (empty hides it)', 'nolasharon' ), 'text', $text, __( 'Visit Our Store', 'nolasharon' ), '' ),
+				'nolasharon_hero_btn2_link'   => array( __( 'Second button link (empty = Store Locations)', 'nolasharon' ), 'url', $url, '', '' ),
 				'nolasharon_hero_source'      => array(
 					__( 'Pictures to show', 'nolasharon' ),
 					'select',
@@ -65,8 +87,8 @@ function nolasharon_settings_schema() {
 						),
 					),
 				),
-				'nolasharon_hero_products'    => array( __( 'Products to show', 'nolasharon' ), 'products', 'nolasharon_sanitize_ids', '', __( 'Tick products in the order you want them to play.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_source_is( 'selected' ) ) ),
-				'nolasharon_hero_gallery'     => array( __( 'Slideshow images', 'nolasharon' ), 'gallery', 'nolasharon_sanitize_ids', '', __( 'Drag the thumbnails to change the order. Portrait photos work best.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_source_is( 'gallery' ) ) ),
+				'nolasharon_hero_products'    => array( __( 'Products to show', 'nolasharon' ), 'products', 'nolasharon_sanitize_ids', '', __( 'Tick products in the order you want them to play.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_when( array( 'nolasharon_hero_source' => array( 'selected' ) ) ) ) ),
+				'nolasharon_hero_gallery'     => array( __( 'Slideshow images', 'nolasharon' ), 'gallery', 'nolasharon_sanitize_ids', '', __( 'Drag the thumbnails to change the order. Portrait photos work best.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_when( array( 'nolasharon_hero_source' => array( 'gallery' ) ) ) ) ),
 				'nolasharon_hero_count'       => array(
 					__( 'Number of products', 'nolasharon' ),
 					'number',
@@ -79,7 +101,7 @@ function nolasharon_settings_schema() {
 							'max'  => 12,
 							'step' => 1,
 						),
-						'active_callback' => nolasharon_hero_source_is( 'recent', 'featured' ),
+						'active_callback' => nolasharon_hero_when( array( 'nolasharon_hero_source' => array( 'recent', 'featured' ) ) ),
 					),
 				),
 				'nolasharon_hero_image'       => array( __( 'Campaign image', 'nolasharon' ), 'image', 'absint', 0, __( 'Also shown when the slideshow has nothing to play. Falls back to the placeholder illustration.', 'nolasharon' ) ),
@@ -98,11 +120,6 @@ function nolasharon_settings_schema() {
 				'nolasharon_hero_interval'    => array( __( 'Seconds on each slide', 'nolasharon' ), 'number', 'nolasharon_sanitize_interval', 5, __( '0 turns off autoplay; visitors use the arrows and dots.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 0, 'max' => 30, 'step' => 1 ), 'transport' => 'postMessage' ) ),
 				'nolasharon_hero_arrows'      => array( __( 'Show arrows', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage' ) ),
 				'nolasharon_hero_dots'        => array( __( 'Show dots', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage' ) ),
-				'nolasharon_hero_captions'    => array( __( 'Show the product name and price on product slides', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage' ) ),
-				'nolasharon_hero_media_h'     => array( __( 'Picture height on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 520, __( 'The hero is about 660px tall, so up to about 580 leaves space above and below.', 'nolasharon' ), $px( 200, 600 ) ),
-				'nolasharon_hero_media_w'     => array( __( 'Picture width on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 420, __( 'Narrows to fit smaller screens.', 'nolasharon' ), $px( 200, 600 ) ),
-				'nolasharon_hero_media_h_m'   => array( __( 'Picture height on phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 380, __( 'Below 760px wide, where the picture sits under the headline at full width.', 'nolasharon' ), $px( 160, 600 ) ),
-				'nolasharon_hero_radius'      => array( __( 'Corner rounding', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 10, __( '0 = square corners.', 'nolasharon' ), $px( 0, 60 ) ),
 				'nolasharon_hero_fit'         => array(
 					__( 'Picture fit', 'nolasharon' ),
 					'select',
@@ -117,6 +134,37 @@ function nolasharon_settings_schema() {
 						'transport' => 'postMessage',
 					),
 				),
+				'nolasharon_hero_media_h_m'   => array( __( 'Picture height on phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 380, __( 'On phones the picture sits under the headline at full width.', 'nolasharon' ), $px( 160, 600 ) ),
+
+				// Editorial design.
+				'nolasharon_hero_bg'          => array( __( 'Background colour', 'nolasharon' ), 'color', 'sanitize_hex_color', '#f4ede5', '', array( 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
+				'nolasharon_hero_ed_h'        => array( __( 'Hero height on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_hero_h', 640, __( 'The picture fills this height.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 400, 'max' => 900, 'step' => 10 ), 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
+				'nolasharon_hero_ed_w'        => array( __( 'Picture width on computers (% of the screen)', 'nolasharon' ), 'number', 'nolasharon_sanitize_percent', 52, __( 'Between 30 and 75. The headline uses the space that is left.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 30, 'max' => 75, 'step' => 1 ), 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
+				'nolasharon_hero_fade'        => array( __( 'Fade the picture softly into the background', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
+				'nolasharon_hero_trust'       => array( __( 'Show the trust row under the buttons', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, __( 'Up to three items from the customer trust strip (payment, delivery, stores, support), each only once it is true.', 'nolasharon' ), array( 'active_callback' => $editorial ) ),
+				'nolasharon_hero_card'        => array(
+					__( 'Product card', 'nolasharon' ),
+					'select',
+					'nolasharon_sanitize_choice',
+					'slide',
+					'',
+					array(
+						'choices'         => array(
+							'slide'   => __( 'The product on the current slide', 'nolasharon' ),
+							'product' => __( 'Always the same product (below)', 'nolasharon' ),
+							'none'    => __( 'Hide the card', 'nolasharon' ),
+						),
+						'active_callback' => $editorial,
+					),
+				),
+				'nolasharon_hero_card_product' => array( __( 'Card product', 'nolasharon' ), 'product', 'absint', 0, __( 'Also used on slides that are not products.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_when( array( 'nolasharon_hero_layout' => array( 'editorial' ), 'nolasharon_hero_card' => array( 'slide', 'product' ) ) ) ) ),
+				'nolasharon_hero_card_label'  => array( __( 'Card label', 'nolasharon' ), 'text', $text, __( 'Shop the look', 'nolasharon' ), __( 'Small text above the product name. Only say "Trending" or "Bestseller" if it is true. Empty hides it.', 'nolasharon' ), array( 'active_callback' => nolasharon_hero_when( array( 'nolasharon_hero_layout' => array( 'editorial' ), 'nolasharon_hero_card' => array( 'slide', 'product' ) ) ) ) ),
+
+				// Classic design.
+				'nolasharon_hero_captions'    => array( __( 'Show the product name and price on product slides', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage', 'active_callback' => $classic ) ),
+				'nolasharon_hero_media_h'     => array( __( 'Picture height on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 520, __( 'The hero is about 660px tall, so up to about 580 leaves space above and below.', 'nolasharon' ), $px( 200, 600 ) + array( 'active_callback' => $classic ) ),
+				'nolasharon_hero_media_w'     => array( __( 'Picture width on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 420, __( 'Narrows to fit smaller screens.', 'nolasharon' ), $px( 200, 600 ) + array( 'active_callback' => $classic ) ),
+				'nolasharon_hero_radius'      => array( __( 'Corner rounding', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 10, __( '0 = square corners.', 'nolasharon' ), $px( 0, 60 ) + array( 'active_callback' => $classic ) ),
 				'nolasharon_hero_valign'      => array(
 					__( 'Vertical position', 'nolasharon' ),
 					'select',
@@ -124,12 +172,13 @@ function nolasharon_settings_schema() {
 					'center',
 					'',
 					array(
-						'choices'   => array(
+						'choices'         => array(
 							'top'    => __( 'Top', 'nolasharon' ),
 							'center' => __( 'Middle', 'nolasharon' ),
 							'bottom' => __( 'Bottom', 'nolasharon' ),
 						),
-						'transport' => 'postMessage',
+						'transport'       => 'postMessage',
+						'active_callback' => $classic,
 					),
 				),
 				'nolasharon_hero_halign'      => array(
@@ -139,17 +188,11 @@ function nolasharon_settings_schema() {
 					'center',
 					'',
 					array(
-						'choices'   => $align,
-						'transport' => 'postMessage',
+						'choices'         => $align,
+						'transport'       => 'postMessage',
+						'active_callback' => $classic,
 					),
 				),
-				'nolasharon_hero_eyebrow'     => array( __( 'Eyebrow (small outlined label above the headline; empty hides it)', 'nolasharon' ), 'text', $text, __( 'NolaSharon Clothing · Lagos', 'nolasharon' ), '' ),
-				'nolasharon_hero_title'       => array( __( 'Headline', 'nolasharon' ), 'text', $text, __( 'Your Style, Your Way.', 'nolasharon' ), '' ),
-				'nolasharon_hero_text'        => array( __( 'Supporting text', 'nolasharon' ), 'textarea', $textarea, __( 'Discover fashion pieces to complement your style and shop the NolaSharon Clothing collection.', 'nolasharon' ), '' ),
-				'nolasharon_hero_btn1_label'  => array( __( 'Main button label', 'nolasharon' ), 'text', $text, __( 'Shop Now', 'nolasharon' ), '' ),
-				'nolasharon_hero_btn1_link'   => array( __( 'Main button link (empty = Shop)', 'nolasharon' ), 'url', $url, '', '' ),
-				'nolasharon_hero_btn2_label'  => array( __( 'Second button label (empty hides it)', 'nolasharon' ), 'text', $text, __( 'Visit Our Store', 'nolasharon' ), '' ),
-				'nolasharon_hero_btn2_link'   => array( __( 'Second button link (empty = Store Locations)', 'nolasharon' ), 'url', $url, '', '' ),
 			),
 		),
 		'nolasharon_brand'        => array(
@@ -339,6 +382,49 @@ function nolasharon_sanitize_interval( $value ) {
 }
 
 /**
+ * Sanitize the editorial hero height in pixels (400–900).
+ *
+ * @param mixed $value Raw value.
+ * @return int
+ */
+function nolasharon_sanitize_hero_h( $value ) {
+	return max( 400, min( 900, absint( $value ) ) );
+}
+
+/**
+ * Sanitize a width as a percentage of the screen (30–75).
+ *
+ * @param mixed $value Raw value.
+ * @return int
+ */
+function nolasharon_sanitize_percent( $value ) {
+	return max( 30, min( 75, absint( $value ) ) );
+}
+
+/**
+ * Product choices for a single-product select: "Automatic" plus published products A–Z.
+ * Built only in the Customizer, so the front end never runs this query.
+ *
+ * @return array
+ */
+function nolasharon_product_choices() {
+	$choices = array( 0 => __( 'Automatic: the newest featured product, else the newest product', 'nolasharon' ) );
+	if ( function_exists( 'wc_get_products' ) ) {
+		foreach ( wc_get_products(
+			array(
+				'status'  => 'publish',
+				'limit'   => 300,
+				'orderby' => 'title',
+				'order'   => 'ASC',
+			)
+		) as $product ) {
+			$choices[ $product->get_id() ] = $product->get_name();
+		}
+	}
+	return $choices;
+}
+
+/**
  * Sanitize a select value against its control's choices.
  *
  * @param string               $value   Raw value.
@@ -452,6 +538,19 @@ function nolasharon_customize_register( $wp_customize ) {
 						$wp_customize,
 						$id,
 						array_merge( $args, array( 'mime_type' => 'image' ) )
+					)
+				);
+			} elseif ( 'color' === $type ) {
+				$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, $id, $args ) );
+			} elseif ( 'product' === $type ) {
+				$wp_customize->add_control(
+					$id,
+					array_merge(
+						$args,
+						array(
+							'type'    => 'select',
+							'choices' => nolasharon_product_choices(),
+						)
 					)
 				);
 			} elseif ( 'gallery' === $type ) {

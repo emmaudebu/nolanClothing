@@ -41,7 +41,10 @@
 		nolasharon_hero_speed: [ '--hs-speed', 'ms' ],
 		nolasharon_hero_fit: [ '--hs-fit' ],
 		nolasharon_hero_valign: [ '--hs-valign', 'flex' ],
-		nolasharon_hero_halign: [ '--hs-halign', 'flex' ]
+		nolasharon_hero_halign: [ '--hs-halign', 'flex' ],
+		nolasharon_hero_bg: [ '--he-bg' ],
+		nolasharon_hero_ed_h: [ '--he-h', 'px' ],
+		nolasharon_hero_ed_w: [ '--he-w', '%' ]
 	};
 
 	Object.keys( hero ).forEach( function ( id ) {
@@ -55,6 +58,15 @@
 				}
 				root.style.setProperty( hero[ id ][ 0 ], value );
 			} );
+		} );
+	} );
+
+	api( 'nolasharon_hero_fade', function ( setting ) {
+		setting.bind( function ( value ) {
+			var section = document.querySelector( '.hero--editorial' );
+			if ( section ) {
+				section.classList.toggle( 'hero--fade', !! value );
+			}
 		} );
 	} );
 
