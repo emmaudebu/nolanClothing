@@ -1,7 +1,8 @@
 <?php
 /**
  * Homepage hero pictures (inc/hero.php): a slideshow when there is more than one slide, a single
- * picture otherwise, and the placeholder illustration when there is nothing to show.
+ * picture otherwise, and the placeholder illustration when there is nothing to show. The editorial
+ * design adds the product card (one per slide when it follows the slides).
  * assets/js/hero-slider.js runs the transitions; without it the first slide simply stays up.
  *
  * @package NolaSharon
@@ -9,12 +10,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$nolasharon_slides   = nolasharon_hero_slides();
-$nolasharon_count    = count( $nolasharon_slides );
-$nolasharon_effect   = nolasharon_setting( 'nolasharon_hero_effect' );
-$nolasharon_interval = (int) nolasharon_setting( 'nolasharon_hero_interval' );
-$nolasharon_classes  = array( 'hslider' );
-foreach ( array( 'arrows', 'dots', 'captions' ) as $nolasharon_option ) {
+$nolasharon_editorial = isset( $args['layout'] ) && 'editorial' === $args['layout'];
+$nolasharon_slides    = nolasharon_hero_slides();
+$nolasharon_count     = count( $nolasharon_slides );
+$nolasharon_effect    = nolasharon_setting( 'nolasharon_hero_effect' );
+$nolasharon_interval  = (int) nolasharon_setting( 'nolasharon_hero_interval' );
+$nolasharon_cards     = $nolasharon_editorial ? nolasharon_hero_cards( $nolasharon_slides ) : array();
+$nolasharon_classes   = array( 'hslider' );
+// The editorial design shows the product card instead of captions on the picture.
+foreach ( $nolasharon_editorial ? array( 'arrows', 'dots' ) : array( 'arrows', 'dots', 'captions' ) as $nolasharon_option ) {
 	if ( nolasharon_setting( 'nolasharon_hero_' . $nolasharon_option ) ) {
 		$nolasharon_classes[] = 'hslider--' . $nolasharon_option;
 	}
@@ -101,4 +105,31 @@ if ( ! $nolasharon_slides ) {
 			</div>
 		<?php endif; ?>
 	</div>
+
+	<?php if ( $nolasharon_cards ) : ?>
+		<div class="hcard<?php echo $nolasharon_cards[0] ? '' : ' is-empty'; ?>">
+			<?php
+			foreach ( $nolasharon_cards as $nolasharon_i => $nolasharon_product ) :
+				$nolasharon_active = 0 === $nolasharon_i ? ' is-active' : '';
+				if ( ! $nolasharon_product ) {
+					printf( '<span class="hcard__item%s" data-hcard-item></span>', esc_attr( $nolasharon_active ) );
+					continue;
+				}
+				$nolasharon_gallery = $nolasharon_product->get_gallery_image_ids();
+				$nolasharon_thumb   = $nolasharon_gallery ? $nolasharon_gallery[0] : $nolasharon_product->get_image_id();
+				?>
+				<a class="hcard__item<?php echo esc_attr( $nolasharon_active ); ?>" href="<?php echo esc_url( $nolasharon_product->get_permalink() ); ?>" data-hcard-item>
+					<span class="hcard__thumb"><?php echo wp_get_attachment_image( $nolasharon_thumb, 'woocommerce_thumbnail', false, array( 'alt' => '', 'loading' => 'lazy' ) ); ?></span>
+					<span class="hcard__body">
+						<?php if ( nolasharon_setting( 'nolasharon_hero_card_label' ) ) : ?>
+							<span class="hcard__label"><?php echo esc_html( nolasharon_setting( 'nolasharon_hero_card_label' ) ); ?></span>
+						<?php endif; ?>
+						<span class="hcard__name"><?php echo esc_html( $nolasharon_product->get_name() ); ?></span>
+						<span class="hcard__price"><?php echo wp_kses_post( $nolasharon_product->get_price_html() ); ?></span>
+						<span class="hcard__cta"><?php esc_html_e( 'Shop Now', 'nolasharon' ); ?> <?php echo nolasharon_icon( 'arrow', 16 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+					</span>
+				</a>
+			<?php endforeach; ?>
+		</div>
+	<?php endif; ?>
 </div>

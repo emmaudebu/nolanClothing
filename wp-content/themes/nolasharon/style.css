@@ -4,7 +4,7 @@ Theme URI: https://amplecr8tive.com/
 Author: Ifeanyi Chukwu
 Author URI: https://www.linkedin.com/in/ifeanyiudebu/
 Description: Elegant, mobile-first WooCommerce theme for NolaSharon Clothing, a Lagos fashion house: collections, quick view, wishlist, store pickup with branch locations, order tracking and a coming soon mode. Built by Ample Agency.
-Version: 0.14.0
+Version: 0.15.0
 Requires at least: 6.5
 Requires PHP: 8.0
 Text Domain: nolasharon
@@ -1020,6 +1020,421 @@ h3 {
 
 	.hslider__name {
 		max-width: 100%;
+	}
+}
+
+/* Editorial hero design (Customizer → Homepage hero → Hero design): light background, the
+   slideshow filling the right side and fading into it, a trust row and a product card.
+   --he-bg, --he-h and --he-w come from the Customizer. */
+
+.hero--editorial {
+	--he-ink: #1d1611;
+	--he-ink-2: #4a3f37;
+	--he-accent: #7a5439;
+	background: var(--he-bg, #f4ede5);
+	color: var(--he-ink);
+}
+
+.hero--editorial .hero__inner {
+	position: static;
+	min-height: var(--he-h, 640px);
+}
+
+.hero--editorial .hero__copy {
+	flex: none;
+	width: calc(100% - var(--he-w, 52%));
+	max-width: 580px;
+	gap: 22px;
+	padding: 72px 32px 72px 0;
+}
+
+.hero--editorial .hero__eyebrow {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	color: var(--he-accent);
+	font-size: 13px;
+	letter-spacing: 0.14em;
+}
+
+.hero--editorial .hero__title {
+	max-width: 600px;
+	font-family: var(--serif);
+	font-weight: 500;
+	font-size: clamp(38px, 4.6vw + 10px, 70px);
+	line-height: 1.06;
+	letter-spacing: -0.01em;
+	color: var(--he-ink);
+}
+
+.hero--editorial .hero__text {
+	max-width: 420px;
+	font-size: 17px;
+	line-height: 1.6;
+	color: var(--he-ink-2);
+}
+
+.hero--editorial .hero__actions {
+	margin-top: 8px;
+}
+
+.hero--editorial .hero__actions .btn {
+	min-height: 52px;
+	padding: 16px 30px;
+	border-radius: 6px;
+	font-size: 13px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+}
+
+.hero--editorial .hero__actions .btn--dark {
+	background: var(--he-ink);
+}
+
+.hero--editorial .hero__actions .btn--light {
+	border-color: var(--he-ink);
+	background: transparent;
+	color: var(--he-ink);
+}
+
+.hero--editorial .hero__actions .btn--light:hover {
+	background: var(--he-ink);
+	color: #ffffff;
+	opacity: 1;
+}
+
+.hero__trust {
+	display: flex;
+	flex-wrap: wrap;
+	row-gap: 14px;
+	margin: 26px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.hero__trust-item {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	max-width: 170px;
+	margin-right: 16px;
+	padding-right: 16px;
+	border-right: 1px solid rgba(29, 22, 17, 0.15);
+}
+
+.hero__trust-item:last-child {
+	margin-right: 0;
+	padding-right: 0;
+	border-right: 0;
+}
+
+.hero__trust-icon {
+	flex: none;
+	margin-top: 1px;
+	color: var(--he-ink-2);
+}
+
+.hero__trust-text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 12px;
+	line-height: 1.45;
+	color: var(--he-ink-2);
+}
+
+.hero__trust-text strong {
+	font-size: 11.5px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--he-ink);
+}
+
+/* The picture fills the right side of the hero, top to bottom. */
+.hero--editorial .hero__media {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	display: block;
+	align-self: stretch;
+	width: var(--he-w, 52%);
+	margin: 0;
+	padding: 0;
+}
+
+.hero--editorial .hslider {
+	width: 100%;
+	height: 100%;
+}
+
+.hero--editorial .hslider__track,
+.hero--editorial .hslider__slide {
+	border-radius: 0;
+}
+
+.hero--fade .hslider__track::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 3;
+	width: 34%;
+	background: linear-gradient(to right, var(--he-bg, #f4ede5), transparent);
+	pointer-events: none;
+}
+
+.hero--fade .hslider__arrow--prev {
+	left: 36%;
+}
+
+.hero--editorial .hslider__bar {
+	top: 28px;
+	right: 28px;
+	left: auto;
+	gap: 4px;
+	margin: 0;
+	padding: 2px 4px 2px 8px;
+	border-radius: 999px;
+	background: rgba(255, 255, 255, 0.88);
+}
+
+.hero--editorial .hslider__dot {
+	width: 22px;
+}
+
+.hero--editorial .hslider__dot::before {
+	background: var(--he-ink);
+	opacity: 0.3;
+}
+
+.hero--editorial .hslider__dot[aria-current="true"]::before {
+	opacity: 1;
+}
+
+.hero--editorial .hslider__toggle {
+	border-color: rgba(29, 22, 17, 0.25);
+	color: var(--he-ink);
+}
+
+.hero--editorial .hslider__dot:focus-visible,
+.hero--editorial .hslider__toggle:focus-visible {
+	outline-color: var(--he-ink);
+}
+
+/* Product card: one per slide, the active one shown. Kept clear of the WhatsApp button. */
+.hcard {
+	position: absolute;
+	right: 112px;
+	bottom: 40px;
+	z-index: 2;
+	display: grid;
+	width: 330px;
+	transition: opacity var(--dur) var(--ease), visibility 0s linear var(--dur);
+}
+
+.hcard.is-empty {
+	opacity: 0;
+	visibility: hidden;
+}
+
+.hcard__item {
+	grid-area: 1 / 1;
+	display: flex;
+	gap: 16px;
+	padding: 14px;
+	border-radius: 10px;
+	background: rgba(255, 255, 255, 0.92);
+	color: var(--he-ink);
+	text-decoration: none;
+	box-shadow: 0 18px 40px rgba(43, 27, 18, 0.14);
+	opacity: 0;
+	visibility: hidden;
+	transform: translateY(10px);
+	transition: opacity 0.45s var(--ease), transform 0.45s var(--ease-out), visibility 0s linear 0.45s;
+}
+
+.hcard__item:not([href]) {
+	display: none;
+}
+
+.hcard__item.is-active {
+	opacity: 1;
+	visibility: visible;
+	transform: none;
+	transition-delay: 0.15s, 0.15s, 0s;
+}
+
+.hcard__item.is-active:hover {
+	transform: translateY(-3px);
+	color: var(--he-ink);
+}
+
+.hcard__item:focus-visible {
+	outline: 2px solid var(--he-ink);
+	outline-offset: 3px;
+}
+
+.hcard__thumb {
+	flex: none;
+	width: 96px;
+	aspect-ratio: 4 / 5;
+	overflow: hidden;
+	border-radius: 6px;
+	background: var(--bg-tint);
+}
+
+.hcard__thumb img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.hcard__body {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 4px;
+	min-width: 0;
+}
+
+.hcard__label {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--he-accent);
+}
+
+.hcard__name {
+	display: -webkit-box;
+	overflow: hidden;
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 1.3;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
+
+.hcard__price {
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.hcard__price del {
+	margin-right: 4px;
+	font-weight: 400;
+	opacity: 0.6;
+}
+
+.hcard__price ins {
+	text-decoration: none;
+}
+
+.hcard__cta {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin-top: 6px;
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	text-decoration: underline;
+	text-underline-offset: 4px;
+}
+
+.hcard__cta .icon {
+	transition: transform var(--dur-fast) var(--ease);
+}
+
+.hcard__item:hover .hcard__cta .icon {
+	transform: translateX(3px);
+}
+
+/* Narrower screens: the trust row stacks. */
+@media (max-width: 1200px) {
+	.hero__trust {
+		flex-direction: column;
+		gap: 10px;
+	}
+
+	.hero__trust-item {
+		max-width: none;
+		margin-right: 0;
+		padding-right: 0;
+		border-right: 0;
+	}
+}
+
+/* Tablets and phones: headline first, then the picture full width with the card over its foot. */
+@media (max-width: 900px) {
+	.hero--editorial .hero__inner {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+		min-height: 0;
+	}
+
+	.hero--editorial .hero__copy {
+		width: auto;
+		max-width: none;
+		padding: 40px 0 28px;
+	}
+
+	.hero--editorial .hero__media {
+		position: relative;
+		flex: none;
+		width: auto;
+		height: var(--hs-h-m, 380px);
+		margin-inline: calc(-1 * var(--gutter));
+	}
+
+	.hero--fade .hslider__track::after {
+		right: 0;
+		bottom: auto;
+		width: auto;
+		height: 22%;
+		background: linear-gradient(to bottom, var(--he-bg, #f4ede5), transparent);
+	}
+
+	/* The card covers the middle of the shorter picture; visitors swipe or use the dots. */
+	.hero--editorial .hslider--arrows .hslider__arrow {
+		display: none;
+	}
+
+	.hero--editorial .hslider__bar {
+		top: auto;
+		right: 16px;
+		bottom: 16px;
+	}
+
+	.hcard {
+		right: 16px;
+		bottom: 68px;
+		left: 16px;
+		width: auto;
+		max-width: 360px;
+	}
+
+	.hcard__thumb {
+		width: 68px;
+	}
+}
+
+@media (max-width: 760px) {
+	.hero--editorial .hero__media {
+		margin-top: 0;
+		margin-inline: -20px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hcard__item {
+		transform: none;
 	}
 }
 

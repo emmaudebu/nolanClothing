@@ -17,6 +17,9 @@
 		var dots = root.querySelectorAll( '[data-hslider-dot]' );
 		var toggle = root.querySelector( '[data-hslider-toggle]' );
 		var track = root.querySelector( '.hslider__track' );
+		// Editorial design: one product card per slide, beside the slider.
+		var cardBox = root.parentNode.querySelector( '.hcard' );
+		var cards = root.parentNode.querySelectorAll( '[data-hcard-item]' );
 		var current = 0;
 		var leaving = null;
 		var cleanup = null;
@@ -93,6 +96,12 @@
 			leaving = from;
 			cleanup = window.setTimeout( finish, speed() + 60 );
 			current = index;
+			if ( 1 < cards.length ) {
+				cards.forEach( function ( card, i ) {
+					card.classList.toggle( 'is-active', i === index );
+				} );
+				cardBox.classList.toggle( 'is-empty', ! cards[ index ].hasAttribute( 'href' ) );
+			}
 			dots.forEach( function ( dot, i ) {
 				if ( i === index ) {
 					dot.setAttribute( 'aria-current', 'true' );
