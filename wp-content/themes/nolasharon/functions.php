@@ -7,7 +7,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'NOLASHARON_VERSION', '0.15.1' );
+define( 'NOLASHARON_VERSION', '0.15.2' );
 
 require get_template_directory() . '/inc/helpers.php';
 require get_template_directory() . '/inc/customizer.php';
@@ -20,6 +20,7 @@ require get_template_directory() . '/inc/quick-view.php';
 require get_template_directory() . '/inc/shop-filters.php';
 require get_template_directory() . '/inc/branches.php';
 require get_template_directory() . '/inc/checkout.php';
+require get_template_directory() . '/inc/delivery-fees.php';
 require get_template_directory() . '/inc/account.php';
 require get_template_directory() . '/inc/cart.php';
 require get_template_directory() . '/inc/order-tracking.php';
