@@ -145,6 +145,7 @@ function nolasharon_icon( $name, $size = 20 ) {
 		'truck'      => '<path d="M3 7h11v10H3zM14 10h4l3 3v4h-7"/>',
 		'cloud-down' => '<path d="M7 17.5A4.5 4.5 0 0 1 6.6 8.5a6 6 0 0 1 11.6 1.6A3.8 3.8 0 0 1 17.5 17.5"/><path d="M12 11v9M9 17l3 3 3-3"/>',
 		'play'       => '<path d="M8 5v14l11-7z" fill="currentColor" stroke="none"/>',
+		'pause'      => '<path d="M8.5 5v14M15.5 5v14"/>',
 		'external'   => '<path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
 		'heart'      => '<path d="M12 20s-7.5-4.6-9.2-9.3C1.6 7.4 3.7 4 7.1 4c2 0 3.4 1.1 4.9 2.9C13.5 5.1 14.9 4 16.9 4c3.4 0 5.5 3.4 4.3 6.7C19.5 15.4 12 20 12 20z"/>',
 		'star'       => '<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/>',

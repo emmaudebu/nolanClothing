@@ -4,7 +4,7 @@ Theme URI: https://amplecr8tive.com/
 Author: Ifeanyi Chukwu
 Author URI: https://www.linkedin.com/in/ifeanyiudebu/
 Description: Elegant, mobile-first WooCommerce theme for NolaSharon Clothing, a Lagos fashion house: collections, quick view, wishlist, store pickup with branch locations, order tracking and a coming soon mode. Built by Ample Agency.
-Version: 0.13.0
+Version: 0.14.0
 Requires at least: 6.5
 Requires PHP: 8.0
 Text Domain: nolasharon
@@ -624,17 +624,338 @@ h3 {
 	text-transform: none;
 }
 
+/* Hero pictures: a slideshow (inc/hero.php, assets/js/hero-slider.js). Size, position,
+   corners, fit and speed come from the Customizer as --hs-* variables. */
+
 .hero__media {
 	flex: 1 1 460px;
-	align-self: flex-end;
+	align-self: var(--hs-valign, center);
 	display: flex;
-	justify-content: center;
+	justify-content: var(--hs-halign, center);
+	padding-block: 48px 64px;
 }
 
-.hero__media img {
+.hslider {
+	--hs-ease: cubic-bezier(0.65, 0, 0.35, 1);
+	position: relative;
+	z-index: 1;
+	width: min(100%, var(--hs-w, 420px));
+	height: var(--hs-h, 520px);
+}
+
+.hslider__track {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	border-radius: var(--hs-radius, 10px);
+	perspective: 1600px;
+}
+
+.hslider__slide {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+	border-radius: var(--hs-radius, 10px);
+	opacity: 0;
+	visibility: hidden;
+	backface-visibility: hidden;
+}
+
+.hslider__slide.is-active,
+.hslider__slide.is-entering,
+.hslider__slide.is-leaving {
+	visibility: visible;
+}
+
+.hslider__slide.is-active,
+.hslider__slide.is-leaving {
+	transition-property: transform, opacity, filter, clip-path;
+	transition-duration: var(--hs-speed, 900ms);
+	transition-timing-function: var(--hs-ease);
+}
+
+.hslider__slide.is-active {
+	z-index: 2;
+	opacity: 1;
+	transform: none;
+	filter: none;
+}
+
+.hslider__slide.is-entering {
+	z-index: 2;
+	transition: none;
+}
+
+.hslider__slide.is-leaving {
+	z-index: 1;
+	opacity: 1;
+}
+
+.hslider__link {
+	display: block;
+	height: 100%;
+	color: inherit;
+	text-decoration: none;
+}
+
+.hslider__slide img {
 	display: block;
 	width: 100%;
-	max-width: 560px;
+	height: 100%;
+	object-fit: var(--hs-fit, cover);
+}
+
+/* The placeholder illustration stands on the hero floor as before. */
+.hslider--art .hslider__slide img {
+	object-fit: contain;
+	object-position: bottom;
+}
+
+/* Effects: is-entering is the starting pose, is-leaving the end pose; data-dir="prev" mirrors them. */
+
+.hslider[data-fx="slide"] .is-entering { opacity: 1; transform: translateX(100%); }
+.hslider[data-fx="slide"] .is-leaving { transform: translateX(-100%); }
+.hslider[data-fx="slide"][data-dir="prev"] .is-entering { transform: translateX(-100%); }
+.hslider[data-fx="slide"][data-dir="prev"] .is-leaving { transform: translateX(100%); }
+
+.hslider[data-fx="slide-up"] .is-entering { opacity: 1; transform: translateY(100%); }
+.hslider[data-fx="slide-up"] .is-leaving { transform: translateY(-100%); }
+.hslider[data-fx="slide-up"][data-dir="prev"] .is-entering { transform: translateY(-100%); }
+.hslider[data-fx="slide-up"][data-dir="prev"] .is-leaving { transform: translateY(100%); }
+
+.hslider[data-fx="zoom-in"] .is-entering { transform: scale(0.7); }
+.hslider[data-fx="zoom-in"] .is-leaving { opacity: 0; transform: scale(1.3); }
+
+.hslider[data-fx="zoom-out"] .is-entering { transform: scale(1.3); }
+.hslider[data-fx="zoom-out"] .is-leaving { opacity: 0; transform: scale(0.75); }
+
+.hslider[data-fx="kenburns"] .is-active img,
+.hslider[data-fx="kenburns"] .is-leaving img {
+	animation: hs-kenburns 9s linear both;
+}
+
+@keyframes hs-kenburns {
+	from { transform: scale(1); }
+	to { transform: scale(1.14); }
+}
+
+/* Card flip and cube turn swing outside the frame, so the frame stops clipping. */
+.hslider[data-fx="flip"] .hslider__track,
+.hslider[data-fx="cube"] .hslider__track {
+	overflow: visible;
+}
+
+.hslider[data-fx="flip"] .is-entering { opacity: 1; transform: rotateY(-180deg); }
+.hslider[data-fx="flip"] .is-leaving { transform: rotateY(180deg); }
+.hslider[data-fx="flip"][data-dir="prev"] .is-entering { transform: rotateY(180deg); }
+.hslider[data-fx="flip"][data-dir="prev"] .is-leaving { transform: rotateY(-180deg); }
+
+.hslider[data-fx="cube"] .is-entering,
+.hslider[data-fx="cube"] .is-active { transform-origin: 0 50%; }
+.hslider[data-fx="cube"] .is-entering { opacity: 1; transform: translateX(100%) rotateY(90deg); }
+.hslider[data-fx="cube"] .is-leaving { transform-origin: 100% 50%; transform: translateX(-100%) rotateY(-90deg); }
+.hslider[data-fx="cube"][data-dir="prev"] .is-entering,
+.hslider[data-fx="cube"][data-dir="prev"] .is-active { transform-origin: 100% 50%; }
+.hslider[data-fx="cube"][data-dir="prev"] .is-entering { transform: translateX(-100%) rotateY(-90deg); }
+.hslider[data-fx="cube"][data-dir="prev"] .is-leaving { transform-origin: 0 50%; transform: translateX(100%) rotateY(90deg); }
+
+.hslider[data-fx="blur"] .is-entering { filter: blur(24px); transform: scale(1.06); }
+.hslider[data-fx="blur"] .is-leaving { opacity: 0; filter: blur(24px); }
+
+.hslider[data-fx="wipe"] .is-active,
+.hslider[data-fx="split"] .is-active { clip-path: inset(0 0 0 0); }
+.hslider[data-fx="wipe"] .is-entering { opacity: 1; clip-path: inset(0 0 0 100%); }
+.hslider[data-fx="wipe"][data-dir="prev"] .is-entering { clip-path: inset(0 100% 0 0); }
+.hslider[data-fx="split"] .is-entering { opacity: 1; clip-path: inset(0 50% 0 50%); }
+
+.hslider[data-fx="circle"] .is-active { clip-path: circle(75% at 50% 50%); }
+.hslider[data-fx="circle"] .is-entering { opacity: 1; clip-path: circle(0% at 50% 50%); }
+
+/* Product name and price on product slides. */
+.hslider__cap {
+	position: absolute;
+	right: 12px;
+	bottom: 12px;
+	left: 12px;
+	z-index: 1;
+	display: none;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 10px 14px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.92);
+	color: var(--text);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+	transition: transform var(--dur) var(--ease-out);
+}
+
+.hslider--captions .hslider__cap {
+	display: flex;
+}
+
+.hslider__link:hover .hslider__cap,
+.hslider__link:focus-visible .hslider__cap {
+	transform: translateY(-3px);
+}
+
+.hslider__link:focus-visible {
+	outline: 3px solid #ffffff;
+	outline-offset: -6px;
+}
+
+.hslider__name {
+	min-width: 0;
+	overflow: hidden;
+	font-family: var(--serif);
+	font-size: 16px;
+	font-weight: 600;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.hslider__price {
+	flex: none;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.hslider__price del {
+	margin-right: 4px;
+	font-weight: 400;
+	opacity: 0.6;
+}
+
+.hslider__price ins {
+	text-decoration: none;
+}
+
+/* Arrows, dots and pause. */
+.hslider__arrow {
+	position: absolute;
+	top: 50%;
+	z-index: 3;
+	display: none;
+	place-items: center;
+	width: 44px;
+	height: 44px;
+	padding: 0;
+	border: 0;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.9);
+	color: var(--text);
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+	cursor: pointer;
+	transform: translateY(-50%);
+	transition: transform var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+
+.hslider--arrows.is-ready .hslider__arrow {
+	display: grid;
+}
+
+.hslider__arrow--prev { left: 12px; }
+.hslider__arrow--next { right: 12px; }
+
+.hslider__arrow:hover {
+	background: #ffffff;
+	transform: translateY(-50%) scale(1.06);
+}
+
+.hslider__bar {
+	position: absolute;
+	top: 100%;
+	right: 0;
+	left: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.hslider__dots {
+	display: none;
+	align-items: center;
+}
+
+.hslider--dots.is-ready .hslider__dots {
+	display: flex;
+}
+
+.hslider__dot {
+	display: grid;
+	place-items: center;
+	width: 28px;
+	height: 32px;
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: pointer;
+}
+
+.hslider__dot::before {
+	content: "";
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
+	background: #ffffff;
+	opacity: 0.5;
+	transition: width var(--dur) var(--ease-out), opacity var(--dur) var(--ease);
+}
+
+.hslider__dot:hover::before {
+	opacity: 0.8;
+}
+
+.hslider__dot[aria-current="true"]::before {
+	width: 22px;
+	opacity: 1;
+}
+
+.hslider__toggle {
+	display: none;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	border: 1.5px solid rgba(255, 255, 255, 0.6);
+	border-radius: 50%;
+	background: none;
+	color: #ffffff;
+	cursor: pointer;
+}
+
+.hslider--auto .hslider__toggle {
+	display: grid;
+}
+
+.hslider__icon-play,
+.hslider.is-paused .hslider__icon-pause {
+	display: none;
+}
+
+.hslider.is-paused .hslider__icon-play {
+	display: block;
+}
+
+.hslider__arrow:focus-visible,
+.hslider__dot:focus-visible,
+.hslider__toggle:focus-visible {
+	outline: 2px solid #ffffff;
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hslider__slide.is-active,
+	.hslider__slide.is-leaving {
+		transition-duration: 0.3s;
+	}
+
+	.hslider .hslider__slide img {
+		animation: none;
+	}
 }
 
 @media (max-width: 760px) {
@@ -676,7 +997,29 @@ h3 {
 
 	.hero__media {
 		flex-basis: 100%;
+		justify-content: center;
 		margin-top: 16px;
+		padding-block: 8px 56px;
+	}
+
+	.hslider {
+		width: 100%;
+		height: var(--hs-h-m, 380px);
+	}
+
+	.hslider__arrow {
+		width: 40px;
+		height: 40px;
+	}
+
+	.hslider__cap {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 2px;
+	}
+
+	.hslider__name {
+		max-width: 100%;
 	}
 }
 

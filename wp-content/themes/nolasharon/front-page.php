@@ -35,7 +35,6 @@ $nolasharon_video_id   = nolasharon_youtube_id( nolasharon_setting( 'nolasharon_
 $nolasharon_new_url    = add_query_arg( 'orderby', 'date', nolasharon_shop_url() );
 
 // Hero settings.
-$nolasharon_hero_img   = (int) nolasharon_setting( 'nolasharon_hero_image' );
 $nolasharon_btn1_label = nolasharon_setting( 'nolasharon_hero_btn1_label' );
 $nolasharon_btn1_link  = nolasharon_setting( 'nolasharon_hero_btn1_link' ) ? nolasharon_setting( 'nolasharon_hero_btn1_link' ) : nolasharon_shop_url();
 $nolasharon_btn2_label = nolasharon_setting( 'nolasharon_hero_btn2_label' );
@@ -103,23 +102,7 @@ if ( nolasharon_whatsapp_url() || nolasharon_setting( 'nolasharon_phone' ) ) {
 				<?php endif; ?>
 			</div>
 		</div>
-		<div class="hero__media">
-			<?php
-			if ( $nolasharon_hero_img ) {
-				echo wp_get_attachment_image(
-					$nolasharon_hero_img,
-					'large',
-					false,
-					array(
-						'fetchpriority' => 'high',
-						'loading'       => 'eager',
-					)
-				);
-			} else {
-				printf( '<img src="%1$s" alt="%2$s" width="600" height="700" fetchpriority="high">', esc_url( nolasharon_img( 'hero-figure' ) ), esc_attr__( 'Illustration of a woman in an indigo gown and gold head wrap', 'nolasharon' ) );
-			}
-			?>
-		</div>
+		<?php get_template_part( 'template-parts/hero-slider' ); ?>
 	</div>
 </section>
 
