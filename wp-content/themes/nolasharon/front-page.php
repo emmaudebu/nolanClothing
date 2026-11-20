@@ -35,6 +35,11 @@ $nolasharon_video_id   = nolasharon_youtube_id( nolasharon_setting( 'nolasharon_
 $nolasharon_new_url    = add_query_arg( 'orderby', 'date', nolasharon_shop_url() );
 
 // Hero settings.
+$nolasharon_layout       = 'classic' === nolasharon_setting( 'nolasharon_hero_layout' ) ? 'classic' : 'editorial';
+$nolasharon_hero_classes = array( 'hero', 'hero--' . $nolasharon_layout );
+if ( 'editorial' === $nolasharon_layout && nolasharon_setting( 'nolasharon_hero_fade' ) ) {
+	$nolasharon_hero_classes[] = 'hero--fade';
+}
 $nolasharon_btn1_label = nolasharon_setting( 'nolasharon_hero_btn1_label' );
 $nolasharon_btn1_link  = nolasharon_setting( 'nolasharon_hero_btn1_link' ) ? nolasharon_setting( 'nolasharon_hero_btn1_link' ) : nolasharon_shop_url();
 $nolasharon_btn2_label = nolasharon_setting( 'nolasharon_hero_btn2_label' );
@@ -82,8 +87,10 @@ if ( nolasharon_whatsapp_url() || nolasharon_setting( 'nolasharon_phone' ) ) {
 }
 ?>
 
-<section class="hero" aria-labelledby="hero-title">
-	<span class="hero__watermark" aria-hidden="true">NolaSharon</span>
+<section class="<?php echo esc_attr( implode( ' ', $nolasharon_hero_classes ) ); ?>" aria-labelledby="hero-title">
+	<?php if ( 'classic' === $nolasharon_layout ) : ?>
+		<span class="hero__watermark" aria-hidden="true">NolaSharon</span>
+	<?php endif; ?>
 	<div class="container hero__inner">
 		<div class="hero__copy">
 			<?php if ( nolasharon_setting( 'nolasharon_hero_eyebrow' ) ) : ?>
@@ -101,8 +108,21 @@ if ( nolasharon_whatsapp_url() || nolasharon_setting( 'nolasharon_phone' ) ) {
 					<a class="btn btn--light" href="<?php echo esc_url( $nolasharon_btn2_link ); ?>"><?php echo esc_html( $nolasharon_btn2_label ); ?></a>
 				<?php endif; ?>
 			</div>
+			<?php if ( 'editorial' === $nolasharon_layout && nolasharon_setting( 'nolasharon_hero_trust' ) && $nolasharon_trust ) : ?>
+				<ul class="hero__trust">
+					<?php foreach ( array_slice( $nolasharon_trust, 0, 3 ) as $nolasharon_item ) : ?>
+						<li class="hero__trust-item">
+							<span class="hero__trust-icon" aria-hidden="true"><?php echo nolasharon_icon( $nolasharon_item[0], 22 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
+							<span class="hero__trust-text">
+								<strong><?php echo esc_html( $nolasharon_item[1] ); ?></strong>
+								<span><?php echo esc_html( $nolasharon_item[2] ); ?></span>
+							</span>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
 		</div>
-		<?php get_template_part( 'template-parts/hero-slider' ); ?>
+		<?php get_template_part( 'template-parts/hero-slider', null, array( 'layout' => $nolasharon_layout ) ); ?>
 	</div>
 </section>
 
