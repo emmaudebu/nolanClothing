@@ -134,12 +134,13 @@ function nolasharon_settings_schema() {
 						'transport' => 'postMessage',
 					),
 				),
-				'nolasharon_hero_media_h_m'   => array( __( 'Picture height on phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 380, __( 'On phones the picture sits under the headline at full width.', 'nolasharon' ), $px( 160, 600 ) ),
+				'nolasharon_hero_media_h_m'   => array( __( 'Picture height on phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 380, __( 'On phones the picture sits under the headline at full width.', 'nolasharon' ), $px( 160, 600 ) + array( 'active_callback' => $classic ) ),
 
 				// Editorial design.
 				'nolasharon_hero_bg'          => array( __( 'Background colour', 'nolasharon' ), 'color', 'sanitize_hex_color', '#f4ede5', '', array( 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
 				'nolasharon_hero_ed_h'        => array( __( 'Hero height on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_hero_h', 640, __( 'The picture fills this height.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 400, 'max' => 900, 'step' => 10 ), 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
 				'nolasharon_hero_ed_w'        => array( __( 'Picture width on computers (% of the screen)', 'nolasharon' ), 'number', 'nolasharon_sanitize_percent', 52, __( 'Between 30 and 75. The headline uses the space that is left.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 30, 'max' => 75, 'step' => 1 ), 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
+				'nolasharon_hero_ed_h_m'      => array( __( 'Picture card height on phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_hero_h_m', 560, __( 'On phones the headline and buttons sit on the picture, in a rounded card. Between 420 and 800; it grows if the text needs more room.', 'nolasharon' ), array( 'input_attrs' => array( 'min' => 420, 'max' => 800, 'step' => 10 ), 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
 				'nolasharon_hero_fade'        => array( __( 'Fade the picture softly into the background', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, '', array( 'transport' => 'postMessage', 'active_callback' => $editorial ) ),
 				'nolasharon_hero_trust'       => array( __( 'Show the trust row under the buttons', 'nolasharon' ), 'checkbox', 'nolasharon_sanitize_checkbox', true, __( 'Up to three items from the customer trust strip (payment, delivery, stores, support), each only once it is true.', 'nolasharon' ), array( 'active_callback' => $editorial ) ),
 				'nolasharon_hero_card'        => array(
@@ -390,6 +391,16 @@ function nolasharon_sanitize_interval( $value ) {
  */
 function nolasharon_sanitize_hero_h( $value ) {
 	return max( 400, min( 900, absint( $value ) ) );
+}
+
+/**
+ * Sanitize the editorial hero card height on phones (420–800px).
+ *
+ * @param mixed $value Raw value.
+ * @return int
+ */
+function nolasharon_sanitize_hero_h_m( $value ) {
+	return max( 420, min( 800, absint( $value ) ) );
 }
 
 /**

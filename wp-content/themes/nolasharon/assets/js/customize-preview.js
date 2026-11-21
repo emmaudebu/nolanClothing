@@ -44,7 +44,8 @@
 		nolasharon_hero_halign: [ '--hs-halign', 'flex' ],
 		nolasharon_hero_bg: [ '--he-bg' ],
 		nolasharon_hero_ed_h: [ '--he-h', 'px' ],
-		nolasharon_hero_ed_w: [ '--he-w', '%' ]
+		nolasharon_hero_ed_w: [ '--he-w', '%' ],
+		nolasharon_hero_ed_h_m: [ '--he-h-m', 'px' ]
 	};
 
 	Object.keys( hero ).forEach( function ( id ) {
