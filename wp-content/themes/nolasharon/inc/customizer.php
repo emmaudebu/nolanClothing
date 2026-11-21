@@ -243,7 +243,7 @@ function nolasharon_settings_schema() {
 			'fields'      => array(
 				'nolasharon_logo_h'   => array( __( 'Height on computers', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 46, '', $px( 20, 120 ) ),
 				'nolasharon_logo_w'   => array( __( 'Width on computers (0 = automatic)', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 0, '', $px( 0, 480 ) ),
-				'nolasharon_logo_h_m' => array( __( 'Height on tablets and phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 36, __( 'Below 1240px wide, where the header shows the wordmark only. Very small phones show it slightly smaller.', 'nolasharon' ), $px( 20, 70 ) ),
+				'nolasharon_logo_h_m' => array( __( 'Height on tablets and phones', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 68, __( 'Below 1240px wide. On phones the logo sits in the middle of the header, so up to 76px fits. Very small phones show it slightly smaller.', 'nolasharon' ), $px( 20, 76 ) ),
 				'nolasharon_logo_w_m' => array( __( 'Width on tablets and phones (0 = automatic)', 'nolasharon' ), 'number', 'nolasharon_sanitize_px', 0, __( 'Keep it under about 180px so the menu and cart icons still fit on phones.', 'nolasharon' ), $px( 0, 240 ) ),
 			),
 		),
