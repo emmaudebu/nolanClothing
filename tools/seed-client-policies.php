@@ -13,28 +13,16 @@
  * Nigeria-only. Re-running overwrites the two policy pages and these FAQ answers.
  */
 
-$h  = function ( $text ) {
-	return "<!-- wp:heading -->\n<h2 class=\"wp-block-heading\">{$text}</h2>\n<!-- /wp:heading -->\n\n";
-};
 $p  = function ( $text ) {
 	return "<!-- wp:paragraph -->\n<p>{$text}</p>\n<!-- /wp:paragraph -->\n\n";
-};
-$ul = function ( $items ) {
-	$li = '';
-	foreach ( $items as $item ) {
-		$li .= "<!-- wp:list-item -->\n<li>{$item}</li>\n<!-- /wp:list-item -->\n";
-	}
-	return "<!-- wp:list -->\n<ul class=\"wp-block-list\">{$li}</ul>\n<!-- /wp:list -->\n\n";
 };
 $a = function ( $url, $text ) {
 	return '<a href="' . esc_url( $url ) . '">' . $text . '</a>';
 };
 $contact  = $a( nolasharon_page_url( 'contact' ), 'contact us' );
-$returns  = $a( nolasharon_policy_url( 'returns' ), 'Returns &amp; Exchange Policy' );
-$delivery = $a( nolasharon_policy_url( 'delivery' ), 'Delivery &amp; Shipping Policy' );
 
-if ( ! function_exists( 'nolasharon_delivery_policy_content' ) ) {
-	WP_CLI::error( 'Activate the NolaSharon theme (version 0.15.3 or later) first.' );
+if ( ! function_exists( 'nolasharon_returns_policy_content' ) ) {
+	WP_CLI::error( 'Activate the NolaSharon theme (version 0.15.4 or later) first.' );
 }
 
 /* Delivery & Shipping ------------------------------------------------------------------ */
@@ -45,44 +33,7 @@ $copy          = nolasharon_delivery_copy();
 
 /* Returns & Exchange ------------------------------------------------------------------- */
 
-$returns_page = $h( 'Returns' )
-	. $p( 'We prioritise exchanges. Refunds are only given when an exchange is not possible (see “Refunds” below).' )
-
-	. $h( 'Exchanges' )
-	. $p( 'We offer an exchange if your item arrives damaged or defective, or if we sent the wrong item or size. You can also exchange an item if you ordered the wrong size or changed your mind, in which case you pay the return and new delivery fees (see “Return delivery costs”).' )
-
-	. $h( 'Timeframe' )
-	. $p( 'Requests must be made within 48 hours (2 days) of receiving your item. We cannot accept returns or exchanges after 48 hours.' )
-
-	. $h( 'Condition of items' )
-	. $p( 'Items must be unworn, unwashed and unperfumed, with their tags still attached.' )
-
-	. $h( 'Exclusions' )
-	. $p( 'The following cannot be returned or exchanged:' )
-	. $ul(
-		array(
-			'underwear, lingerie and swimwear;',
-			'earrings and body jewellery (for hygiene reasons);',
-			'items that have been worn, washed or perfumed, or have had their tags removed;',
-			'sale, promotional and discounted items (final sale);',
-			'custom-made or tailored items.',
-		)
-	)
-
-	. $h( 'How to make a request' )
-	. $p( 'Contact us within 48 hours of receiving your order, by WhatsApp, phone or our ' . $a( nolasharon_page_url( 'contact' ), 'Contact page' ) . ', with your order number and photo or video proof of the issue. An unboxing video is required for all delivery complaints, so please record one when you open your package.' )
-
-	. $h( 'Return delivery costs' )
-	. $ul(
-		array(
-			'<strong>Our error</strong> (wrong or damaged item): we cover the cost of the return and deliver your replacement free of charge.',
-			'<strong>Customer’s choice</strong> (changed mind or ordered the wrong size): you pay the return fee and the delivery fee for the exchange.',
-		)
-	)
-
-	. $h( 'Refunds' )
-	. $p( 'A refund is only given if the size you need for an exchange is unavailable. Refunds are made after we have inspected the item, which must be unworn with its tag attached, and are processed to your bank account within 3–5 working days. Delivery fees are non-refundable.' )
-	. $p( 'International orders are not refunded; we offer an exchange only where we made an error.' );
+$returns_page = nolasharon_returns_policy_content(); // In the theme since 0.15.4 (inc/page-content.php).
 
 foreach ( array(
 	'delivery' => $delivery_page,
