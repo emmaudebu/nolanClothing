@@ -56,7 +56,4 @@ $nolasharon_item       = function ( $label, $url, $current = false ) {
 	$nolasharon_item( __( 'Store Locations', 'nolasharon' ), nolasharon_page_url( 'store-locations' ), is_page( 'store-locations' ) );
 	$nolasharon_item( __( 'Contact Us', 'nolasharon' ), nolasharon_page_url( 'contact' ), is_page( 'contact' ) );
 	?>
-	<?php if ( function_exists( 'nolasharon_wishlist_url' ) ) : ?>
-		<li class="main-nav__mobile-only"><a href="<?php echo esc_url( nolasharon_wishlist_url() ); ?>"><?php esc_html_e( 'Wishlist', 'nolasharon' ); ?></a></li>
-	<?php endif; ?>
 </ul>

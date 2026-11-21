@@ -49,7 +49,24 @@ if ( ! nolasharon_unconfirmed( $nolasharon_announce ) ) :
 		<?php nolasharon_logo(); ?>
 
 		<nav class="main-nav" id="main-nav" aria-label="<?php esc_attr_e( 'Main', 'nolasharon' ); ?>">
+			<?php // Phones keep only menu, logo and bag in the bar; search, wishlist and account move into the menu. ?>
+			<form class="main-nav__search" role="search" method="get" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+				<label class="screen-reader-text" for="nav-search-input"><?php esc_html_e( 'Search products', 'nolasharon' ); ?></label>
+				<?php echo nolasharon_icon( 'search', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+				<input id="nav-search-input" type="search" name="s" value="<?php echo esc_attr( get_search_query() ); ?>" placeholder="<?php esc_attr_e( 'Search products...', 'nolasharon' ); ?>">
+				<?php if ( class_exists( 'WooCommerce' ) ) : ?>
+					<input type="hidden" name="post_type" value="product">
+				<?php endif; ?>
+			</form>
 			<?php get_template_part( 'template-parts/nav' ); ?>
+			<ul class="main-nav__quick">
+				<?php if ( function_exists( 'nolasharon_wishlist_url' ) ) : ?>
+					<li><a href="<?php echo esc_url( nolasharon_wishlist_url() ); ?>"><?php echo nolasharon_icon( 'heart', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php esc_html_e( 'Wishlist', 'nolasharon' ); ?></a></li>
+				<?php endif; ?>
+				<?php if ( function_exists( 'wc_get_page_permalink' ) ) : ?>
+					<li><a href="<?php echo esc_url( wc_get_page_permalink( 'myaccount' ) ); ?>"><?php echo nolasharon_icon( 'user', 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> <?php is_user_logged_in() ? esc_html_e( 'My account', 'nolasharon' ) : esc_html_e( 'Sign in', 'nolasharon' ); ?></a></li>
+				<?php endif; ?>
+			</ul>
 		</nav>
 
 		<div class="site-header__tools">
