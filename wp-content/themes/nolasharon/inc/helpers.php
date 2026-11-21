@@ -165,6 +165,9 @@ function nolasharon_icon( $name, $size = 20 ) {
 		'filter'     => '<path d="M4 6h16M7 12h10M10 18h4"/>',
 		'card'       => '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3"/>',
 		'chat'       => '<path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8M8 13h5"/>',
+		'instagram'  => '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="0.6" fill="currentColor"/>',
+		'facebook'   => '<path d="M14 21v-7.5h2.6l.4-3H14V8.6c0-.9.3-1.5 1.6-1.5H17V4.4a20 20 0 0 0-2.3-.1C12.4 4.3 11 5.7 11 8.2v2.3H8.5v3H11V21"/>',
+		'tiktok'     => '<path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5"/><path d="M14 3c.3 2.6 2 4.4 4.5 4.6"/>',
 		'whatsapp'   => '<path d="M4 20l1.3-4A8 8 0 1 1 8 18.7L4 20z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2L9 9.5z" fill="currentColor" stroke="none"/>',
 	);
 	if ( ! isset( $paths[ $name ] ) ) {

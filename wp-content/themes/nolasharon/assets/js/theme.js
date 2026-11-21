@@ -50,6 +50,32 @@
 		} );
 	} );
 
+	// Footer columns: closed on phones (tap a heading to open it), always open on larger
+	// screens, where the heading is not a control.
+	var footerCols = document.querySelectorAll( '.site-footer__col' );
+	if ( footerCols.length && window.matchMedia ) {
+		var phone = window.matchMedia( '(max-width: 760px)' );
+		var syncFooter = function () {
+			footerCols.forEach( function ( col ) {
+				col.open = ! phone.matches;
+				if ( phone.matches ) {
+					col.firstElementChild.removeAttribute( 'tabindex' );
+				} else {
+					col.firstElementChild.setAttribute( 'tabindex', '-1' );
+				}
+			} );
+		};
+		syncFooter();
+		phone.addEventListener( 'change', syncFooter );
+		footerCols.forEach( function ( col ) {
+			col.firstElementChild.addEventListener( 'click', function ( e ) {
+				if ( ! phone.matches ) {
+					e.preventDefault();
+				}
+			} );
+		} );
+	}
+
 	// Mobile search.
 	var searchToggle = document.querySelector( '.search-toggle' );
 	var search = document.getElementById( 'header-search' );

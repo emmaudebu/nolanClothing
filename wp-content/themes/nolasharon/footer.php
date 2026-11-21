@@ -62,6 +62,21 @@ $nolasharon_columns = array(
 	),
 );
 
+// Phones: contact and social links as a row of round icon buttons under the logo.
+$nolasharon_social = array_filter(
+	array(
+		'whatsapp'  => array( __( 'WhatsApp', 'nolasharon' ), $nolasharon_whatsapp ),
+		'phone'     => array( __( 'Call us', 'nolasharon' ), nolasharon_tel_url( $nolasharon_phone ) ),
+		'mail'      => array( __( 'Email us', 'nolasharon' ), $nolasharon_email ? 'mailto:' . $nolasharon_email : '' ),
+		'instagram' => array( __( 'Instagram', 'nolasharon' ), nolasharon_setting( 'nolasharon_instagram' ) ),
+		'facebook'  => array( __( 'Facebook', 'nolasharon' ), nolasharon_setting( 'nolasharon_facebook' ) ),
+		'tiktok'    => array( __( 'TikTok', 'nolasharon' ), nolasharon_setting( 'nolasharon_tiktok' ) ),
+	),
+	function ( $item ) {
+		return (bool) $item[1];
+	}
+);
+
 $nolasharon_footer_class = sprintf(
 	'site-footer site-footer--%1$s site-footer--align-%2$s site-footer--bottom-%3$s',
 	sanitize_html_class( nolasharon_setting( 'nolasharon_footer_layout' ) ),
@@ -85,6 +100,16 @@ $nolasharon_credit_url   = nolasharon_setting( 'nolasharon_credit_url' );
 				<?php if ( nolasharon_setting( 'nolasharon_footer_line' ) ) : ?>
 					<p class="site-footer__line"><?php echo nl2br( esc_html( nolasharon_setting( 'nolasharon_footer_line' ) ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped first. ?></p>
 				<?php endif; ?>
+				<?php if ( $nolasharon_social ) : ?>
+					<ul class="site-footer__social">
+						<?php
+						foreach ( $nolasharon_social as $nolasharon_key => list( $nolasharon_label, $nolasharon_url ) ) :
+							$nolasharon_external = 0 === strpos( $nolasharon_url, 'http' );
+							?>
+							<li><a href="<?php echo esc_url( $nolasharon_url, array( 'http', 'https', 'tel', 'mailto' ) ); ?>" aria-label="<?php echo esc_attr( $nolasharon_label ); ?>"<?php echo $nolasharon_external ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo nolasharon_icon( $nolasharon_key, 20 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></a></li>
+						<?php endforeach; ?>
+					</ul>
+				<?php endif; ?>
 			</div>
 			<nav class="site-footer__cols" aria-label="<?php esc_attr_e( 'Footer', 'nolasharon' ); ?>">
 				<?php foreach ( $nolasharon_columns as list( $nolasharon_heading, $nolasharon_links ) ) : ?>
@@ -92,17 +117,18 @@ $nolasharon_credit_url   = nolasharon_setting( 'nolasharon_credit_url' );
 					<?php if ( ! $nolasharon_links || '' === $nolasharon_heading ) : ?>
 						<?php continue; ?>
 					<?php endif; ?>
-					<div>
-						<h2 class="site-footer__heading"><?php echo esc_html( $nolasharon_heading ); ?></h2>
+					<?php // Open everywhere; on phones theme.js closes them so each heading opens its links. ?>
+					<details class="site-footer__col" open>
+						<summary><h2 class="site-footer__heading"><?php echo esc_html( $nolasharon_heading ); ?></h2><?php echo nolasharon_icon( 'chevron', 18 ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></summary>
 						<ul>
 							<?php
 							foreach ( $nolasharon_links as $nolasharon_label => $nolasharon_url ) :
 								$nolasharon_external = 0 === strpos( $nolasharon_url, 'http' ) && false === strpos( $nolasharon_url, home_url() );
 								?>
-								<li><a href="<?php echo esc_url( $nolasharon_url, array( 'http', 'https', 'tel', 'mailto' ) ); ?>"<?php echo $nolasharon_external ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo esc_html( $nolasharon_label ); ?></a></li>
+								<li><a href="<?php echo esc_url( $nolasharon_url, array( 'http', 'https', 'tel', 'mailto' ) ); ?>"<?php echo $nolasharon_external ? ' target="_blank" rel="noopener"' : ''; ?>><?php echo str_replace( '@', '<wbr>@', esc_html( $nolasharon_label ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped, then a line-break hint. ?></a></li>
 							<?php endforeach; ?>
 						</ul>
-					</div>
+					</details>
 				<?php endforeach; ?>
 			</nav>
 		</div>
