@@ -198,6 +198,7 @@ function nolasharon_hero_css() {
 		'--he-bg'     => sanitize_hex_color( nolasharon_setting( 'nolasharon_hero_bg' ) ) ? nolasharon_setting( 'nolasharon_hero_bg' ) : '#f4ede5',
 		'--he-h'      => (int) nolasharon_setting( 'nolasharon_hero_ed_h' ) . 'px',
 		'--he-w'      => (int) nolasharon_setting( 'nolasharon_hero_ed_w' ) . '%',
+		'--he-h-m'    => (int) nolasharon_setting( 'nolasharon_hero_ed_h_m' ) . 'px',
 	);
 	$css  = '';
 	foreach ( $vars as $name => $value ) {
